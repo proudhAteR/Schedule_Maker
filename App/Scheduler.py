@@ -1,5 +1,7 @@
+from Models.Class import Class
 from Models.menu import Menu
 from Models.menu_action import MenuAction
+from Services.ScheduleService import ScheduleService
 
 
 def display_title():
@@ -17,8 +19,9 @@ class Scheduler:
     def __init__(self):
         self.menu: Menu = Menu([
             MenuAction("Make schedule", lambda: None),
-            MenuAction("Create event", lambda: None)
+            MenuAction("Create event", self.create)
         ])
+        self.service = ScheduleService()
 
     def run(self):
         display_title()
@@ -52,3 +55,9 @@ class Scheduler:
 
     def is_valid_choice(self, choice):
         return 0 <= choice < len(self.menu.actions)
+
+    def create(self):
+        # Math IN Room 101 FROM 10:00 TO 11:00 EVERY Monday BY Mr. Smith
+        sentence = input("Enter the prompt for the event creation: ")
+        event = Class.from_sentence(sentence)
+        self.service.create_event(event)

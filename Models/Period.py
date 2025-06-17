@@ -16,5 +16,8 @@ class Period:
     def __init__(self, start: str, end: str, day: Day, session: Session | None = None, custom_streak: int = 15):
         self.day = day
         self.streak = session.streak if session else custom_streak
-        self.start = _str_to_datetime(start, day, session_start=session.first_occurrence)
-        self.end = _str_to_datetime(end, day, session_start=session.first_occurrence)
+        start_date = session.first_occurrence if session else None
+        end_date = session.first_occurrence if session else None
+
+        self.start = _str_to_datetime(start, day, session_start=start_date)
+        self.end = _str_to_datetime(end, day, session_start=end_date)
