@@ -1,4 +1,5 @@
-cred.json
+App/credentials.json
+App/token.json
 
 ### VisualStudioCode template
 .vscode/*

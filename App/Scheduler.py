@@ -1,6 +1,8 @@
 from Models.Class import Class
+from Models.Schedule import Schedule
 from Models.menu import Menu
 from Models.menu_action import MenuAction
+from Services.Logger import get_logger
 from Services.ScheduleService import ScheduleService
 
 
@@ -14,50 +16,70 @@ def display_title():
 ╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝""")
 
 
+def handle_choice(menu: Menu) -> bool:
+    try:
+        choice = int(input("Enter number: ")) - 1
+        if menu.is_valid_choice(choice):
+            print()
+            selection = menu.actions[choice]
+            selection.action()
+
+            return selection.name.lower() == 'quit'
+
+        print("Invalid choice. Please try again.")
+    except ValueError:
+        print("Please enter a valid number.")
+    return False
+
+
+def show_options(menu: Menu):
+    print("\n\nWhat would you like to do?")
+    for i, action in enumerate(menu.actions, start=1):
+        action.display(i)
+
+
+def display_menu(menu: Menu):
+    while True:
+        show_options(menu)
+        if handle_choice(menu):
+            return
+
+
 class Scheduler:
 
     def __init__(self):
-        self.menu: Menu = Menu([
-            MenuAction("Make schedule", lambda: None),
-            MenuAction("Create event", self.create)
-        ])
         self.service = ScheduleService()
 
     def run(self):
+        main_menu: Menu = Menu([
+            MenuAction("Make schedule", self.schedule),
+            MenuAction("Create event", self.event)
+        ])
         display_title()
-        self.display_menu()
+        display_menu(main_menu)
 
-    def display_menu(self):
-        while True:
-            self.show_options()
-            if self.handle_choice():
-                return
-
-    def show_options(self):
-        print("\nSelect an option:")
-        for i, action in enumerate(self.menu.actions):
-            action.display(i)
-
-    def handle_choice(self) -> bool:
-        try:
-            choice = int(input("\nEnter the number of your choice: ")) - 1
-            if self.is_valid_choice(choice):
-                print()
-                selection = self.menu.actions[choice]
-                selection.action()
-
-                return selection.name.lower() == 'quit'
-
-            print("Invalid choice. Please try again.")
-        except ValueError:
-            print("Please enter a valid number.")
-        return False
-
-    def is_valid_choice(self, choice):
-        return 0 <= choice < len(self.menu.actions)
-
-    def create(self):
-        # Math IN Room 101 FROM 10:00 TO 11:00 EVERY Monday BY Mr. Smith
+    def event(self):
+        print("Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith\n")
         sentence = input("Enter the prompt for the event creation: ")
         event = Class.from_sentence(sentence)
         self.service.create_event(event)
+
+    def schedule(self):
+        print("Paste your events below (one per line). Finish input by pressing Enter twice:\n")
+        print("(Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith)\n")
+
+        # Read multi-line block from stdin until double Enter (empty line)
+        block = []
+        while True:
+            line = input()
+            if not line.strip():
+                break
+            block.append(line.strip())
+
+        if not block:
+            get_logger().warning("Invalid line")
+            return
+
+        self.service.make_schedule(
+            Schedule.from_block(block)
+        )

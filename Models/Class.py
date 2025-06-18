@@ -16,12 +16,13 @@ class Class(Event):
 
     @classmethod
     def from_sentence(cls, sentence: str) -> "Class":
-        pattern = r"(.+?) IN (.+?) FROM (.+?) TO (.+?) EVERY (.+?) BY (.+)"
+        pattern = r"(.+?) in (.+?) from (.+?) to (.+?) every (.+?) by (.+)"
         match = re.match(pattern, sentence.strip())
         if not match:
-            raise ValueError("Sentence format is invalid")
+            raise ValueError
 
         name, location, start, end, day_str, teacher = match.groups()
-        day_enum = Day[day_str.strip().upper()]
-        period = Period(start=start.strip(), end=end.strip(), day=day_enum)
-        return cls(name=name.strip(), location=location.strip(), period=period, teacher=teacher.strip())
+        day = Day[day_str.strip().upper()]
+        period = Period(start.strip(), end.strip(), day)
+
+        return Class(name.strip(), period, location.strip(), teacher=teacher.strip())

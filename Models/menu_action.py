@@ -10,4 +10,4 @@ class MenuAction:
         return self.action()
 
     def display(self, index: int):
-        print(f"{index + 1}.{self.name}")
+        print(f"{index}.{self.name}")
