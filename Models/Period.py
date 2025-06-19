@@ -13,9 +13,9 @@ def _str_to_datetime(t: str, day: Day, session_start: datetime | None = None) ->
 
 
 class Period:
-    def __init__(self, start: str, end: str, day: Day, session: Session | None = None, custom_streak: int = 15):
+    def __init__(self, start: str, end: str, day: Day, session: Session | None = None, streak: int = 15):
         self.day = day
-        self.streak = session.streak if session else custom_streak
+        self.streak = session.streak if session else streak
         start_date = session.first_occurrence if session else None
         end_date = session.first_occurrence if session else None
 

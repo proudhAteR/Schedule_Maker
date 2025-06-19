@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from Models.Event import Event
 import re
 from Models.Period import Period
+from Models.Session import Session
 from Models.enum.Day import Day
 
 
@@ -15,7 +16,7 @@ class Class(Event):
         return event
 
     @classmethod
-    def from_sentence(cls, sentence: str) -> "Class":
+    def from_sentence(cls, sentence: str, session: Session | None = None) -> "Class":
         pattern = r"(.+?) in (.+?) from (.+?) to (.+?) every (.+?) by (.+)"
         match = re.match(pattern, sentence.strip())
         if not match:
@@ -23,6 +24,6 @@ class Class(Event):
 
         name, location, start, end, day_str, teacher = match.groups()
         day = Day[day_str.strip().upper()]
-        period = Period(start.strip(), end.strip(), day)
+        period = Period(start.strip(), end.strip(), day, session=session)
 
         return Class(name.strip(), period, location.strip(), teacher=teacher.strip())

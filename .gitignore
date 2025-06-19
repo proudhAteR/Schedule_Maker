@@ -1,4 +1,4 @@
-App/credentials/
+App/secrets/
 ### VisualStudioCode template
 .vscode/*
 !.vscode/settings.json

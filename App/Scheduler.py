@@ -1,3 +1,5 @@
+from textwrap import dedent
+
 from Models.Class import Class
 from Models.Schedule import Schedule
 from Models.menu import Menu
@@ -45,6 +47,54 @@ def display_menu(menu: Menu):
             return
 
 
+def show_help():
+    print("""
+    ─────────────── Schedule Maker Documentation ───────────────
+
+    This application helps you manage your class schedules via a command-line interface.
+
+    ➤ Available Options:
+    1. Make schedule – Allows you to paste multiple events at once.
+    2. Create event – Enter a single event manually.
+
+    ➤ Event Format:
+    Each event must follow this format:
+    [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+    Example:
+    Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+
+    ➤ Schedule from Start Date (Optional):
+    To specify when a schedule begins, start your input block with:
+    Schedule starts on [Date]
+    Example:
+    Schedule starts on 2025-09-01
+
+    ➤ Ending Input:
+    When inputting multiple events, finish your block by pressing Enter twice.
+
+    ────────────────────────────────────────────────────────────
+    """)
+
+
+def block_instructions():
+    print(dedent("""
+        [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+        Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+    """))
+    print(dedent("""
+        If you want to start from a specific date you should start the schedule by:
+        Schedule starts on [Date]
+    """))
+    print("Paste your events below (one per line). Finish input by pressing Enter twice:\n")
+
+
+def sentence_instructions():
+    dedent("""
+        [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+        Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith\n
+    """)
+
+
 class Scheduler:
 
     def __init__(self):
@@ -53,21 +103,20 @@ class Scheduler:
     def run(self):
         main_menu: Menu = Menu([
             MenuAction("Make schedule", self.schedule),
-            MenuAction("Create event", self.event)
+            MenuAction("Create event", self.event),
+            MenuAction("Help / Documentation", show_help)
         ])
         display_title()
         display_menu(main_menu)
 
     def event(self):
-        print("Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith\n")
+        sentence_instructions()
         sentence = input("Enter the prompt for the event creation: ")
         event = Class.from_sentence(sentence)
         self.service.create_event(event)
 
     def schedule(self):
-        print("Paste your events below (one per line). Finish input by pressing Enter twice:\n")
-        print("(Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith)\n")
-
+        block_instructions()
         # Read multi-line block from stdin until double Enter (empty line)
         block = []
         while True:

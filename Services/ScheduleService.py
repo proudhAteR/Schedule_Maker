@@ -14,6 +14,7 @@ logger = get_logger()
 class ScheduleService:
     def __init__(self):
         self.client = Client('https://www.googleapis.com/auth/calendar')
+        self.scopes = [self.client.base_url]
         self.creds = self.authenticate()
         self.res = build('calendar', 'v3', credentials=self.creds)
 
@@ -34,19 +35,18 @@ class ScheduleService:
     def authenticate(self) -> Credentials:
         creds = None
 
-
-        if os.path.exists("token.json"):
-            creds = Credentials.from_authorized_user_file("token.json", self.client.scope)
+        if os.path.exists("secrets/token.json"):
+            creds = Credentials.from_authorized_user_file("secrets/token.json", self.scopes)
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.client.scope
+                    'secrets/credentials.json', self.scopes
                 )
                 creds = flow.run_local_server(port=0)
-            with open("token.json", "w") as token:
+            with open("secrets/token.json", "w") as token:
                 token.write(creds.to_json())
 
         return creds
