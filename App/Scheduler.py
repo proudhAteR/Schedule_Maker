@@ -2,10 +2,13 @@ from textwrap import dedent
 
 from Models.Class import Class
 from Models.Schedule import Schedule
-from Models.menu import Menu
-from Models.menu_action import MenuAction
+from Models.Menu import Menu
+from Models.MenuAction import MenuAction
 from Services.Logger import get_logger
 from Services.ScheduleService import ScheduleService
+from Services.TesseractService import TesseractService
+
+logger = get_logger()
 
 
 def display_title():
@@ -25,10 +28,9 @@ def handle_choice(menu: Menu) -> bool:
             print()
             selection = menu.actions[choice]
             selection.action()
-
             return selection.name.lower() == 'quit'
-
-        print("Invalid choice. Please try again.")
+        else:
+            print(f"Invalid choice: {choice + 1}. Please select a valid option.")
     except ValueError:
         print("Please enter a valid number.")
     return False
@@ -47,64 +49,85 @@ def display_menu(menu: Menu):
             return
 
 
-def show_help():
-    print("""
-    ─────────────── Schedule Maker Documentation ───────────────
+def ai_prompt():
+    print(dedent("""
+        I have a text containing a class or event schedule (such as a table, timetable, or calendar view) that was transformed by an OCR process. 
+        Please extract the relevant information and convert it into a list of event descriptions following this exact format:
+        [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+        
+        For example:
+        Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+        
+        Additional guidelines:
+            - If the schedule contains a start date (e.g., "Schedule starts on 2025-09-01"), include that line first.
+            - If the schedule does not contain a start date, ask me if I want to add one.
+            - Times must be in 24-hour format.
+            - If the teacher’s name isn’t present, use "Unknown".
+            - If the location is missing, use "TBD".
+            - There shouldn't be any empty lines in the output you give me.
+            - Respect the format by any means and do not change it.
+            - Ignore single-letter codes like "L" and "T" as they are not days of the week or relevant information
+            - You can omit activities called "Activités collège".
 
-    This application helps you manage your class schedules via a command-line interface.
-
-    ➤ Available Options:
-    1. Make schedule – Allows you to paste multiple events at once.
-    2. Create event – Enter a single event manually.
-
-    ➤ Event Format:
-    Each event must follow this format:
-    [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
-    Example:
-    Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
-
-    ➤ Schedule from Start Date (Optional):
-    To specify when a schedule begins, start your input block with:
-    Schedule starts on [Date]
-    Example:
-    Schedule starts on 2025-09-01
-
-    ➤ Ending Input:
-    When inputting multiple events, finish your block by pressing Enter twice.
-
-    ────────────────────────────────────────────────────────────
-    """)
+        Output all the extracted and formatted lines as a plain text block that I can paste directly.
+    """))
 
 
 def block_instructions():
     print(dedent("""
-        [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
-        Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
-    """))
-    print(dedent("""
-        If you want to start from a specific date you should start the schedule by:
+        If you want to start from a specific date, begin your schedule like this:
         Schedule starts on [Date]
     """))
     print("Paste your events below (one per line). Finish input by pressing Enter twice:\n")
 
+    ai_prompt()
+
 
 def sentence_instructions():
-    dedent("""
-        [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
-        Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith\n
-    """)
+    print(
+        dedent("""
+            [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+            Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+        """)
+    )
+
+
+def read_block() -> list[str]:
+    # Read multi-line block from stdin until double Enter (empty line)
+    block = []
+    while True:
+        line = input()
+        if not line.strip():
+            break
+        block.append(line.strip())
+
+    if not block:
+        logger.warning("No input lines were provided for schedule.")
+
+    return block
+
+
+def create_event_from_sentence(sentence: str) -> Class:
+    return Class.from_sentence(sentence)
+
+
+def quit_app():
+    print("Exiting Schedule Maker.")
 
 
 class Scheduler:
 
     def __init__(self):
-        self.service = ScheduleService()
+        self.schedule = ScheduleService()
+        # -c preserve_interword_spaces=1 add this to the config to have a table like layout
+        self.tesseract = TesseractService(debug=True)
 
     def run(self):
         main_menu: Menu = Menu([
-            MenuAction("Make schedule", self.schedule),
+            MenuAction("Make schedule", self.make_schedule),
             MenuAction("Create event", self.event),
-            MenuAction("Help / Documentation", show_help)
+            MenuAction("Prompt", ai_prompt),
+            MenuAction("Quit", quit_app)
         ])
         display_title()
         display_menu(main_menu)
@@ -113,22 +136,22 @@ class Scheduler:
         sentence_instructions()
         sentence = input("Enter the prompt for the event creation: ")
         event = Class.from_sentence(sentence)
-        self.service.create_event(event)
+        self.schedule.create_event(event)
 
-    def schedule(self):
-        block_instructions()
-        # Read multi-line block from stdin until double Enter (empty line)
-        block = []
-        while True:
-            line = input()
-            if not line.strip():
-                break
-            block.append(line.strip())
+    def make_schedule(self):
+        path = input("What is the namer of the your schedule file (e.g., schedule.jpg)?: ")
 
-        if not block:
-            get_logger().warning("Invalid line")
+        try:
+            text, confidence = self.tesseract.extract(path)
+            block_instructions()
+            print(text)
+        except FileNotFoundError:
+            print(f"'{path}' cannot be found.")
             return
 
-        self.service.make_schedule(
+        block = read_block()
+        self.schedule.make_schedule(
             Schedule.from_block(block)
         )
+
+        logger.warning(f"Check all entries at least once. OCR confidence at {confidence}%")

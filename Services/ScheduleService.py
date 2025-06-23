@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from Clients.Client import Client
 from Models.Event import Event
 from Models.Schedule import Schedule
+from Services.FileService import FileService
 from Services.Logger import get_logger
 import os
 
@@ -35,7 +36,7 @@ class ScheduleService:
     def authenticate(self) -> Credentials:
         creds = None
 
-        if os.path.exists("secrets/token.json"):
+        if FileService.exists("secrets/token.json"):
             creds = Credentials.from_authorized_user_file("secrets/token.json", self.scopes)
 
         if not creds or not creds.valid:
@@ -46,7 +47,7 @@ class ScheduleService:
                     'secrets/credentials.json', self.scopes
                 )
                 creds = flow.run_local_server(port=0)
-            with open("secrets/token.json", "w") as token:
-                token.write(creds.to_json())
+
+            FileService.write('secrets/token.json', creds.to_json())
 
         return creds

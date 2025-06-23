@@ -1,4 +1,4 @@
-from Models.menu_action import MenuAction
+from Models.MenuAction import MenuAction
 
 
 class Menu:
