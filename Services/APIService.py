@@ -5,14 +5,12 @@ from googleapiclient.discovery import build
 from Clients.Client import Client
 from Models.Event import Event
 from Models.Schedule import Schedule
-from Services.FileService import FileService
-from Services.Logger import get_logger
-import os
+from Utils.FileHandler import FileHandler
+from Utils.Logger import Logger
 
-logger = get_logger()
+logger = Logger().logger
 
-
-class ScheduleService:
+class APIService:
     def __init__(self):
         self.client = Client('https://www.googleapis.com/auth/calendar')
         self.scopes = [self.client.base_url]
@@ -36,7 +34,7 @@ class ScheduleService:
     def authenticate(self) -> Credentials:
         creds = None
 
-        if FileService.exists("secrets/token.json"):
+        if FileHandler.exists("secrets/token.json"):
             creds = Credentials.from_authorized_user_file("secrets/token.json", self.scopes)
 
         if not creds or not creds.valid:
@@ -48,6 +46,6 @@ class ScheduleService:
                 )
                 creds = flow.run_local_server(port=0)
 
-            FileService.write('secrets/token.json', creds.to_json())
+            FileHandler.write('secrets/token.json', creds.to_json())
 
         return creds

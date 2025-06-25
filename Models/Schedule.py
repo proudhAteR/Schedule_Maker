@@ -4,7 +4,7 @@ from datetime import datetime
 from Models.Class import Class
 from Models.Event import Event
 from Models.Session import Session
-from Services.Logger import get_logger
+from Utils.Logger import Logger
 
 
 class Schedule:
@@ -28,6 +28,6 @@ class Schedule:
                 event = Class.from_sentence(line, schedule_session)
                 events.append(event)
             except Exception as e:
-                get_logger().error(f"Failed to parse line: '{line}'. Reason: {e}")
+                Logger().logger.error(f"Failed to parse line: '{line}'. Reason: {e}")
 
         return Schedule(events, schedule_session)

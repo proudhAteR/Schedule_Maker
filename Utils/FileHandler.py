@@ -4,7 +4,7 @@ from PIL.Image import Image
 from pdf2image import convert_from_path
 
 
-class FileService:
+class FileHandler:
     @classmethod
     def exists(cls, path: str):
         return os.path.exists(path)
@@ -25,5 +25,5 @@ class FileService:
             return False
 
     @classmethod
-    def convert_pdf_to_images(cls, pdf_path: str, dpi: int = 300) -> Image:
+    def convert_pdf_to_image(cls, pdf_path: str, dpi: int = 300) -> Image:
         return convert_from_path(pdf_path, dpi=dpi)[0]

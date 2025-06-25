@@ -4,11 +4,12 @@ from Models.Class import Class
 from Models.Schedule import Schedule
 from Models.Menu import Menu
 from Models.MenuAction import MenuAction
-from Services.Logger import get_logger
-from Services.ScheduleService import ScheduleService
-from Services.TesseractService import TesseractService
+from Services.OCR.TesseractOCR import TesseractOCR
+from Services.APIService import APIService
+from Services.OCRService import OCRService
+from Utils.Logger import Logger
 
-logger = get_logger()
+logger = Logger().logger
 
 
 def display_title():
@@ -118,9 +119,7 @@ def quit_app():
 class Scheduler:
 
     def __init__(self):
-        self.schedule = ScheduleService()
-        # -c preserve_interword_spaces=1 add this to the config to have a table like layout
-        self.tesseract = TesseractService(debug=True)
+        self.schedule = APIService()
 
     def run(self):
         main_menu: Menu = Menu([
@@ -142,9 +141,11 @@ class Scheduler:
         path = input("What is the namer of the your schedule file (e.g., schedule.jpg)?: ")
 
         try:
-            text, confidence = self.tesseract.extract(path)
+            ocr = TesseractOCR()
+            service = OCRService(ocr)
+
             block_instructions()
-            print(text)
+            print(service.extract(path))
         except FileNotFoundError:
             print(f"'{path}' cannot be found.")
             return
@@ -153,5 +154,3 @@ class Scheduler:
         self.schedule.make_schedule(
             Schedule.from_block(block)
         )
-
-        logger.warning(f"Check all entries at least once. OCR confidence at {confidence}%")
