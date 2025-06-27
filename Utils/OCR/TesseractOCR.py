@@ -10,7 +10,7 @@ class TesseractOCR(OCR):
         super().__init__()
         self.__check_tesseract()
 
-    def init(self, debug: bool = False, lang: str = None, config: str = None) -> OCR:
+    def init(self, lang: str = None, debug: bool = False, config: str = None) -> OCR:
         self.lang = lang or 'fra+eng'
         # -c preserve_interword_spaces=1 add this to the config to have a table like layout
         self.config = config or r'--psm 11 --oem 1 --dpi {dpi}'

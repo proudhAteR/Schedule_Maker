@@ -28,6 +28,6 @@ class Schedule:
                 event = Class.from_sentence(line, schedule_session)
                 events.append(event)
             except Exception as e:
-                Logger().logger.error(f"Failed to parse line: '{line}'. Reason: {e}")
+                Logger().error(f"Failed to parse line: '{line}'. Reason: {e}")
 
         return Schedule(events, schedule_session)

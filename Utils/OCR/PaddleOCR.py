@@ -9,15 +9,13 @@ from Interfaces.OCR import OCR
 from Utils.ImageHandler import ImageHandler
 from Utils.Logger import Logger
 
-logger = Logger().logger
-
 
 class C_PaddleOCR(OCR):
     def __init__(self):
         super().__init__()
         self.ocr = None
 
-    def init(self, lang: str, config: str = None, debug: bool = False) -> "C_PaddleOCR":
+    def init(self, lang: str = None, debug: bool = False, config: str = None) -> "C_PaddleOCR":
         lang = lang or 'fra'
         self.lang = 'fr' if 'fra' in lang else 'en'
         self.debug = debug
@@ -25,13 +23,13 @@ class C_PaddleOCR(OCR):
         try:
             self.config = json.loads(config) if config else {}
         except json.JSONDecodeError as e:
-            logger.error(f"Invalid config format: {e}")
+            Logger.error(f"Invalid config format: {e}")
             self.config = {}
 
         try:
             self.ocr: PaddleOCR = PaddleOCR(use_angle_cls=True, lang=self.lang, **self.config)
         except Exception as e:
-            logger.error(f"Failed to initialize PaddleOCR: {e}")
+            Logger.error(f"Failed to initialize PaddleOCR: {e}")
             raise
 
         return self
@@ -48,10 +46,10 @@ class C_PaddleOCR(OCR):
 
             if self.debug:
                 res.save_to_json('schedules/image.json')
-                logger.info(f"Image infos have been saved in schedules/image.json")
+                Logger.info(f"Image infos have been saved in schedules/image.json")
 
             return text.strip()
 
         except Exception as e:
-            logger.error(f"OCR extraction failed: {e}")
+            Logger.error(f"OCR extraction failed: {e}")
             raise

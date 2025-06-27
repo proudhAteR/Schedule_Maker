@@ -4,13 +4,11 @@ from Models.Class import Class
 from Models.Schedule import Schedule
 from Models.Menu import Menu
 from Models.MenuAction import MenuAction
-from Utils.OCR.PaddleOCR import C_PaddleOCR
 from Services.APIService import APIService
 from Services.OCRService import OCRService
 from Utils.Logger import Logger
 from Utils.OCR.TesseractOCR import TesseractOCR
 
-logger = Logger().logger
 
 
 def display_title():
@@ -104,7 +102,7 @@ def read_block() -> list[str]:
         block.append(line.strip())
 
     if not block:
-        logger.warning("No input lines were provided for schedule.")
+        Logger.warning("No input lines were provided for schedule.")
 
     return block
 
@@ -150,7 +148,7 @@ class Scheduler:
             block_instructions()
             print(res)
         except Exception as e:
-            logger.error(f"Cannot extraxt data from {path} because {e}")
+            Logger.error(f"Cannot extract data from {path} because {e}")
             return
 
         block = read_block()

@@ -8,7 +8,6 @@ from Models.Schedule import Schedule
 from Utils.FileHandler import FileHandler
 from Utils.Logger import Logger
 
-logger = Logger().logger
 
 class APIService:
     def __init__(self):
@@ -22,9 +21,9 @@ class APIService:
             events = self.res.events()
             insert = events.insert(calendarId=calendar_id, body=event.to_google_event())
             response = insert.execute()
-            logger.info(f"Event created: {response.get('id')}")
+            Logger.info(f"Event created: {response.get('id')}")
         except Exception as e:
-            logger.error(f"Failed to create event: {e}")
+            Logger.error(f"Failed to create event: {e}")
             raise
 
     def make_schedule(self, schedule: Schedule):

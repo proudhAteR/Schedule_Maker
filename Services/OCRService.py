@@ -5,8 +5,6 @@ from Utils.FileHandler import FileHandler
 from Utils.ImageHandler import ImageHandler
 from Utils.Logger import Logger
 
-logger = Logger().logger
-
 
 class OCRService:
 
@@ -32,8 +30,8 @@ class OCRService:
             if self.debug:
                 processed_path = ImageHandler.get_processed_filename(image_path)
                 enhanced.save(processed_path)
-                logger.info(f"Saved processed image to: {processed_path}")
-                logger.info(f"Extracted {len(res)} characters")
+                Logger.info(f"Saved processed image to: {processed_path}")
+                Logger.info(f"Extracted {len(res)} characters")
 
             return res
         except Exception:

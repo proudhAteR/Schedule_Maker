@@ -1,42 +1,61 @@
-import logging
+from logging import *
+import threading
+
 
 class Logger:
     _instance = None
+    _lock = threading.Lock()
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(Logger, cls).__new__(cls)
-            cls._instance._logger = cls._instance.__get_logger()
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super(Logger, cls).__new__(cls)
+                    cls._instance._logger = cls._instance.__get_logger()
         return cls._instance
 
     @classmethod
-    def __get_logger(cls) -> logging.Logger:
-        class ColorFormatter(logging.Formatter):
+    def __get_logger(cls) -> Logger:
+        class ColorFormatter(Formatter):
             COLORS = {
-                'DEBUG': '\033[94m',    # Blue
-                'INFO': '\033[92m',     # Green
+                'DEBUG': '\033[94m',  # Blue
+                'INFO': '\033[92m',  # Green
                 'WARNING': '\033[93m',  # Yellow
-                'ERROR': '\033[91m',    # Red
-                'CRITICAL': '\033[95m', # Magenta
+                'ERROR': '\033[91m',  # Red
             }
             RESET = '\033[0m'
 
             def format(self, record):
                 level_color = self.COLORS.get(record.levelname, self.RESET)
-                record.levelname = f"{level_color}{record.levelname}{self.RESET}"
-                record.msg = f"{level_color}{record.msg}{self.RESET}"
-                return super().format(record)
+                log_line = super().format(record)
+                return f"{level_color}{log_line}{self.RESET}"
 
-        logger = logging.getLogger()
-        if not logger.handlers:
-            logger.setLevel(logging.INFO)
-            handler = logging.StreamHandler()
-            formatter = ColorFormatter('[%(levelname)s] %(asctime)s - %(message)s')
+        __logger = getLogger()
+        if not __logger.handlers:
+            __logger.setLevel(INFO)
+            handler = StreamHandler()
+            formatter = ColorFormatter('%(asctime)s - [%(levelname)s] - %(message)s')
             handler.setFormatter(formatter)
-            logger.addHandler(handler)
-            logger.propagate = False
-        return logger
+            __logger.addHandler(handler)
+            __logger.propagate = False
+        return __logger
 
-    @property
-    def logger(self):
-        return self._logger
+    @classmethod
+    def info(cls, message: str):
+        cls.__get_logger().info(message)
+
+    @classmethod
+    def warning(cls, message: str):
+        cls.__get_logger().warning(message)
+
+    @classmethod
+    def error(cls, message: str):
+        cls.__get_logger().error(message)
+
+    @classmethod
+    def debug(cls, message: str):
+        cls.__get_logger().debug(message)
+
+    @classmethod
+    def set_level(cls, level: int):
+        cls.__get_logger().setLevel(level)
