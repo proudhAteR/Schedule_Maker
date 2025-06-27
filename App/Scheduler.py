@@ -7,7 +7,7 @@ from Models.MenuAction import MenuAction
 from Services.APIService import APIService
 from Services.OCRService import OCRService
 from Utils.Logger import Logger
-from Utils.OCR.TesseractOCR import TesseractOCR
+from Services.OCR.TesseractOCR import TesseractOCR
 
 
 
