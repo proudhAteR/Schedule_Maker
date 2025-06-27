@@ -26,4 +26,12 @@ class FileHandler:
 
     @classmethod
     def convert_pdf_to_image(cls, pdf_path: str, dpi: int = 300) -> Image:
-        return convert_from_path(pdf_path, dpi=dpi)[0]
+        images = convert_from_path(pdf_path, dpi=dpi)
+        if not images:
+            raise ValueError(f"No pages found in PDF: {pdf_path}")
+        return images[0]
+
+    @classmethod
+    def in_schedules(cls, path):
+        path = 'schedules/' + path
+        return path

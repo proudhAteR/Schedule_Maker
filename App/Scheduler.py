@@ -4,10 +4,11 @@ from Models.Class import Class
 from Models.Schedule import Schedule
 from Models.Menu import Menu
 from Models.MenuAction import MenuAction
-from Services.OCR.TesseractOCR import TesseractOCR
+from Utils.OCR.PaddleOCR import C_PaddleOCR
 from Services.APIService import APIService
 from Services.OCRService import OCRService
 from Utils.Logger import Logger
+from Utils.OCR.TesseractOCR import TesseractOCR
 
 logger = Logger().logger
 
@@ -138,16 +139,18 @@ class Scheduler:
         self.schedule.create_event(event)
 
     def make_schedule(self):
-        path = input("What is the namer of the your schedule file (e.g., schedule.jpg)?: ")
-
+        path = input("What is the name of the your schedule file? (e.g., schedule.jpg): ")
         try:
-            ocr = TesseractOCR()
-            service = OCRService(ocr)
+            service = OCRService(
+                TesseractOCR(),
+                debug=True
+            )
+            res = service.extract(path)
 
             block_instructions()
-            print(service.extract(path))
-        except FileNotFoundError:
-            print(f"'{path}' cannot be found.")
+            print(res)
+        except Exception as e:
+            logger.error(f"Cannot extraxt data from {path} because {e}")
             return
 
         block = read_block()

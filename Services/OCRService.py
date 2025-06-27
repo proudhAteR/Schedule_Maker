@@ -11,12 +11,12 @@ logger = Logger().logger
 class OCRService:
 
     def __init__(self, ocr: OCR, lang: str = None, config: str = None, debug: bool = False):
-        self.ocr: OCR = ocr.init(lang, config)
+        self.ocr: OCR = ocr.init(lang, debug=debug, config=config)
         self.debug = debug
         self.image = ImageHandler()
 
     def extract(self, image_path: str, conf_min: int = 50):
-        image_path = self._in_schedules(image_path)
+        image_path = FileHandler.in_schedules(image_path)
 
         if not FileHandler.exists(image_path):
             raise FileNotFoundError(f"Image not found: {image_path}")
@@ -36,14 +36,8 @@ class OCRService:
                 logger.info(f"Extracted {len(res)} characters")
 
             return res
-        except Exception as e:
-            logger.error(f"OCR failed for {image_path}: {e}")
+        except Exception:
             raise
-
-    @classmethod
-    def _in_schedules(cls, path):
-        path = 'schedules/' + path
-        return path
 
     def __process(self, img: Image) -> Image:
         return self.image.enhance_image_for_ocr(img)

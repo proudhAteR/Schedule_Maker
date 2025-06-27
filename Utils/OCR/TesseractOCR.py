@@ -7,10 +7,7 @@ from Utils.ImageHandler import ImageHandler
 
 class TesseractOCR(OCR):
     def __init__(self):
-        self.config = None
-        self.lang = None
-        self.debug = None
-
+        super().__init__()
         self.__check_tesseract()
 
     def init(self, debug: bool = False, lang: str = None, config: str = None) -> OCR:

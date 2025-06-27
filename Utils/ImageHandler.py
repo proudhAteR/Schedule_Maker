@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
+from numpy import ndarray
 
 from Utils.FileHandler import FileHandler
 
@@ -13,8 +14,8 @@ class ImageHandler:
         self.contrast_factor = 1.5
         self.sharpen_factor = 120
 
-    def enhance_image_for_ocr(self, img: Image) -> Image:
-        rgb_img = img.convert("RGB")
+    def enhance_image_for_ocr(self, img: Image, max_side_limit: int = 4000) -> Image:
+        rgb_img = img.convert('RGB')
         np_img = np.array(rgb_img)
         np_img = self.__deskew_image(np_img)
         gray = cv2.cvtColor(np_img, cv2.COLOR_RGB2GRAY)
@@ -28,7 +29,14 @@ class ImageHandler:
         gray = Image.fromarray(np_img)
         contrast = ImageEnhance.Contrast(gray).enhance(self.contrast_factor)
         sharpened = contrast.filter(ImageFilter.UnsharpMask(radius=0.75, percent=self.sharpen_factor, threshold=2))
-        return sharpened.resize((sharpened.width * 2, sharpened.height * 2), resample=Image.Resampling.LANCZOS)
+
+        width, height = sharpened.size
+        scale = min(max_side_limit / width, max_side_limit / height, 2)  # Avoid enlarging beyond 2x
+
+        new_size = (int(width * scale), int(height * scale))
+        res = sharpened.resize(new_size, resample=Image.Resampling.LANCZOS)
+
+        return res.convert('RGB')
 
     @classmethod
     def __deskew_image(cls, img: np.ndarray) -> np.ndarray:
@@ -67,3 +75,7 @@ class ImageHandler:
             return FileHandler.convert_pdf_to_image(path)
 
         return Image.open(path)
+
+    @classmethod
+    def paddle_conversion(cls, image: Image) -> ndarray:
+        return np.array(image)
