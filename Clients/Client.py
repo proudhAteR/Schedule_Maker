@@ -1,14 +1,17 @@
-import aiohttp
 from aiohttp import ClientResponse as Response
+from aiohttp import ClientSession as Session
 
 
 class Client:
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str, session: Session = None):
         self.base_url = base_url
-        self.session: aiohttp.ClientSession | None = None
+
+        if not session:
+            session = Session()
+        self.session = session
 
     async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
+        self.session = Session()
         return self
 
     async def __aexit__(self, exc_type, exc, tb):

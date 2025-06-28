@@ -1,8 +1,9 @@
+from google.auth.exceptions import TransportError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from Clients.Client import Client
+from Clients.GoogleClient import GoogleClient
 from Models.Event import Event
 from Models.Schedule import Schedule
 from Utils.FileHandler import FileHandler
@@ -11,10 +12,13 @@ from Utils.Logger import Logger
 
 class APIService:
     def __init__(self):
-        self.client = Client('https://www.googleapis.com/auth/calendar')
-        self.scopes = [self.client.base_url]
-        self.creds = self.authenticate()
-        self.res = build('calendar', 'v3', credentials=self.creds)
+        try:
+            self.client = GoogleClient('calendar')
+            self.scopes = [self.client.base_url]
+            self.creds = self.authenticate()
+            self.res = build('calendar', 'v3', credentials=self.creds)
+        except TransportError as e:
+            Logger.error(f"Error while trying to authenticate : {e}")
 
     def create_event(self, event: Event, calendar_id: str = 'primary'):
         try:
