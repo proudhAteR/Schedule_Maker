@@ -44,10 +44,7 @@ class C_PaddleOCR(OCR):
             text_parts = res["rec_texts"]
             text = ' '.join(text_parts) if text_parts else ''
 
-            if self.debug:
-                res.save_to_json('schedules/image.json')
-                Logger.info(f"Image infos have been saved in schedules/image.json")
-
+            res.save_to_json('schedules/image.json')
             return text.strip()
 
         except Exception as e:

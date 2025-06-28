@@ -8,7 +8,7 @@ from numpy import ndarray
 from Utils.FileHandler import FileHandler
 
 
-class ImageHandler:
+class ImageHandler(FileHandler):
 
     def __init__(self):
         self.contrast_factor = 1.5
@@ -71,8 +71,8 @@ class ImageHandler:
     @classmethod
     def get_image(cls, path: str) -> Image:
 
-        if FileHandler.is_pdf(path):
-            return FileHandler.convert_pdf_to_image(path)
+        if cls._is_pdf(path):
+            return cls.convert_pdf_to_image(path)
 
         return Image.open(path)
 

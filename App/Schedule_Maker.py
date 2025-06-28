@@ -6,9 +6,9 @@ from Models.Menu import Menu
 from Models.MenuAction import MenuAction
 from Services.APIService import APIService
 from Services.OCRService import OCRService
+from Utils.FileHandler import FileHandler
 from Utils.Logger import Logger
 from Services.OCR.TesseractOCR import TesseractOCR
-
 
 
 def display_title():
@@ -51,7 +51,7 @@ def display_menu(menu: Menu):
 
 def ai_prompt():
     print(dedent("""
-        I have a text containing a class or event schedule (such as a table, timetable, or calendar view) that was transformed by an OCR process. 
+        I have a json file containing a class or event schedule (such as a table, timetable, or calendar view) that was transformed by an OCR process. 
         Please extract the relevant information and convert it into a list of event descriptions following this exact format:
         [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
         
@@ -59,6 +59,7 @@ def ai_prompt():
         Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
         
         Additional guidelines:
+            - When looking for classes the hours at the levels 
             - If the schedule contains a start date (e.g., "Schedule starts on 2025-09-01"), include that line first.
             - If the schedule does not contain a start date, ask me if I want to add one.
             - Times must be in 24-hour format.
@@ -79,8 +80,6 @@ def block_instructions():
         Schedule starts on [Date]
     """))
     print("Paste your events below (one per line). Finish input by pressing Enter twice:\n")
-
-    ai_prompt()
 
 
 def sentence_instructions():
@@ -145,8 +144,8 @@ class Scheduler:
             )
             res = service.extract(path)
 
+            ai_prompt()
             block_instructions()
-            print(res)
         except Exception as e:
             Logger.error(f"Cannot extract data from {path} because {e}")
             return

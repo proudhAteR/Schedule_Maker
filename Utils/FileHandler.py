@@ -1,3 +1,4 @@
+import json
 import os
 
 from PIL.Image import Image
@@ -12,11 +13,11 @@ class FileHandler:
     @classmethod
     def write(cls, path: str, text: str):
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w") as f:
+        with open(path, "w", encoding='utf8') as f:
             f.write(text)
 
     @classmethod
-    def is_pdf(cls, path):
+    def _is_pdf(cls, path):
         try:
             with open(path, 'rb') as f:
                 header = f.read(4)
@@ -35,3 +36,18 @@ class FileHandler:
     def in_schedules(cls, path):
         path = 'schedules/' + path
         return path
+
+    @classmethod
+    def convert_ocr_datas(cls, data: dict, output_path: str):
+        num_words = len(next(iter(data.values())))
+
+        structured_words = []
+        for i in range(num_words):
+            word_entry = {key: data[key][i] for key in data}
+            if word_entry.get("text", "").strip() != "":
+                structured_words.append(word_entry)
+
+        cls.write(
+            output_path,
+            json.dumps(structured_words, ensure_ascii=False, indent=2)
+        )

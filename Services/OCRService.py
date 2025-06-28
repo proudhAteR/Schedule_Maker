@@ -33,7 +33,6 @@ class OCRService:
                 Logger.info(f"Saved processed image to: {processed_path}")
                 Logger.info(f"Extracted {len(res)} characters")
 
-            return res
         except Exception:
             raise
 
