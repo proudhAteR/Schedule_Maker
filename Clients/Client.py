@@ -1,5 +1,5 @@
 import aiohttp
-from aiohttp import ClientResponse
+from aiohttp import ClientResponse as Response
 
 
 class Client:
@@ -15,7 +15,7 @@ class Client:
         if self.session:
             await self.session.close()
 
-    async def get(self, endpoint: str) -> ClientResponse:
+    async def get(self, endpoint: str) -> Response:
         if not self.session:
             raise RuntimeError("Session not initialized")
 
@@ -24,7 +24,7 @@ class Client:
                 raise RuntimeError(f"Error fetching data: {response.status}")
             return response
 
-    async def post(self, endpoint: str) -> ClientResponse:
+    async def post(self, endpoint: str) -> Response:
         if not self.session:
             raise RuntimeError("Session not initialized")
 

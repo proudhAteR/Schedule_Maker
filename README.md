@@ -33,6 +33,7 @@ Dependencies typically include:
 - `Pillow`
 - `opencv-python`
 - `numpy`
+- `google-api-core`
 
 **Note:** You may also need to install Tesseract OCR engine or PaddleOCR system dependencies based on your OS.
 

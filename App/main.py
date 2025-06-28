@@ -1,3 +1,3 @@
-from App.Scheduler import Scheduler
+from App.Schedule_Maker import Scheduler
 
 Scheduler().run()
