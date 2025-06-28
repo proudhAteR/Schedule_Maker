@@ -1,5 +1,6 @@
-App/secrets/
-App/schedules/
+App/secrets/*
+App/schedules/*_processed*
+App/schedules/image.json
 ### VisualStudioCode template
 .vscode/*
 !.vscode/settings.json

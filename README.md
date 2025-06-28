@@ -1,6 +1,8 @@
 # Schedule_Maker
 
-Schedule_Maker is a Python-based application that helps extract and organize course or event schedules from PDF or image files using OCR (Optical Character Recognition). The tool processes timetable documents and converts them into structured, human-readable descriptions.
+Schedule_Maker is a Python-based application that helps extract and organize course or event schedules from PDF or image
+files using OCR (Optical Character Recognition). The tool processes timetable documents and converts them into
+structured, human-readable descriptions.
 
 ## 📌 Features
 
@@ -18,15 +20,18 @@ Schedule_Maker is a Python-based application that helps extract and organize cou
 - Python 3.8+
 - pip
 - Virtual environment recommended
+- Add the given credentials.json file into the secrets directory
 
 ### Required Python packages:
+
 Install all dependencies using:
 
-```
-pip install -r requirements.txt
+```bash
+  pip install -r requirements.txt
 ```
 
 Dependencies typically include:
+
 - `paddleocr`
 - `pytesseract`
 - `pdf2image`
@@ -35,14 +40,30 @@ Dependencies typically include:
 - `numpy`
 - `google-api-core`
 
+### Additional Requirements (System Dependencies)
+
+You must install [Poppler](https://poppler.freedesktop.org/) for `pdf2image` to work:
+
+- On macOS:
+
+```bash
+  brew install poppler
+```
+
 **Note:** You may also need to install Tesseract OCR engine or PaddleOCR system dependencies based on your OS.
+
+- On macOs:
+
+```bash
+  brew install tesseract
+```
 
 ## ⚠️ Limitations
 
 - OCR accuracy depends on the quality and structure of the input document.
 - Tables with irregular formatting, merged cells, or handwritten notes may not be parsed correctly.
-- Current version assumes a standard weekly schedule format; custom or non-standard layouts may require additional processing logic.
-
+- Current version assumes a standard weekly schedule format; custom or non-standard layouts may require additional
+  processing logic.
 
 ---
 

@@ -58,7 +58,7 @@ class ImageHandler:
     @classmethod
     def get_processed_filename(cls, original_path: str) -> str:
         base, ext = os.path.splitext(original_path)
-        return f"{base}_processed{ext}"
+        return f"{base}_processed.jpg"
 
     @classmethod
     def get_image_dpi(cls, img: Image) -> int:
