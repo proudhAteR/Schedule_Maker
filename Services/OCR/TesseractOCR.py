@@ -1,9 +1,13 @@
+import random
+
 from PIL import Image
+from numpy import ndarray
 from pytesseract import pytesseract
 
 from Interfaces.OCR import OCR
-from Utils.FileHandler import FileHandler
+from Models.Tables.Box import Box
 from Utils.ImageHandler import ImageHandler
+from Utils.Logger import Logger
 
 
 class TesseractOCR(OCR):
@@ -14,7 +18,7 @@ class TesseractOCR(OCR):
     def init(self, lang: str = None, debug: bool = False, config: str = None) -> OCR:
         self.lang = lang or 'fra+eng'
         # -c preserve_interword_spaces=1  add this to the config to have a table like layout
-        self.config = config or r'--psm 4 --oem 1 --dpi {dpi} -c tessedit_create_tsv=1 -c preserve_interword_spaces=1'
+        self.config = config or r'--psm 6 --oem 1 --dpi {dpi} -c tessedit_create_tsv=1'
         self.debug = debug
 
         return self
@@ -26,11 +30,20 @@ class TesseractOCR(OCR):
         except Exception as e:
             raise RuntimeError(f"Tesseract not found: {e}")
 
-    def extract(self, image: Image, conf_min: int) -> str:
+    def extract(self, src: Box, bit: ndarray, conf_min: int) -> str:
+        processed: Image = ImageHandler.image_from_array(
+            ImageHandler.crop_image(bit, src)
+        )
+        self.config.format(
+            dpi=ImageHandler.get_image_dpi(processed)
+        )
 
-        self.config.format(dpi=ImageHandler.get_image_dpi(image))
-        data = pytesseract.image_to_data(image, lang=self.lang, config=self.config, output_type=pytesseract.Output.DICT)
+        if self.debug:
+            path = f"schedules/debug/{random.random()}.jpg"
+            processed.save(path)
+            Logger.info(f"Saved processed image to: {path} with size of {processed.size}")
 
-        FileHandler.convert_ocr_datas(data, 'schedules/image.json')
+        data = pytesseract.image_to_string(processed, lang=self.lang, config=self.config,
+                                           output_type=pytesseract.Output.STRING)
 
         return data

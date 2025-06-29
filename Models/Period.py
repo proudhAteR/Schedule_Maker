@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from Models.Session import Session
-from Models.enum.Day import Day
+from Models.Enum.Day import Day
 
 
 def _str_to_datetime(t: str, day: Day, session_start: datetime | None = None) -> datetime:

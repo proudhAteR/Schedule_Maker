@@ -1,12 +1,16 @@
 import os
+from typing import Any
 
 import cv2
 import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter
 from numpy import ndarray
 
-from Models.Box import Box
+from Models.Tables.Box import Box
+from Models.ProcessResult import ProcessResult
+from Models.Tables.Table import Table
 from Utils.FileHandler import FileHandler
+from Utils.Logger import Logger
 
 
 class ImageHandler(FileHandler):
@@ -15,9 +19,9 @@ class ImageHandler(FileHandler):
         self.contrast_factor = 1.5
         self.sharpen_factor = 120
 
-    def enhance_image_for_ocr(self, img: Image, max_side_limit: int = 4000) -> tuple[Image, list]:
+    def enhance_image_for_ocr(self, img: Image, max_side_limit: int = 4000) -> ProcessResult:
         rgb_img = img.convert('RGB')
-        np_img = np.array(rgb_img)
+        np_img = self.as_array(rgb_img)
         np_img = self.__deskew_image(np_img)
         gray = cv2.cvtColor(np_img, cv2.COLOR_RGB2GRAY)
         gray = cv2.GaussianBlur(gray, (3, 3), self.contrast_factor)
@@ -25,7 +29,9 @@ class ImageHandler(FileHandler):
             gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
         )
         # Get text and table layers
-        text_image = np.array(Image.fromarray(thresh))
+        text_image = self.as_array(
+            Image.fromarray(thresh)
+        )
         table_mask = self.__table_mask(text_image)
 
         overlay = cv2.addWeighted(text_image, 1.0, table_mask, 0.6, 0)
@@ -44,7 +50,7 @@ class ImageHandler(FileHandler):
         new_size = (int(width * scale), int(height * scale))
         res = sharpened.resize(new_size, resample=Image.Resampling.LANCZOS)
 
-        return res.convert('RGB'), boxes
+        return ProcessResult(res.convert('RGB'), boxes)
 
     @classmethod
     def __deskew_image(cls, img: np.ndarray) -> np.ndarray:
@@ -81,8 +87,8 @@ class ImageHandler(FileHandler):
         return Image.open(path)
 
     @classmethod
-    def paddle_conversion(cls, image: Image) -> ndarray:
-        return np.array(image)
+    def as_array(cls, obj: Any) -> ndarray:
+        return np.array(obj)
 
     @classmethod
     def __table_mask(cls, array: ndarray) -> ndarray:
@@ -122,15 +128,75 @@ class ImageHandler(FileHandler):
 
         for cnt in contours:
             box = Box(cnt)
-            boxes.append(box)
 
             aspect_ratio = box.w / box.h if box.h != 0 else 0
 
             if box.area > 500 and box.w > 40 and box.h > 25 and 0.2 < aspect_ratio < 6.0:
                 cls.__draw_contour(box, image)
+                boxes.append(box)
 
         return boxes
 
     @classmethod
     def __draw_contour(cls, box: Box, image: ndarray):
-        cv2.rectangle(image, (box.x, box.y), (box.x + box.w, box.y + box.h), (0, 255, 0), 2)
+        cv2.rectangle(image, (box.x, box.y), (box.pos.hor, box.pos.vert), (0, 255, 0), 2)
+
+    @classmethod
+    def mean(cls, array: list):
+        return np.mean(
+            cls.as_array(array)
+        )
+
+    @classmethod
+    def get_table(cls, boxes: list[Box]) -> Table:
+        columns = []
+        rows = []
+
+        heights = [box.h for box in boxes]
+        mean = ImageHandler.mean(heights)
+
+        columns.append(boxes[0])  # first box starts the first row
+        previous = boxes[0]
+
+        for i in range(1, len(boxes)):
+            if boxes[i].y <= previous.y + mean / 2:
+                columns.append(boxes[i])
+                previous = boxes[i]
+                if i == len(boxes) - 1:
+                    rows.append(columns)
+            else:
+                rows.append(columns)
+                columns = []
+                previous = boxes[i]
+                columns.append(boxes[i])
+
+        return Table(columns, rows)
+
+    def get_bit(self, processed: Image) -> ndarray:
+        if processed.mode != "RGB":
+            processed = processed.convert("RGB")
+
+        img = self.as_array(processed)
+
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        gray = cv2.GaussianBlur(gray, (3, 3), self.contrast_factor)
+        thresh = cv2.adaptiveThreshold(
+            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+        )
+
+        return thresh
+
+    @classmethod
+    def crop_image(cls, image: np.ndarray, box: Box, padding: int = 5) -> np.ndarray:
+        h, w = image.shape[:2]
+
+        x1 = max(box.x - padding, 0)
+        y1 = max(box.y - padding, 0)
+        x2 = min(box.x + box.w + padding, w)
+        y2 = min(box.y + box.h + padding, h)
+
+        return image[y1:y2, x1:x2]
+
+    @classmethod
+    def image_from_array(cls, roi: ndarray) -> Image:
+        return Image.fromarray(roi)

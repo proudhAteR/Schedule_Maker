@@ -1,11 +1,13 @@
 import json
 
 from PIL import Image
+from numpy import ndarray
 
 from paddleocr import PaddleOCR
 from paddlex.inference.pipelines.ocr.result import OCRResult
 
 from Interfaces.OCR import OCR
+from Models.Tables.Box import Box
 from Utils.ImageHandler import ImageHandler
 from Utils.Logger import Logger
 
@@ -34,10 +36,10 @@ class C_PaddleOCR(OCR):
 
         return self
 
-    def extract(self, image: Image, conf_min: int) -> str:
+    def extract(self, src: Box, bit: ndarray, conf_min: int) -> str:
         try:
             res: OCRResult = self.ocr.predict(
-                ImageHandler.paddle_conversion(image)
+                ImageHandler.as_array(src)
             )[0]
             if not res:
                 raise ValueError("PaddleOCR returned no results")

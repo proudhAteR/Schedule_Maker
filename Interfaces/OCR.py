@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from numpy import ndarray
 
-from PIL import Image
+from Models.Tables.Box import Box
 
 
 class OCR(ABC):
@@ -14,5 +15,5 @@ class OCR(ABC):
     def init(self, lang: str = None, debug: bool = False, config: str = None) -> "OCR":
         pass
 
-    def extract(self, image: Image, conf_min: int) -> str:
+    def extract(self, src: Box, bit: ndarray, conf_min: int) -> str:
         pass

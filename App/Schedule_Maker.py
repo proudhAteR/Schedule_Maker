@@ -1,3 +1,4 @@
+import asyncio
 from textwrap import dedent
 
 from Models.Class import Class
@@ -141,7 +142,9 @@ class Scheduler:
                 TesseractOCR(),
                 debug=True
             )
-            service.extract(path)
+            data = asyncio.run(service.extract(path))
+
+            print(data)
 
             ai_prompt()
             block_instructions()

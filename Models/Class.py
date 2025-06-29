@@ -3,7 +3,7 @@ from Models.Event import Event
 import re
 from Models.Period import Period
 from Models.Session import Session
-from Models.enum.Day import Day
+from Models.Enum.Day import Day
 
 
 @dataclass
