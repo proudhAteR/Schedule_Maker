@@ -6,7 +6,6 @@ from Models.Menu import Menu
 from Models.MenuAction import MenuAction
 from Services.APIService import APIService
 from Services.OCRService import OCRService
-from Utils.FileHandler import FileHandler
 from Utils.Logger import Logger
 from Services.OCR.TesseractOCR import TesseractOCR
 
@@ -142,7 +141,7 @@ class Scheduler:
                 TesseractOCR(),
                 debug=True
             )
-            res = service.extract(path)
+            service.extract(path)
 
             ai_prompt()
             block_instructions()

@@ -3,12 +3,9 @@ from aiohttp import ClientSession as Session
 
 
 class Client:
-    def __init__(self, base_url: str, session: Session = None):
+    def __init__(self, base_url: str):
         self.base_url = base_url
-
-        if not session:
-            session = Session()
-        self.session = session
+        self.session: Session | None = None
 
     async def __aenter__(self):
         self.session = Session()

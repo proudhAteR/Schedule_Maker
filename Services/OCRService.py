@@ -19,7 +19,7 @@ class OCRService:
         if not FileHandler.exists(image_path):
             raise FileNotFoundError(f"Image not found: {image_path}")
 
-        enhanced = self.__process(
+        enhanced, boxes = self.__process(
             ImageHandler.get_image(image_path)
         )
 
@@ -30,11 +30,12 @@ class OCRService:
             if self.debug:
                 processed_path = ImageHandler.get_processed_filename(image_path)
                 enhanced.save(processed_path)
+                Logger.info(f"Found {len(boxes)} box(es)")
                 Logger.info(f"Saved processed image to: {processed_path}")
                 Logger.info(f"Extracted {len(res)} characters")
 
         except Exception:
             raise
 
-    def __process(self, img: Image) -> Image:
+    def __process(self, img: Image) -> tuple[Image, list]:
         return self.image.enhance_image_for_ocr(img)
