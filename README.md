@@ -50,7 +50,7 @@ You must install [Poppler](https://poppler.freedesktop.org/) for `pdf2image` to 
   brew install poppler
 ```
 
-**Note:** You may also need to install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) engine or [Paddle OCR](https://github.com/PaddlePaddle/PaddleOCR) system dependencies based on your OS.
+You  also need to install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) engine or [Paddle OCR](https://github.com/PaddlePaddle/PaddleOCR) system dependencies based on your OS.
 
 - On macOs:
 
