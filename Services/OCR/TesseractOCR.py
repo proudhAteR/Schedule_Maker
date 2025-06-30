@@ -46,4 +46,4 @@ class TesseractOCR(OCR):
         data = pytesseract.image_to_string(processed, lang=self.lang, config=self.config,
                                            output_type=pytesseract.Output.STRING)
 
-        return data
+        return data.strip()
