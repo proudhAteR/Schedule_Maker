@@ -1,0 +1,22 @@
+[project]
+name = "sm"
+version = "0.1.2"
+description = " terminal-based Python application that helps you quickly create Google Calendar events. Designedfor speed and flexibility, it turns natural language inputs into structured calendar schedules."
+authors = [{ name = "proudhater", email = "cboleku162004@gmail.com" }]
+dependencies = [
+    "typer[all]",
+    "aiohttp[all]",
+    "google-api-core[all]",
+    "google-api-python-client[all]",
+    "google-auth[all]",
+    "google-auth-httplib2[all]",
+    "google-auth-oauthlib[all]",
+    "googleapis-common-protos[all]"
+]
+
+[project.scripts]
+sm = "App.main:app"
+
+[tool.setuptools.packages.find]
+include = ["App", "Utils", "Models", "Clients", "Services", "Interfaces"]
+

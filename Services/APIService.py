@@ -32,25 +32,26 @@ class APIService:
             raise
 
     async def make_schedule(self, schedule: Schedule):
+        tasks = [self.create_event(event) for event in schedule.events]
         await asyncio.gather(
-            *(self.create_event(event) for event in schedule.events)
+            *tasks
         )
 
     def authenticate(self) -> Credentials:
         creds = None
 
-        if FileHandler.exists("secrets/token.json"):
-            creds = Credentials.from_authorized_user_file("secrets/token.json", self.scopes)
+        if FileHandler.exists("App/secrets/token.json"):
+            creds = Credentials.from_authorized_user_file("App/secrets/token.json", self.scopes)
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'secrets/credentials.json', self.scopes
+                    'App/secrets/credentials.json', self.scopes
                 )
                 creds = flow.run_local_server(port=0)
 
-            FileHandler.write('secrets/token.json', creds.to_json())
+            FileHandler.write('App/secrets/token.json', creds.to_json())
 
         return creds
