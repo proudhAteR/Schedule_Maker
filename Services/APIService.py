@@ -8,6 +8,7 @@ from Models.Event import Event
 from Models.Schedule import Schedule
 from Utils.FileHandler import FileHandler
 from Utils.Logger import Logger
+import asyncio
 
 
 class APIService:
@@ -30,9 +31,10 @@ class APIService:
             Logger.error(f"Failed to create event: {e}")
             raise
 
-    def make_schedule(self, schedule: Schedule):
-        for event in schedule.events:
-            self.create_event(event)
+    async def make_schedule(self, schedule: Schedule):
+        await asyncio.gather(
+            *(self.create_event(event) for event in schedule.events)
+        )
 
     def authenticate(self) -> Credentials:
         creds = None
