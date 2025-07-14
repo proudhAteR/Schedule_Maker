@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 from Models.Class import Class
@@ -13,17 +12,16 @@ class Schedule:
         self.session = schedule_session
 
     @classmethod
-    def from_block(cls, block: list[str]) -> 'Schedule':
+    def from_block(cls, block: str, date_str: str | None = None) -> 'Schedule':
         events = []
+        block_list = block.strip().split(";")
         schedule_session = None
-        pattern = r"Schedule starts on\s+(\d{4}-\d{2}-\d{2})"
-        match = re.match(pattern, block[0])
-        if match:
-            date_str = match.group(1)
-            schedule_session = Session(first_occurrence=datetime.strptime(date_str, "%Y-%m-%d"))
-            block = block[1:]
+        if date_str:
+            schedule_session = Session(
+                first_occurrence=datetime.strptime(date_str, "%Y-%m-%d")
+            )
 
-        for line in block:
+        for line in block_list:
             try:
                 event = Class.from_sentence(line, schedule_session)
                 events.append(event)

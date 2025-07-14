@@ -22,12 +22,10 @@ Schedule_Maker understands input in a simple, natural format:
 [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
 ```
 
-You can also specify when the schedule should start by adding this simple line on top of the schedule block:
-
-```
-Schedule starts on [Date]
-```
-
+For more information on the commands use:
+   ```bash
+     sm --help
+   ```
 ---
 
 ## 🛠️ Setup & Installation
@@ -50,11 +48,11 @@ Schedule starts on [Date]
 3. Activate the virtual environment if it's not already
 
 4. Go to the project root and install the project using
-   ```
+   ```bash
    pip install --editable .
    ```
    If you want the sm command to be available outside the .venv use
-   ```
+   ```bash
    pipx install --editable .
    ```
 
