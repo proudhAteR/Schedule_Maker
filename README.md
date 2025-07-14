@@ -1,19 +1,18 @@
 # Schedule_Maker
 
-Schedule_Maker is a Python-based application that helps extract and organize course or event schedules from PDF or image
-files using OCR (Optical Character Recognition). The tool processes timetable documents and converts them into
-structured, human-readable descriptions.
+Schedule_Maker is a Python-based application that helps create events using google calendar from the terminal. These
+events are defined as classes but the code can easily be changed to fit the user needs.
 
 ## 📌 Features
 
-- Supports extraction from scanned PDFs and images.
-- Uses OCR to identify and parse tabular schedule content.
+- Create single events rapidly using the CLI
+- Create schedules
 
 ## ⚙️ How It Works
 
-1. The user provides a PDF or image file containing a class or event schedule.
-2. The app uses OCR (like PaddleOCR or Tesseract) to detect text within the file.
-3. A parser extracts schedule information based on positional and confidence data.
+1. The user enter a phrase like [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+   Example: Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+2. The event is created using the Google Calendar API (do not forget to contact me for the credentials.)
 
 ## 🧰 Prerequisites
 
@@ -32,38 +31,7 @@ Install all dependencies using:
 
 Dependencies typically include:
 
-- `paddleocr`
-- `pytesseract`
-- `pdf2image`
-- `Pillow`
-- `opencv-python`
-- `numpy`
 - `google-api-core`
-
-### Additional Requirements (System Dependencies)
-
-You must install [Poppler](https://poppler.freedesktop.org/) for `pdf2image` to work:
-
-- On macOS:
-
-```bash
-  brew install poppler
-```
-
-You  also need to install [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) engine or [Paddle OCR](https://github.com/PaddlePaddle/PaddleOCR) system dependencies based on your OS.
-
-- On macOs:
-
-```bash
-  brew install tesseract
-```
-
-## ⚠️ Limitations
-
-- OCR accuracy depends on the quality and structure of the input document.
-- Tables with irregular formatting, merged cells, or handwritten notes may not be parsed correctly.
-- Current version assumes a standard weekly schedule format; custom or non-standard layouts may require additional
-  processing logic.
 
 ---
 
