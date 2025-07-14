@@ -39,19 +39,23 @@ class APIService:
 
     def authenticate(self) -> Credentials:
         creds = None
+        token_path = FileHandler.secret_path('token.json')
+        cred_path = FileHandler.secret_path('credentials.json')
 
-        if FileHandler.exists("App/secrets/token.json"):
-            creds = Credentials.from_authorized_user_file("App/secrets/token.json", self.scopes)
+        if FileHandler.exists(token_path):
+            creds = Credentials.from_authorized_user_file(
+                token_path, self.scopes
+            )
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'App/secrets/credentials.json', self.scopes
-                )
+                flow = InstalledAppFlow.from_client_secrets_file(cred_path, self.scopes)
                 creds = flow.run_local_server(port=0)
 
-            FileHandler.write('App/secrets/token.json', creds.to_json())
+            FileHandler.write(
+                token_path, creds.to_json()
+            )
 
         return creds

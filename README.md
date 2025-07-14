@@ -36,7 +36,7 @@ Schedule starts on [Date]
 
 - Python 3.8 or higher
 
-- pip (Python package installer)
+- pip (Python package installer) or pipx
 
 - (Optional but recommended) Python virtual environment
 
@@ -52,6 +52,10 @@ Schedule starts on [Date]
 4. Go to the project root and install the project using
    ```
    pip install --editable .
+   ```
+   If you want the sm command to be available outside the .venv use
+   ```
+   pipx install --editable .
    ```
 
 ---
