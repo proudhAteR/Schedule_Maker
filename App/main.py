@@ -2,8 +2,9 @@ from typer import *
 
 from App.Schedule_Maker import Scheduler
 from Utils.Logger import Logger
+import asyncio
 
-app = Typer(help="Schedule Maker CLI: Create and manage your events quickly from the terminal.")
+app = Typer()
 scheduler = Scheduler()
 e_help = """
 Natural language event description\n
@@ -21,17 +22,20 @@ def event(description: str = Argument(..., help=e_help)):
 def schedule(
         file: str = Option(None, "--file", "-f", help="Path to a file containing events (one per line)."),
         events: str = Argument(None, help="Block of events, ';' separated."),
-        start: str = Option(..., "-s", "--start", help="The session starting date using yy-mm-dd format.")
+        start: str = Option(None, "-s", "--start", help="The session starting date using yy-mm-dd format.")
 ):
     if file:
         with open(file, "r") as f:
-            events_block = f.read()
+            events_block = f.read().splitlines()
+        echo(events_block)
     elif events:
-        events_block = events
+        events_block = events.split(";")
     else:
         raise Logger.error("You must provide either --file or a block of events.")
 
-    scheduler.schedule(events_block, start)
+    asyncio.run(
+        scheduler.schedule(events_block, start)
+    )
 
 
 if __name__ == "__main__":

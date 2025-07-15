@@ -21,7 +21,7 @@ class APIService:
         except TransportError as e:
             Logger.error(f"Error while trying to authenticate : {e}")
 
-    def create_event(self, event: Event, calendar_id: str = 'primary'):
+    async def create_event(self, event: Event, calendar_id: str = 'primary'):
         try:
             events = self.res.events()
             insert = events.insert(calendarId=calendar_id, body=event.to_google_event())

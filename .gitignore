@@ -5,6 +5,9 @@ App/schedules/*_processed*
 App/schedules/image.json
 App/schedules/debug/
 
+###Test
+test/
+
 ### VisualStudioCode template
 .vscode/*
 !.vscode/settings.json

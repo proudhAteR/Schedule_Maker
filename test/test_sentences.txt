@@ -1,0 +1,5 @@
+Math in Room A from 10:00 to 11:00 every Monday by John
+Meditation in Studio 1 from 08:00 to 08:30
+Physics Lab in Lab 3 from 14:00 to 16:00 every Wednesday by Dr. Evans
+Advanced Algorithms Seminar in Building 5 Room 210 from 18:00 to 20:00 every Thursday by Prof. X
+Sync in Zoom from 09:00 to 09:15 every Friday by Team Lead

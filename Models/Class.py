@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from Models.Event import Event
 import re
-from Models.Period import Period
-from Models.Session import Session
-from Models.Enum.Day import Day
+from Models.Recurrence import Recurrence
 
 
 @dataclass
@@ -16,14 +14,23 @@ class Class(Event):
         return event
 
     @classmethod
-    def from_sentence(cls, sentence: str, session: Session | None = None) -> "Class":
-        pattern = r"(.+?) in (.+?) from (.+?) to (.+?) every (.+?) by (.+)"
-        match = re.match(pattern, sentence.strip())
+    def from_sentence(cls, sentence: str, recurrence: Recurrence | None = None) -> "Class":
+        event = super().from_sentence(sentence, recurrence)
+        teacher = cls.__teacher(sentence)
+
+        return cls(
+            event.name,
+            event.period,
+            event.location,
+            teacher
+        )
+
+    @classmethod
+    def __teacher(cls, sentence: str) -> str:
+        pattern = r"\bby\s+(.+)"
+        match = re.search(pattern, sentence.strip(), re.IGNORECASE)
+
         if not match:
-            raise ValueError
+            return ''
 
-        name, location, start, end, day_str, teacher = match.groups()
-        day = Day[day_str.strip().upper()]
-        period = Period(start.strip(), end.strip(), day, session=session)
-
-        return Class(name.strip(), period, location.strip(), teacher=teacher.strip())
+        return match.group(1).strip()

@@ -3,6 +3,6 @@ from datetime import datetime
 
 
 @dataclass
-class Session:
+class Recurrence:
     first_occurrence: datetime
     streak: int = 15
