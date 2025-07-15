@@ -4,7 +4,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from Clients.GoogleClient import GoogleClient
-from Models.Event import Event
+from Models.Events.Event import Event
 from Models.Schedule import Schedule
 from Utils.FileHandler import FileHandler
 from Utils.Logger import Logger
@@ -21,7 +21,7 @@ class APIService:
         except TransportError as e:
             Logger.error(f"Error while trying to authenticate : {e}")
 
-    async def create_event(self, event: Event, calendar_id: str = 'primary'):
+    async def insert(self, event: Event, calendar_id: str = 'primary'):
         try:
             events = self.res.events()
             insert = events.insert(calendarId=calendar_id, body=event.to_google_event())
@@ -32,7 +32,7 @@ class APIService:
             raise
 
     async def make_schedule(self, schedule: Schedule):
-        tasks = [self.create_event(event) for event in schedule.events]
+        tasks = [self.insert(event) for event in schedule.events]
         await asyncio.gather(
             *tasks
         )

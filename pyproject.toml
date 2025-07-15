@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.2"
+version = "0.1.3"
 description = " terminal-based Python application that helps you quickly create Google Calendar events. Designedfor speed and flexibility, it turns natural language inputs into structured calendar schedules."
 authors = [{ name = "proudhater", email = "cboleku162004@gmail.com" }]
 dependencies = [

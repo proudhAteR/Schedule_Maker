@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from Models.Event import Event
+from Models.Events.Event import Event
 import re
 from Models.Recurrence import Recurrence
 

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import re
 from datetime import datetime
 
+from Models.Enum.Priority import *
 from Models.Recurrence import Recurrence
 from Models.Enum.Day import Day
 from Models.Period import Period
@@ -14,9 +15,11 @@ class Event:
     location: str
     description: str = ''
     timezone: str = "America/Toronto"
+    color: Priority = Priority.CASUAL
 
+    # noinspection PyTypeChecker
     def to_google_event(self) -> dict:
-        return {
+        event = {
             'summary': self.name,
             'location': self.location,
             'description': self.description,
@@ -28,11 +31,15 @@ class Event:
                 'dateTime': self.period.end.isoformat(),
                 'timeZone': self.timezone,
             },
-            'recurrence': [
-                f'RRULE:FREQ=WEEKLY;'
-                f'COUNT={self.period.streak}'
-            ]
+            'colorId': self.color.value,
         }
+
+        if self.period.streak > 1:
+            event['recurrence'] = [
+                f'RRULE:FREQ=WEEKLY;COUNT={self.period.streak}'
+            ]
+
+        return event
 
     @classmethod
     def from_sentence(cls, sentence: str, recurrence: Recurrence | None = None) -> "Event":
