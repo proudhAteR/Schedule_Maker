@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from Models.Events.Event import Event
-from Models.Recurrence import Recurrence
-from Services.EventService import EventService
-from Utils.Logger import Logger
+from Core.Models.Events.Event import Event
+from Core.Models.Recurrence import Recurrence
+from Infrastructure.Services.EventService import EventService
+from Infrastructure.Utils.Logger import Logger
 
 
 class Schedule:

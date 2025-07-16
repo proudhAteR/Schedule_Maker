@@ -1,4 +1,4 @@
-from Clients.Client import Client
+from Infrastructure.Clients.Client import Client
 
 
 class GoogleClient(Client):

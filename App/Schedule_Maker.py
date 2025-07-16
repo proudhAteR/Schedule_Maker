@@ -1,7 +1,7 @@
-from Models.Schedule import Schedule
-from Services.APIService import APIService
-from Services.EventService import EventService
-from Utils.Logger import Logger
+from Core.Models.Schedule import Schedule
+from Infrastructure.Services.APIService import APIService
+from Infrastructure.Services.EventService import EventService
+from Infrastructure.Utils.Logger import Logger
 
 
 class Scheduler:

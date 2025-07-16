@@ -3,11 +3,11 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from Clients.GoogleClient import GoogleClient
-from Models.Events.Event import Event
-from Models.Schedule import Schedule
-from Utils.FileHandler import FileHandler
-from Utils.Logger import Logger
+from Infrastructure.Clients.GoogleClient import GoogleClient
+from Core.Models.Events.Event import Event
+from Core.Models.Schedule import Schedule
+from Infrastructure.Utils.FileHandler import FileHandler
+from Infrastructure.Utils.Logger import Logger
 import asyncio
 
 

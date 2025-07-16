@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from Models.Events.Event import Event
+from Core.Models.Events.Event import Event
 import re
-from Models.Recurrence import Recurrence
+from Core.Models.Recurrence import Recurrence
 
 
 @dataclass

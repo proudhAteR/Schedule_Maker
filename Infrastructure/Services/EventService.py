@@ -1,7 +1,7 @@
-from Models.Events.Class import Class
-from Models.Enum.Priority import Priority
-from Models.Events.Event import Event
-from Models.Recurrence import Recurrence
+from Core.Models.Events.Class import Class
+from Core.Models.Enum.Priority import Priority
+from Core.Models.Events.Event import Event
+from Core.Models.Recurrence import Recurrence
 
 
 class EventService:

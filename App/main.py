@@ -1,8 +1,8 @@
 from typer import Typer, Option, Argument, echo
 from asyncio import run as async_call
 from App.Schedule_Maker import Scheduler
-from Utils.Logger import Logger
-from Utils.help_texts import *
+from Infrastructure.Utils.Logger import Logger
+from Infrastructure.Utils.help_texts import *
 
 app = Typer()
 scheduler = Scheduler()

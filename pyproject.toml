@@ -18,5 +18,5 @@ dependencies = [
 sm = "App.main:app"
 
 [tool.setuptools.packages.find]
-include = ["App", "Utils", "Models", "Clients", "Services", "Interfaces"]
+include = ["App", "Core", "Infrastructure"]
 

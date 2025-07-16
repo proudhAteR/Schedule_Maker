@@ -2,10 +2,10 @@ from dataclasses import dataclass
 import re
 from datetime import datetime
 
-from Models.Enum.Priority import *
-from Models.Recurrence import Recurrence
-from Models.Enum.Day import Day
-from Models.Period import Period
+from Core.Models.Enum.Priority import Priority
+from Core.Models.Recurrence import Recurrence
+from Core.Models.Enum.Day import Day
+from Core.Models.Period import Period
 
 
 @dataclass
