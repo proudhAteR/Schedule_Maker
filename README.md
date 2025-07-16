@@ -44,7 +44,7 @@ For more information on the commands use:
 - Python 3.10+
 
 - pip (Python package installer)
-  or [pipx](https://chatgpt.com/c/6877e1e7-0dc4-8009-8399-99b5171f3aa1#:~:text=pip%20or-,pipx,-(Recommended)%20Python%20virtual)
+  or [pipx](https://pypa.github.io/pipx/)
 
 - (Optional but recommended) Python virtual environment
 
