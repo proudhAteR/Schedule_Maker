@@ -1,6 +1,6 @@
 from Infrastructure.Services.EventService import EventService
 from Infrastructure.Services.GoogleAPI import GoogleAPI
-from Infrastructure.Utils.Logger import Logger
+from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class Schedule_Maker:

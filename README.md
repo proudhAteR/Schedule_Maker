@@ -26,7 +26,7 @@ Schedule_Maker understands input in a simple, natural format:
 Example:
 
 ```
-Math in Room A from 10:00 to 11:00 every Monday by John
+Math in Room A from 8am to 1pm every Monday by John
 ```
 
 For more information on the commands use:

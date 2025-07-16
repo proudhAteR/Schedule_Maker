@@ -4,7 +4,7 @@ EVENT_HELP = {
 [Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
 
 Example:
-  Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
+Math in Room 101 from 10:00 to 11:00 every Monday by Mr. Smith
 """,
 
     "priority": {

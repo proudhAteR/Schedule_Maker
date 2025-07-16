@@ -8,7 +8,7 @@ from Core.Models.Events.Event import Event
 @dataclass
 class Entertainment(Event):
     description: str = ''
-    color: Priority = Priority.OPTIONAL
+    priority: Priority = Priority.OPTIONAL
     related: ClassVar[list[str]] = [
         "concert", "movie", "theatre", "show", "comedy", "opera", "festival", "screening", "break"
     ]

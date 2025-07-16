@@ -8,7 +8,7 @@ from Core.Models.Events.Event import Event
 @dataclass
 class Appointment(Event):
     description: str = ''
-    color: Priority = Priority.HIGH
+    priority: Priority = Priority.HIGH
     related: ClassVar[list[str]] = ["appointment", "doctor", "dentist", "therapy", "consultation", "info"]
 
     def to_google_event(self) -> dict:

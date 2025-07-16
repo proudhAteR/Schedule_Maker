@@ -1,7 +1,7 @@
 import threading
 from logging import *
 
-from Infrastructure.Utils.ColorFormatter import ColorFormatter
+from Infrastructure.Utils.Logs.ColorFormatter import ColorFormatter
 
 
 class Logger:

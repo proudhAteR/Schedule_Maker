@@ -1,20 +1,9 @@
 Math in Room A from 10:00 to 11:00 every Monday by John
-Meditation in Studio 1 from 08:00 to 08:30
-Physics Lab in Lab 3 from 14:00 to 16:00 every Wednesday by Dr. Evans
-Advanced Algorithms Seminar in Building 5 Room 210 from 18:00 to 20:00 every Thursday by Prof. X
-Sync in Zoom from 09:00 to 09:15 every Friday by Team Lead
-CS101 in Main Auditorium from 11:00 to 12:30 every Tuesday by Dr. Taylor
-Lunch Break in Cafeteria from 12:00 to 12:45
-Yoga in Studio B from 06:00 to 07:00 every Saturday by Clara
-French Oral Exam in Room 42 from 15:30 to 17:00 every Wednesday by M. Dupont
-Consultation in Office 12 from 13:00 to 13:30 by Advisor
-AI & Ethics Talk in Virtual Hall from 19:00 to 20:30 every Monday by Guest Lecturer
 BIO200 Lab in Science Wing from 08:15 to 10:45 every Friday by Dr. Li
-Piano Lesson in Music Room from 16:00 to 17:00 every Sunday by Mr. Bennett
-Project Presentation in Conf Room 2 from 17:45 to 18:30 by Team Omega
+Piano Lesson in Music Room from 16 to 17 every Sunday by Mr. Bennett
 Internship Info Session in Lecture Hall from 10:00 to 11:15 every Thursday by HR Rep
-Movie Night in Cinema 2 from 20:00 to 22:00 by Quentin Tarantino
-Theatre Show in Downtown Theatre from 19:30 to 21:00 every Saturday by Cast Ensemble
-Comedy Night in Club 99 from 21:00 to 23:00 by Dave Chappell
-Music Festival in Central Park from 15:00 to 22:00 by Various Artists
-Opera in Grand Hall from 18:30 to 20:45 by The National Ensemble
+Theatre Show at The Downtown Theatre from 19:30 to 21:00 every Saturday by Cast Ensemble
+Running in the park from 7 to 8 am on Sunday with Coach Mike
+Dance class 9:00 - 10:30 every Wednesday with Emily
+Literature in Room 101 from 13:00 to 14:30 this Tuesday by Alice
+Yoga class from 18:00 to 19:00

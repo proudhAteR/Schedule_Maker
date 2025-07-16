@@ -10,7 +10,7 @@ from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 from Infrastructure.Clients.GoogleClient import GoogleClient
 from Infrastructure.Utils.FileHandler import FileHandler
-from Infrastructure.Utils.Logger import Logger
+from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class GoogleAPI(API):

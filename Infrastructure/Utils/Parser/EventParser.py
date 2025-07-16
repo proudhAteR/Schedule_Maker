@@ -5,7 +5,7 @@ from Core.Models.Enum.Day import Day
 from Core.Models.Events.Event import Event
 from Core.Models.Period import Period
 from Core.Models.Recurrence import Recurrence
-from Infrastructure.Utils.LanguageHandler import LanguageHandler
+from Infrastructure.Utils.Parser.LanguageHandler import LanguageHandler
 
 
 class EventParser(Parser):
@@ -13,6 +13,7 @@ class EventParser(Parser):
         self.language = LanguageHandler()
 
     def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
+        sentence = sentence.strip()
         name, location, start, end, day_str, more = self.language.pattern_match(sentence)
         day, recurrence = self.__recurrence_gestion(day_str, recurrence)
         period = Period(start, end, day, recurrence)

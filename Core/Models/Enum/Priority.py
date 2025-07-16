@@ -15,4 +15,4 @@ class Priority(str, Enum):
             if priority.name == s:
                 return priority
 
-        return Priority.CASUAL
+        return Priority.MEDIUM
