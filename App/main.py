@@ -1,9 +1,11 @@
-from typer import Typer, Option, Argument
 from asyncio import run as async_call
-from App.Schedule_Maker import Schedule_Maker
-from Infrastructure.Utils.Logger import Logger
-from Infrastructure.Utils.Help_texts import *
+
+from typer import Typer, Option, Argument
+
 import Infrastructure.Utils.EventImports as Imp
+from App.Schedule_Maker import Schedule_Maker
+from Infrastructure.Utils.Help_texts import *
+from Infrastructure.Utils.Logger import Logger
 
 Imp.run()
 app = Typer()

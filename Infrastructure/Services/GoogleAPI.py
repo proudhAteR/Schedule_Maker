@@ -1,14 +1,16 @@
-from Core.Interface.API import API
+import asyncio
+
 from google.auth.exceptions import TransportError
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from Infrastructure.Clients.GoogleClient import GoogleClient
+
+from Core.Interface.API import API
 from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
+from Infrastructure.Clients.GoogleClient import GoogleClient
 from Infrastructure.Utils.FileHandler import FileHandler
 from Infrastructure.Utils.Logger import Logger
-import asyncio
 
 
 class GoogleAPI(API):

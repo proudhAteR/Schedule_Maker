@@ -3,7 +3,6 @@ import inspect
 from Core.Interface.Parser import Parser
 from Core.Models.Enum.Day import Day
 from Core.Models.Events.Event import Event
-
 from Core.Models.Period import Period
 from Core.Models.Recurrence import Recurrence
 from Infrastructure.Utils.LanguageHandler import LanguageHandler
@@ -30,8 +29,6 @@ class EventParser(Parser):
 
         # noinspection PyArgumentList
         return event(**kwargs)
-
-    import inspect
 
     @staticmethod
     def __define_args(kwargs: dict, event: type['Event'], more: str):

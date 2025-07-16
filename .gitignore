@@ -1,9 +1,9 @@
 
 ### App
-# Ignore all contents of the secrets directory
+# Ignore everything in App/secrets/
 App/secrets/*
 
-# But keep the secrets directory itself
+# But don't ignore the .gitkeep file
 !App/secrets/.gitkeep
 
 ### VisualStudioCode template

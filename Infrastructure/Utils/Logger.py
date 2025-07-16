@@ -1,5 +1,6 @@
-from logging import *
 import threading
+from logging import *
+
 from Infrastructure.Utils.ColorFormatter import ColorFormatter
 
 

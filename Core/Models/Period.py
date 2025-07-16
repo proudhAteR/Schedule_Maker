@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from Core.Models.Recurrence import Recurrence
 from Core.Models.Enum.Day import Day
+from Core.Models.Recurrence import Recurrence
 
 
 class Period:

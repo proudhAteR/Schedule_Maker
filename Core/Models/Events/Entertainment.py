@@ -1,8 +1,8 @@
-from Core.Models.Enum.Priority import Priority
-from Core.Models.Events.Event import Event
-
 from dataclasses import dataclass
 from typing import ClassVar
+
+from Core.Models.Enum.Priority import Priority
+from Core.Models.Events.Event import Event
 
 
 @dataclass
