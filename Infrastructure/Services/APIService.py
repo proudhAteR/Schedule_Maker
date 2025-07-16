@@ -31,7 +31,7 @@ class APIService:
             Logger.error(f"Failed to create event: {e}")
             raise
 
-    async def make_schedule(self, schedule: Schedule):
+    async def insert_all(self, schedule: Schedule):
         tasks = [self.insert(event) for event in schedule.events]
         await asyncio.gather(
             *tasks

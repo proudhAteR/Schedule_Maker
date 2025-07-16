@@ -1,10 +1,5 @@
 from dataclasses import dataclass
-import re
-from datetime import datetime
-
 from Core.Models.Enum.Priority import Priority
-from Core.Models.Recurrence import Recurrence
-from Core.Models.Enum.Day import Day
 from Core.Models.Period import Period
 
 
@@ -40,42 +35,3 @@ class Event:
             ]
 
         return event
-
-    @classmethod
-    def from_sentence(cls, sentence: str, recurrence: Recurrence | None = None) -> "Event":
-        name, location, start, end, day_str, _ = cls._pattern_match(sentence)
-        day, recurrence = cls.__recurrence_gestion(day_str, recurrence)
-        period = Period(
-            start.strip(),
-            end.strip(),
-            day,
-            recurrence
-        )
-
-        return cls(name.strip(), period, location.strip())
-
-    @classmethod
-    def _pattern_match(cls, sentence: str) -> tuple:
-        pattern = r"^(.*?) in (.*?) from (.*?) to (.*?)(?: every (.*?))?(?: by (.*))?$"
-        match = re.match(pattern, sentence.strip())
-
-        if not match:
-            raise ValueError("Sentence format invalid.")
-
-        return tuple(part or "" for part in match.groups())
-
-    @classmethod
-    def __recurrence_gestion(cls, day_str: str | None, recurrence: Recurrence | None) -> tuple:
-        recurrence = recurrence or Recurrence(datetime.now(), streak=15)
-        day = Period.today()
-
-        if not day_str:
-            return day, Recurrence(datetime.now(), 1)
-
-        try:
-            day_str = day_str.strip().upper()
-            day = Day[day_str]
-        except KeyError:
-            raise ValueError(f"Unknown day: {day_str}")
-
-        return day, recurrence
