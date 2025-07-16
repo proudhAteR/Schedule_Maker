@@ -6,10 +6,11 @@ from Core.Models.Events.Event import Event
 
 @dataclass
 class Class(Event):
-    teacher: str = ''
+    description: str = ''
     related: ClassVar[list[str]] = ["class", "lecture", "lab", "exam", "lesson"]
 
     def to_google_event(self) -> dict:
         event = super().to_google_event()
-        event["description"] = f"Teacher: {self.teacher}"
+        if self.description:
+            event["description"] = f"Teacher: {self.description}"
         return event

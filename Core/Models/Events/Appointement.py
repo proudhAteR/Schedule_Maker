@@ -7,11 +7,12 @@ from Core.Models.Events.Event import Event
 
 @dataclass
 class Appointment(Event):
-    with_whom: str = ''
+    description: str = ''
     color: Priority = Priority.HIGH
     related: ClassVar[list[str]] = ["appointment", "doctor", "dentist", "therapy", "consultation", "info"]
 
     def to_google_event(self) -> dict:
         event = super().to_google_event()
-        event["description"] = f"Appointment with: {self.with_whom}"
+        if self.description:
+            event["description"] = f"Appointment with: {self.description}"
         return event

@@ -12,9 +12,10 @@ class EventService:
     def __init__(self):
         self.parser = EventParser()
 
-    def create_event(self, sentence: str, priority: str = "casual", recurrence: Recurrence | None = None) -> Event:
+    def create_event(self, sentence: str, priority: str | None = None, recurrence: Recurrence | None = None) -> Event:
         event: Event = self.parser.parse(sentence, recurrence)
-        event.priority = Priority.from_str(priority)
+        if priority:
+            event.priority = Priority.from_str(priority)
 
         return event
 

@@ -1,11 +1,13 @@
 from typer import Typer, Option, Argument
 from asyncio import run as async_call
-from App.Schedule_Maker import Scheduler
+from App.Schedule_Maker import Schedule_Maker
 from Infrastructure.Utils.Logger import Logger
 from Infrastructure.Utils.Help_texts import *
+import Infrastructure.Utils.EventImports as Imp
 
+Imp.run()
 app = Typer()
-scheduler = Scheduler()
+maker = Schedule_Maker()
 
 
 @app.command(help="Create an event from natural language input.")
@@ -27,7 +29,7 @@ def event(
         raise ValueError(f"Priority must be one of: {', '.join(pr_list)}")
 
     async_call(
-        scheduler.event(description, priority)
+        maker.event(description, priority)
     )
 
 
@@ -46,7 +48,7 @@ def schedule(
         raise Logger.error("You must provide either --file or a block of events.")
 
     async_call(
-        scheduler.schedule(events_block, start)
+        maker.schedule(events_block, start)
     )
 
 

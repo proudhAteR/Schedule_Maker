@@ -11,7 +11,7 @@ class Event:
     location: str
     description: str = ''
     timezone: str = "America/Toronto"
-    priority: Priority = Priority.CASUAL
+    priority: Priority = Priority.MEDIUM
 
     # noinspection PyTypeChecker
     def to_google_event(self) -> dict:
@@ -43,7 +43,6 @@ class Event:
             return [sub] + [g for sc in sub.__subclasses__() for g in recurse(sc)]
 
         subclasses = recurse(cls)
-        print("Detected subclasses:", [sc.__name__ for sc in subclasses])
         return subclasses
 
     @classmethod
