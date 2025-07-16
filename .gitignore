@@ -1,9 +1,10 @@
 
 ### App
+# Ignore all contents of the secrets directory
 App/secrets/*
-App/schedules/*_processed*
-App/schedules/image.json
-App/schedules/debug/
+
+# But keep the secrets directory itself
+!App/secrets/.gitkeep
 
 ### VisualStudioCode template
 .vscode/*

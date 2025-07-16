@@ -1,23 +1,31 @@
 [project]
 name = "sm"
 version = "0.1.4"
-description = " terminal-based Python application that helps you quickly create Google Calendar events. Designedfor speed and flexibility, it turns natural language inputs into structured calendar schedules."
-authors = [{ name = "proudhater", email = "cboleku162004@gmail.com" }]
+description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "proudhater", email = "cboleku162004@gmail.com" }
+]
+
 dependencies = [
     "typer[all]",
-    "aiohttp[all]",
-    "dateparser[all]",
-    "google-api-core[all]",
-    "google-api-python-client[all]",
-    "google-auth[all]",
-    "google-auth-httplib2[all]",
-    "google-auth-oauthlib[all]",
-    "googleapis-common-protos[all]"
+    "aiohttp",
+    "dateparser",
+    "google-api-core",
+    "google-api-python-client",
+    "google-auth",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "googleapis-common-protos"
 ]
 
 [project.scripts]
 sm = "App.main:app"
 
-[tool.setuptools.packages.find]
-include = ["App", "Core", "Infrastructure"]
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["App*", "Core*", "Infrastructure*"]
