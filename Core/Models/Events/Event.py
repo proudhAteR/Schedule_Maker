@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Type
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Period import Period
 
@@ -10,7 +11,7 @@ class Event:
     location: str
     description: str = ''
     timezone: str = "America/Toronto"
-    color: Priority = Priority.CASUAL
+    priority: Priority = Priority.CASUAL
 
     # noinspection PyTypeChecker
     def to_google_event(self) -> dict:
@@ -26,7 +27,7 @@ class Event:
                 'dateTime': self.period.end.isoformat(),
                 'timeZone': self.timezone,
             },
-            'colorId': self.color.value,
+            'colorId': self.priority.value,
         }
 
         if self.period.streak > 1:
@@ -35,3 +36,23 @@ class Event:
             ]
 
         return event
+
+    @classmethod
+    def _all_subclasses(cls) -> list[Type['Event']]:
+        def recurse(sub):
+            return [sub] + [g for sc in sub.__subclasses__() for g in recurse(sc)]
+
+        subclasses = recurse(cls)
+        print("Detected subclasses:", [sc.__name__ for sc in subclasses])
+        return subclasses
+
+    @classmethod
+    def detect_type(cls, sentence: str) -> type['Event']:
+        lowered = sentence.lower()
+
+        for subclass in cls._all_subclasses():
+            related = getattr(subclass, 'related', [])
+            if any(word in lowered for word in related):
+                return subclass
+
+        return cls

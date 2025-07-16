@@ -6,6 +6,7 @@ authors = [{ name = "proudhater", email = "cboleku162004@gmail.com" }]
 dependencies = [
     "typer[all]",
     "aiohttp[all]",
+    "dateparser[all]",
     "google-api-core[all]",
     "google-api-python-client[all]",
     "google-auth[all]",

@@ -11,7 +11,6 @@ Example:
         "urgent": "Red — Critical or emergency-level tasks",
         "high": "Pink — Important or time-sensitive",
         "medium": "Blue — Normal or default importance",
-        "soft": "Light green — Gentle or soft reminders",
         "casual": "Lavender — Non-work or casual meetings",
         "optional": "Yellow — Optional activities",
     }

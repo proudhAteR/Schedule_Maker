@@ -14,7 +14,7 @@ class EventService:
 
     def create_event(self, sentence: str, priority: str = "casual", recurrence: Recurrence | None = None) -> Event:
         event: Event = self.parser.parse(sentence, recurrence)
-        event.color = Priority.from_str(priority)
+        event.priority = Priority.from_str(priority)
 
         return event
 
