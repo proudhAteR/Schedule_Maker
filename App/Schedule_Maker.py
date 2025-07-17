@@ -14,14 +14,14 @@ class Schedule_Maker(Generic[TCalendar]):
 
     async def event(self, sentence: str, priority: str):
         try:
-            event = self.service.create_event(sentence, priority)
+            event = await self.service.create_event(sentence, priority)
             await self.calendar.insert(event)
         except ValueError as e:
             Logger.error(f"Unable to create event. Cause: {e}")
 
     async def schedule(self, block: list[str], date: str | None = None):
         try:
-            schedule = self.service.create_schedule(block, date)
+            schedule = await self.service.create_schedule(block, date)
             await self.calendar.insert_all(schedule)
         except ValueError as e:
             Logger.error(f"Unable to create schedule. Cause: {e}")
