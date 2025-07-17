@@ -1,5 +1,5 @@
 from Core.Models.Events.Event import Event
-from Core.Models.Recurrence import Recurrence
+from Core.Models.Time.Recurrence import Recurrence
 
 
 class Schedule:

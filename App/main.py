@@ -2,7 +2,7 @@ from asyncio import run as async_call
 
 from typer import Typer, Option, Argument
 
-import Infrastructure.Utils.Helpers.EventImports as Imp
+import Infrastructure.Utils.Helpers.Imports as Imp
 from App.Schedule_Maker import Schedule_Maker
 from Infrastructure.Utils.Helpers.Help_texts import *
 from Infrastructure.Utils.Logs.Logger import Logger

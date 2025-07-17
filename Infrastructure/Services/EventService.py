@@ -2,7 +2,7 @@ from datetime import datetime
 
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
-from Core.Models.Recurrence import Recurrence
+from Core.Models.Time.Recurrence import Recurrence
 from Core.Models.Schedule import Schedule
 from Infrastructure.Utils.Parser.EventParser import EventParser
 from Infrastructure.Utils.Logs.Logger import Logger

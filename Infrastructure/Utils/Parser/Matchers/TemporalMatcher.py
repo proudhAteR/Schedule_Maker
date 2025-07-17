@@ -3,21 +3,30 @@ import re
 from datetime import datetime, timedelta
 import dateparser
 from Core.Interface.Matcher import Matcher
+from Core.Models.Enum.Field import Field
 
 
 # Used chatgpt a lot here :3
 class TemporalMatcher(Matcher):
-    def match(self, sentence: str) -> tuple[str, datetime, datetime]:
+    def match(self, sentence: str) -> dict[Field, datetime | str]:
         day_str = self.__extract_day(sentence)
         start_raw, end_raw = self.__extract_time_range(sentence)
 
         if not start_raw or not end_raw:
             fallback = self.__parse_or_now(sentence)
-            return day_str, fallback, fallback
+            return {
+                Field.DAY: day_str,
+                Field.START: fallback,
+                Field.END: fallback,
+            }
 
         start, end = self.resolve_time_range(day_str, end_raw, start_raw)
 
-        return day_str, start, end
+        return {
+            Field.DAY: day_str,
+            Field.START: start,
+            Field.END: end
+        }
 
     def resolve_time_range(self, day_str: str, end_raw: str, start_raw: str) -> tuple:
         if day_str:

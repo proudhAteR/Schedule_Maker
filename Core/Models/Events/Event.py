@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Type
 
 from Core.Models.Enum.Priority import Priority
-from Core.Models.Period import Period
+from Core.Models.Time.Period import Period
 
 
 @dataclass
