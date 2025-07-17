@@ -7,7 +7,7 @@ from Infrastructure.Services.Google.GoogleAPI import GoogleAPI
 from Infrastructure.Utils.Logs.Logger import Logger
 
 
-class GoogleCalendarAPI(CalendarAPI, GoogleAPI):
+class GoogleCalendar(CalendarAPI, GoogleAPI):
     def __init__(self):
         GoogleAPI.__init__(self, 'calendar')
 
