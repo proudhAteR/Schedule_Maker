@@ -5,7 +5,7 @@ from Core.Models.Enum.Field import Field
 
 
 class TitleMatcher(Matcher):
-    def match(self, sentence: str) -> dict[Field, str]:
+    async def match(self, sentence: str) -> dict[Field, str]:
         split_keywords = r"\b(?:in|at|from|on|every|by|with)\b"
         parts = re.split(split_keywords, sentence, maxsplit=1, flags=re.IGNORECASE)
         event_name = parts[0].strip()
