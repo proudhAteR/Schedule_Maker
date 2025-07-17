@@ -1,10 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
+from Core.Interface.APIs.API import API
 from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 
 
-class API(ABC):
+class CalendarAPI(API):
+    def __init__(self):
+        pass
+
     @abstractmethod
     async def insert(self, event: Event):
         pass
