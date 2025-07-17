@@ -12,7 +12,3 @@ class API(ABC):
     @abstractmethod
     async def insert_all(self, schedule: Schedule):
         pass
-
-    @abstractmethod
-    def authenticate(self):
-        pass

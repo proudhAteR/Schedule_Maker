@@ -1,11 +1,12 @@
+from Core.Interface.API import API
 from Infrastructure.Services.EventService import EventService
-from Infrastructure.Services.GoogleAPI import GoogleAPI
+from Infrastructure.Services.Google.GoogleAPI import GoogleAPI
 from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class Schedule_Maker:
     def __init__(self):
-        self.api = GoogleAPI()
+        self.api: API = GoogleAPI()
         self.service = EventService()
 
     async def event(self, sentence: str, priority: str):
