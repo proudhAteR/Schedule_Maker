@@ -8,7 +8,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
 ## 🚀 What's New (v0.1.5 — 2025‑07‑18)
 
 ### ✨ Added
-- **Multilingual input & output**  
+- **Multilingual input**  
   Thanks to [`deep-translator`](https://pypi.org/project/deep-translator/) and [`langdetect`](https://pypi.org/project/langdetect/) packages, your program can now:
   - Detect and translate user input from various languages.
   - Respond in the user’s preferred language.
