@@ -9,8 +9,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ### ✨ Added
 - **Multilingual input**  
-  Thanks to [`deep-translator`](https://pypi.org/project/deep-translator/) and [`langdetect`](https://pypi.org/project/langdetect/) packages, your program can now:
-  - Detect and translate user input from various languages.
+  Thanks to [`deep-translator`](https://pypi.org/project/deep-translator/) and [`langdetect`](https://pypi.org/project/langdetect/) packages, your program can now detect and translate user input from various languages.
   
 - **Natural‑language time parsing**  
   You can now write schedules using terms like:
