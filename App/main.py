@@ -18,7 +18,7 @@ maker = Schedule_Maker(
 def event(
         description: str = Argument(..., help=EVENT_HELP["description"]),
         priority: str = Option(
-            "medium",
+            None,
             "--priority",
             "-pr",
             help="\n".join(f"{k}: {v}" for k, v in EVENT_HELP["priority"].items()),
@@ -26,11 +26,12 @@ def event(
             case_sensitive=False
         )
 ):
-    priority = priority.lower()
-    pr_list = EVENT_HELP["priority"].keys()
+    if priority:
+        priority = priority.lower()
+        pr_list = EVENT_HELP["priority"].keys()
 
-    if priority not in pr_list:
-        raise ValueError(f"Priority must be one of: {', '.join(pr_list)}")
+        if priority not in pr_list:
+            raise ValueError(f"Priority must be one of: {', '.join(pr_list)}")
 
     async_call(
         maker.event(description, priority)

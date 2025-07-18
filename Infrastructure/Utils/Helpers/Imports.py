@@ -12,8 +12,7 @@ def run():
 
 def __load_all_events():
     for _, module_name, _ in pkgutil.iter_modules(Core.Models.Events.__path__):
-        if module_name != "Event":
-            importlib.import_module(f"Core.Models.Events.{module_name}")
+        importlib.import_module(f"Core.Models.Events.{module_name}")
 
 
 def __load_all_matchers():

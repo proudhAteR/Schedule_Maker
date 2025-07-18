@@ -15,7 +15,7 @@ class LanguageService:
         self.__translator = translator
 
     async def pattern_match(self, sentence: str) -> tuple:
-        data = await self.match_all(sentence)
+        data, sentence= await self.match_all(sentence)
 
         return LanguageMatch(
             name=data.get(Field.NAME, ""),
@@ -50,4 +50,4 @@ class LanguageService:
         for res in results:
             data.update(res)
 
-        return data
+        return data, sentence
