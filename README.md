@@ -90,6 +90,11 @@ For more information on the commands use:
    ```bash
    pipx install -e .
    ````
+
+   To update the app just run:
+   ```bash
+   pipx reinstall sm
+   ````
 ---
 
 ## 📬 Contact
