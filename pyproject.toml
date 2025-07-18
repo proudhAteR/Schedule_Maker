@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.4.1"
+version = "0.1.5"
 description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -11,6 +11,8 @@ authors = [
 dependencies = [
     "typer[all]",
     "aiohttp",
+    "deep-translator",
+    "langdetect",
     "dateparser",
     "google-api-core",
     "google-api-python-client",

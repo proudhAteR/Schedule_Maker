@@ -1,7 +1,8 @@
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from Core.Interface.Auth import Auth
+from Core.Interface.APIs.Auth import Auth
+from Infrastructure.Clients.Client import Client
 from Infrastructure.Clients.GoogleClient import GoogleClient
 from Infrastructure.Utils.FileHandler import FileHandler
 from Infrastructure.Utils.Logs.Logger import Logger

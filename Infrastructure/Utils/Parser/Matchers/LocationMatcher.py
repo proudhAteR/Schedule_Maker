@@ -6,8 +6,9 @@ from Core.Models.Enum.Field import Field
 
 class LocationMatcher(Matcher):
 
-    def match(self, sentence: str) -> dict[Field, str]:
+    async def match(self, sentence: str) -> dict[Field, str]:
         location_match = re.search(r"(?:in|at) (.*?) from", sentence)
-        location = location_match.group(1).strip() if location_match else ""
+        location = location_match.group(1).strip().title() if location_match else ""
+
 
         return {Field.LOCATION: location}

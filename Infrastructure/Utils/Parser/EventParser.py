@@ -9,11 +9,10 @@ from Infrastructure.Services.LanguageService import LanguageService
 
 class EventParser(Parser):
     def __init__(self):
-        self.language = LanguageService()
+        self.__language = LanguageService()
 
-    def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
-        sentence = sentence.strip()
-        match = self.language.pattern_match(sentence)
+    async def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
+        match, sentence = await self.__language.pattern_match(sentence)
         period = Period.from_match(match, recurrence)
 
         event = Event.detect_type(sentence)
@@ -32,9 +31,7 @@ class EventParser(Parser):
     @staticmethod
     def __define_args(kwargs: dict, event: type['Event'], more: str):
         sig = inspect.signature(event.__init__)
-
         param_names = [p for p in sig.parameters if p != "self"]
-
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in param_names}
 
         for param in param_names:
