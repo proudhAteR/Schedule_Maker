@@ -5,16 +5,15 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ---
 
-## 🚀 What's New (v0.1.5 — 2025‑07‑18)
+## 🆕 Changelog
 
-### ✨ Added
-- **Multilingual input**  
-  Thanks to [`deep-translator`](https://pypi.org/project/deep-translator/) and [`langdetect`](https://pypi.org/project/langdetect/) packages, your program can now detect and translate user input from various languages.
-  
-- **Natural‑language time parsing**  
-  You can now write schedules using terms like:
-  - `"noon"`, `"morning"`, `"evening"`, `"tonight"`, `"midnight"`,  
-    and have them correctly interpreted as times.
+### v0.1.5 (2025‑07‑18)
+
+#### ✨ Added
+
+- **Multilingual input support** using  [`deep-translator`](https://pypi.org/project/deep-translator/) and [
+  `langdetect`](https://pypi.org/project/langdetect/)
+- **Natural language parsing**: Terms like `"noon"`, `"evening"`, `"tonight"` now correctly resolve to actual times
 
 ---
 
@@ -41,19 +40,26 @@ Example:
 Math in Room A from 8am to 1pm every Monday by John
 ```
 
+### 🗣️ Input Examples
+
+- `BIO200 Lab in Science Wing from 08:15 to 10:45 every Friday by Dr. Li`
+- `Piano lesson in music room from 16 to 17 every Sunday by Mr. Bennett`
+- `Cours de mathématiques dans la salle B de 9h à 11h chaque lundi par M. Dupont` *(French)*
+- `Trabajo en oficina en la tarde todos los martes` *(Spanish — "Afternoon work in the office every Tuesday")*
+
+---
+
 For more information on the commands use:
 
    ```bash
      sm --help
    ```
 
----
-
 ## 🛠️ Setup & Installation
 
 ✅ Requirements
 
-- Python 3.10+
+- ![Python version](https://img.shields.io/badge/python-3.10%2B-blue)
 
 - pip (Python package installer)
   or [pipx](https://pypa.github.io/pipx/)
@@ -93,6 +99,7 @@ For more information on the commands use:
    ```bash
    pipx reinstall sm
    ````
+
 ---
 
 ## 📬 Contact
@@ -110,3 +117,13 @@ Need help with credentials or want to contribute?
 I'm always looking to improve!
 Feel free to suggest code improvements, open issues, or submit pull requests.
 This project is both a tool and a learning journey.
+
+---
+
+## 📚 Table of Contents
+
+- [What's New](#-changelog)
+- [Features](#-features)
+- [How It Works](#-how-it-works)
+- [Setup & Installation](#-setup--installation)
+- [Contact](#-contact)
