@@ -30,7 +30,7 @@ class TemporalMatcher(Matcher):
             TIME_EXPRESSIONS,
             self.time_only_pattern
         )
-        self.fallback = FallbackHandler(TIME_EXPRESSIONS)
+        self.fallback = FallbackHandler(TIME_EXPRESSIONS, self.time_only_pattern)
         self.resolver = TimeResolver()
         self.normalizer = Normalizer(TIME_EXPRESSIONS)
         super().__init__()
