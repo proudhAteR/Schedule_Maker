@@ -3,6 +3,20 @@
 **Schedule_Maker** is a terminal-based Python application that helps you quickly create Google Calendar events. Designed
 for speed and flexibility, it turns natural language inputs into structured calendar schedules.
 
+---
+
+## 🚀 What's New (v0.1.5 — 2025‑07‑18)
+
+### ✨ Added
+- **Multilingual input & output**  
+  Thanks to [`deep-translator`](https://pypi.org/project/deep-translator/) and [`langdetect`](https://pypi.org/project/langdetect/) packages, your program can now:
+  - Detect and translate user input from various languages.
+  - Respond in the user’s preferred language.
+  
+- **Natural‑language time parsing**  
+  You can now write schedules using terms like:
+  - `"noon"`, `"morning"`, `"evening"`, `"tonight"`, `"midnight"`,  
+    and have them correctly interpreted as times.
 
 ---
 
