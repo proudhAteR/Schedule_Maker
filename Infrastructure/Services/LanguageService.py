@@ -12,7 +12,6 @@ class LanguageService:
         self.__matchers: list[Matcher] = [
             matcher() for matcher in Matcher.all_subclasses()
         ]
-        print(self.__matchers)
         self.__translator = translator
 
     async def pattern_match(self, sentence: str) -> tuple:

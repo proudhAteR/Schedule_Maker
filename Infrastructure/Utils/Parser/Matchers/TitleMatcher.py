@@ -44,4 +44,4 @@ class TitleMatcher(Matcher):
             raw_title
         )
 
-        return {Field.NAME: raw_title.strip()}
+        return {Field.NAME: raw_title.strip().title()}
