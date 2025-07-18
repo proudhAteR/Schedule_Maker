@@ -14,6 +14,7 @@ class EventService:
         self.parser = EventParser()
 
     async def create_event(self, sentence: str, priority: str = None, recurrence: Recurrence = None) -> Event:
+
         event = await self.parser.parse(sentence, recurrence)
         if priority:
             event.priority = Priority.from_str(priority)
@@ -22,6 +23,7 @@ class EventService:
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
         recurrence = None
+
         if date_str:
             recurrence = Recurrence(
                 first_occurrence=datetime.strptime(date_str, "%Y-%m-%d")
@@ -38,5 +40,5 @@ class EventService:
         results = await asyncio.gather(*tasks)
 
         events = [e for e in results if e is not None]
-
+        
         return Schedule(events, recurrence)
