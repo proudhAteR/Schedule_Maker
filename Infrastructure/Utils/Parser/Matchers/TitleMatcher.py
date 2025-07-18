@@ -7,7 +7,7 @@ from Core.Models.Enum.Field import Field
 class TitleMatcher(Matcher):
     async def match(self, sentence: str) -> dict[Field, str]:
         # Metadata keywords where title usually ends
-        split_keywords = r"\b(from|at|in|on|every|by|with)\b"
+        split_keywords = r"\b(from|at|in|on|every|by|with|between)\b"
 
         # Split on first keyword occurrence (start of metadata)
         parts = re.split(split_keywords, sentence, maxsplit=1, flags=re.IGNORECASE)
@@ -44,4 +44,5 @@ class TitleMatcher(Matcher):
             raw_title
         )
 
-        return {Field.NAME: raw_title.strip()}
+        return {Field.NAME: raw_title.strip().title()}
+      
