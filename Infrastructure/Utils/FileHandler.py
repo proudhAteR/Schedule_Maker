@@ -21,8 +21,10 @@ class FileHandler:
             f.write(text)
 
     @classmethod
-    def secret_path(cls, path: str):
-        return os.path.join(cls.root(), 'App', 'secrets', path)
+    def secret_path(cls, file: str):
+        return os.path.join(
+            cls.root(), 'App', 'secrets', file
+        )
 
     @classmethod
     def __find_root(cls, marker: str = "pyproject.toml") -> str:

@@ -1,8 +1,8 @@
 from Core.Models.Events.Event import Event
-from Core.Models.Recurrence import Recurrence
+from Core.Models.Time.Recurrence import Recurrence
 
 
 class Schedule:
-    def __init__(self, events: list[Event], schedule_session: Recurrence):
+    def __init__(self, events: list[Event], recurrence: Recurrence):
         self.events = events
-        self.session = schedule_session
+        self.recurrence = recurrence

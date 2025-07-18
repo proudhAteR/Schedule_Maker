@@ -1,15 +1,17 @@
 from asyncio import run as async_call
-
 from typer import Typer, Option, Argument
 
-import Infrastructure.Utils.Helpers.EventImports as Imp
+import Infrastructure.Utils.Helpers.Imports as Imp
 from App.Schedule_Maker import Schedule_Maker
+from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
 from Infrastructure.Utils.Helpers.Help_texts import *
 from Infrastructure.Utils.Logs.Logger import Logger
 
 Imp.run()
 app = Typer()
-maker = Schedule_Maker()
+maker = Schedule_Maker(
+    GoogleCalendar()
+)
 
 
 @app.command(help="Create an event from natural language input.")
