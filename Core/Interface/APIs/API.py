@@ -8,5 +8,5 @@ TClient = TypeVar("TClient", bound=Client)
 class API(Generic[TClient], ABC):
 
     @abstractmethod
-    def __init__(self, client: TClient):
+    def __init__(self, client: TClient = Client()):
         self.client = client
