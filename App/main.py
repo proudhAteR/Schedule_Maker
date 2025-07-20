@@ -12,7 +12,6 @@ from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class App:
-
     def __init__(self):
         Imp.run()
         self.app = Typer()
@@ -126,5 +125,8 @@ class App:
         self.app()
 
 
+__instance = App()
+app = __instance.app
+
 if __name__ == "__main__":
-    App().run()
+    __instance.run()
