@@ -25,7 +25,7 @@ class FallbackHandler:
         return {
             Field.DAY: day_str,
             Field.START: fallback_time,
-            Field.END: self.__next_hour(fallback_time),
+            Field.END: self.next_hour(fallback_time),
         }
 
     @staticmethod
@@ -40,18 +40,18 @@ class FallbackHandler:
         return fallback_time
 
     @staticmethod
-    def __next_hour(fallback_time):
-        return fallback_time + timedelta(hours=1)
+    def next_hour(given: time) -> time:
+        dummy_dt = datetime.combine(datetime.today(), given)
+        incremented = dummy_dt + timedelta(hours=1)
+        return incremented.time()
 
     def _extract_any_time(self, sentence: str) -> datetime | None:
         """Extract any time information as fallback."""
-        # Look for any time patterns
         times = self.time_only_pattern.findall(sentence)
         if times:
             time_str = f"{times[0][0]} {times[0][1]}"
             return self.parser.parse(time_str)
 
-        # Look for time expressions
         for expr, replacement in self.expressions.items():
             if expr in sentence.lower():
                 return self.parser.parse(replacement)

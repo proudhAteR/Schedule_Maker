@@ -1,6 +1,7 @@
 import calendar
 from datetime import datetime, timedelta, time
 
+from Infrastructure.Utils.Parser.Matchers.Temporal.FallbackHandler import FallbackHandler
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
@@ -33,6 +34,9 @@ class TimeResolver:
     def __get_period(self, end_raw: str, start_raw: str) -> tuple:
         start_time = self.parser.parse(start_raw)
         end_time = self.parser.parse(end_raw)
+
+        if start_time == end_time:
+            end_time = FallbackHandler.next_hour(end_time)
 
         return start_time, end_time
 

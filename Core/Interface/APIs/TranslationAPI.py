@@ -1,5 +1,6 @@
-from Core.Interface.APIs.API import API
 from abc import abstractmethod
+
+from Core.Interface.APIs.API import API
 
 
 class TranslationAPI(API):
@@ -10,5 +11,5 @@ class TranslationAPI(API):
 
     @staticmethod
     @abstractmethod
-    def translate(text: str, from_lang: str, to_lang: str = 'en') -> str:
+    def translate(text: str, to_lang: str = 'en') -> str:
         pass

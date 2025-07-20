@@ -34,6 +34,8 @@ class Normalizer:
         # Normalize AM/PM spacing, e.g. "3pm" -> "3 pm"
         normalized = re.sub(r'(\d)(am|pm)\b', r'\1 \2', normalized)
 
+        # Remove common articles before normalization
+        normalized = re.sub(r"\bthe\s+(?=\w+)", "", normalized, flags=re.IGNORECASE)
         # Normalize common time expressions
         for expr, replacement in self.expressions.items():
             normalized = re.sub(rf"\b{expr}\b", replacement, normalized)

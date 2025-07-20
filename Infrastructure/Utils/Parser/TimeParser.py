@@ -55,6 +55,7 @@ class TimeParser(Parser):
     @staticmethod
     def pattern(match: re.Match, pattern_index: int) -> tuple:
         groups = match.groups()
+
         match pattern_index:
             case 0 | 5:
                 return groups[0].strip(), groups[1].strip()
@@ -66,4 +67,7 @@ class TimeParser(Parser):
                 return f"{groups[0]}:{groups[1]}", f"{groups[2]}:{groups[3]}"
             case 4:
                 return f"{groups[0]}:00", f"{groups[1]}:00"
+            case 6:
+                return f"{groups[0]} {groups[1]}", f"{groups[0]} {groups[1]}"
+
         return "", ""

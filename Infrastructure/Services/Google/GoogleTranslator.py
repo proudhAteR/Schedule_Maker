@@ -1,7 +1,7 @@
+from deep_translator import GoogleTranslator as Core
 from langdetect import detect, LangDetectException
 
 from Core.Interface.APIs.TranslationAPI import TranslationAPI
-from deep_translator import GoogleTranslator as Core
 
 
 class GoogleTranslator(TranslationAPI):
@@ -9,8 +9,8 @@ class GoogleTranslator(TranslationAPI):
         super().__init__()
 
     @staticmethod
-    def translate(text: str, from_lang: str, to_lang: str = 'en') -> str:
-        t = Core(source=from_lang, target=to_lang)
+    def translate(text: str, to_lang: str = 'en') -> str:
+        t = Core(source='auto', target=to_lang)
         return t.translate(text)
 
     @staticmethod

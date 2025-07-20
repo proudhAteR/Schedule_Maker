@@ -15,7 +15,7 @@ class LanguageService:
         self.__translator = translator
 
     async def pattern_match(self, sentence: str) -> tuple:
-        data, sentence= await self.match_all(sentence)
+        data, sentence = await self.match_all(sentence)
 
         return LanguageMatch(
             name=data.get(Field.NAME, ""),
@@ -26,19 +26,20 @@ class LanguageService:
             more=data.get(Field.EXTRA, "")
         ), sentence
 
-    async def __process(self, sentence : str):
+    async def __process(self, sentence: str):
         sentence = sentence.strip()
         lang = self.__detect(sentence)
-        if lang != "en":
-            sentence = self.__translate(sentence, lang)
+
+        if lang != 'en':
+            sentence = self.__translate(sentence)
 
         return sentence
 
     def __detect(self, text: str):
         return self.__translator.detect_lang(text)
 
-    def __translate(self, text: str, from_lang: str, to_lang: str = 'en'):
-        return self.__translator.translate(text, from_lang, to_lang)
+    def __translate(self, text: str, to_lang: str = 'en'):
+        return self.__translator.translate(text, to_lang)
 
     async def match_all(self, sentence: str):
         data = {}

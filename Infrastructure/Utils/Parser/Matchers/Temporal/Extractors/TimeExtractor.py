@@ -1,6 +1,6 @@
-from Core.Interface.Extractor import Extractor
 import re
 
+from Core.Interface.Extractor import Extractor
 from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.Helpers.MeridiemHelper import MeridiemHelper
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
@@ -27,6 +27,12 @@ TIME_PATTERNS = [
     re.compile(
         r"\b(?:between|from)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+(?:and|to|until)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
         re.IGNORECASE),
+    # Matches "at 2:00 pm", "in 2:00 pm", "on 2:00 pm"
+    re.compile(
+        r"\b(?:at|in|on|around|about)?\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        re.IGNORECASE
+    ),
+
 ]
 
 

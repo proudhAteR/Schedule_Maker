@@ -3,26 +3,30 @@ from datetime import datetime
 
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
-from Core.Models.Time.Recurrence import Recurrence
 from Core.Models.Schedule import Schedule
-from Infrastructure.Utils.Logs.PerformanceTracker import PerformanceTracker
-from Infrastructure.Utils.Parser.EventParser import EventParser
+from Core.Models.Time.Recurrence import Recurrence
 from Infrastructure.Utils.Logs.Logger import Logger
+from Infrastructure.Utils.Parser.EventParser import EventParser
 
 
 class EventService:
     def __init__(self):
         self.parser = EventParser()
 
-    #@PerformanceTracker.timeit()
+    # @PerformanceTracker.timeit()
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
 
-        event = await self.parser.parse(sentence, recurrence)
-        if priority:
-            event.priority = Priority.from_str(priority)
+        try:
+            event = await self.parser.parse(sentence, recurrence)
 
-        return event
+            if priority:
+                event.priority = Priority.from_str(priority)
+
+            return event
+        except ValueError as e:
+            Logger.error(f"Unable to create event. Cause: {e}")
+            raise
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
         recurrence = None

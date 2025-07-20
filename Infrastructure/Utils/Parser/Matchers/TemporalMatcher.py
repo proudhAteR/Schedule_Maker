@@ -1,6 +1,6 @@
-from asyncio import gather
 import re
-from datetime import datetime
+from asyncio import gather
+
 from Core.Interface.Matcher import Matcher
 from Core.Models.Enum.Field import Field
 from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.DayExtractor import DayExtractor
@@ -35,13 +35,10 @@ class TemporalMatcher(Matcher):
         super().__init__()
 
     async def match(self, sentence: str) -> dict:
-        """Parse sentence with enhanced natural language understanding."""
         if not sentence or not sentence.strip():
-            now = datetime.now()
-            return {Field.DAY: "", Field.START: now, Field.END: now}
+            raise ValueError("No sentence detected.")
 
-        normalized = self.normalizer.run(sentence)
-        day_str, start_raw, end_raw = await self.extract_comp(normalized)
+        day_str, start_raw, end_raw = await self.__extract_time(sentence)
 
         if not start_raw or not end_raw:
             return self.fallback.handle(sentence, day_str)
@@ -54,13 +51,15 @@ class TemporalMatcher(Matcher):
             Field.END: end
         }
 
-    async def extract_comp(self, normalized):
+    async def __extract_time(self, sentence: str):
+        normalized = self.normalizer.run(sentence)
+
         day_str_task = self.day_extract.extract(normalized)
-        time_tuple_task = self.time_extract.extract(normalized)
+        time_task = self.time_extract.extract(normalized)
 
         day_str, (start_raw, end_raw) = await gather(
             day_str_task,
-            time_tuple_task
+            time_task
         )
 
         return day_str, start_raw, end_raw
