@@ -11,8 +11,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 #### ✨ Added
 
-- **Multilingual input support** using  [`deep-translator`](https://pypi.org/project/deep-translator/) and [
-  `langdetect`](https://pypi.org/project/langdetect/)
+- **Multilingual input support** using  [`deep-translator`](https://pypi.org/project/deep-translator/)
 - **Natural language parsing**: Terms like `"noon"`, `"evening"`, `"night"` now correctly resolve to actual times
 
 ---

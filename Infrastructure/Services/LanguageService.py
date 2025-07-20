@@ -28,15 +28,9 @@ class LanguageService:
 
     async def __process(self, sentence: str):
         sentence = sentence.strip()
-        lang = self.__detect(sentence)
-
-        if lang != 'en':
-            sentence = self.__translate(sentence)
+        sentence = self.__translate(sentence)
 
         return sentence
-
-    def __detect(self, text: str):
-        return self.__translator.detect_lang(text)
 
     def __translate(self, text: str, to_lang: str = 'en'):
         return self.__translator.translate(text, to_lang)
