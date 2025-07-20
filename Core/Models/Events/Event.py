@@ -3,6 +3,7 @@ from typing import Type
 
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Time.Period import Period
+from Infrastructure.Services.ZoneService import ZoneService
 
 
 @dataclass
@@ -11,7 +12,7 @@ class Event:
     period: Period
     location: str
     description: str = ''
-    timezone: str = "America/Toronto"
+    timezone: str = ZoneService.get_timezone()
     priority: Priority = Priority.MEDIUM
 
     # noinspection PyTypeChecker

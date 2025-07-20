@@ -5,12 +5,14 @@ from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 from Infrastructure.Services.Google.GoogleAPI import GoogleAPI
 from Infrastructure.Utils.Logs.Logger import Logger
+from Infrastructure.Utils.Logs.PerformanceTracker import PerformanceTracker
 
 
 class GoogleCalendar(CalendarAPI, GoogleAPI):
     def __init__(self):
         GoogleAPI.__init__(self, 'calendar')
 
+    #@PerformanceTracker.timeit()
     async def insert(self, event: Event, calendar_id: str = 'primary'):
         try:
             events = self.resource.events()

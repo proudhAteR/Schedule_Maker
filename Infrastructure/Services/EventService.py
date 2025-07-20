@@ -5,6 +5,7 @@ from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
 from Core.Models.Time.Recurrence import Recurrence
 from Core.Models.Schedule import Schedule
+from Infrastructure.Utils.Logs.PerformanceTracker import PerformanceTracker
 from Infrastructure.Utils.Parser.EventParser import EventParser
 from Infrastructure.Utils.Logs.Logger import Logger
 
@@ -13,6 +14,7 @@ class EventService:
     def __init__(self):
         self.parser = EventParser()
 
+    #@PerformanceTracker.timeit()
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
 

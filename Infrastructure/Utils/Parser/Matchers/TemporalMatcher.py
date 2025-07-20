@@ -18,7 +18,7 @@ TIME_EXPRESSIONS = {
     'morning': '9:00 am',
     'afternoon': '2:00 pm',
     'evening': '6:00 pm',
-    'night': '9:00 pm',
+    'night': '9:00 pm'
 }
 
 
