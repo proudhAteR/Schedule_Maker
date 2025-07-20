@@ -45,7 +45,7 @@ Math in Room A from 8am to 1pm every Monday by John
 - `BIO200 Lab in Science Wing from 08:15 to 10:45 every Friday by Dr. Li`
 - `Piano lesson in music room from 16 to 17 every Sunday by Mr. Bennett`
 - `Cours de mathématiques dans la salle B de 9h à 11h chaque lundi par M. Dupont` *(French)*
-- `Trabajo en oficina en la tarde todos los martes` *(Spanish — "Afternoon work in the office every Tuesday")*
+- `Trabajo en oficina en la tarde todos los martes` *(Spanish)*
 
 ---
 
