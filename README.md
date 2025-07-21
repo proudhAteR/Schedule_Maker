@@ -80,9 +80,19 @@ For more information on the commands use:
    cd Schedule_Maker
    ```
 
-2. Add your Google API credentials
-    - Place your credentials.json file into the secrets/ directory.
-    - If you don’t have it, contact the project maintainer (see contact info below).
+2. Run the initialization script.
+    - On **Linux/macOS**:
+      ```bash
+      ./conf/init.sh
+      ```
+
+    - On **Windows** (Command Prompt):
+      ```cmd
+      conf/init.bat
+      ```
+      ⚠️ If you encounter issues with credentials, make sure the script was run from the root of the project, and you’re
+      not
+      using PowerShell (use Command Prompt instead).
 
 3. Activate the virtual environment if it's not already (Optional)
 
@@ -105,7 +115,7 @@ For more information on the commands use:
 
 ## 📬 Contact
 
-Need help with credentials or want to contribute?
+Need help with anything or want to contribute?
 
 📧 Email: cboleku162004@gmail.com
 
