@@ -44,4 +44,9 @@ class FileHandler:
 
     @staticmethod
     def get_env(key: str):
-        return os.environ.get(key)
+        return os.getenv(key)
+
+    @staticmethod
+    def get_env_json(key: str) -> dict:
+        raw = os.getenv(key)
+        return json.loads(raw) if raw else {}

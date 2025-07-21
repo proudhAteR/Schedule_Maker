@@ -19,6 +19,8 @@ jobs:
       - name: Install package dependencies
         run: pip install -e .
 
+      - name: Check if env is set
+        run: echo "Secret is set" && [ ! -z "$GOOGLE_CREDENTIALS" ]
 
       - name: Run app
         run: sm overview
