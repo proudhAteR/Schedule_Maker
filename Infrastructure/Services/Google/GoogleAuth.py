@@ -2,7 +2,6 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 from Core.Interface.APIs.Auth import Auth
-from Infrastructure.Clients.Client import Client
 from Infrastructure.Clients.GoogleClient import GoogleClient
 from Infrastructure.Utils.FileHandler import FileHandler
 from Infrastructure.Utils.Logs.Logger import Logger
@@ -11,7 +10,6 @@ from Infrastructure.Utils.Logs.Logger import Logger
 class GoogleAuth(Auth):
     def __init__(self, client: GoogleClient):
         self.token_path = FileHandler.secret_path('token.json')
-        self.cred_path = FileHandler.secret_path('credentials.json')
         self.client = client
 
     def auth(self) -> Credentials:
@@ -46,5 +44,7 @@ class GoogleAuth(Auth):
         FileHandler.write(self.token_path, creds.to_json())
 
     def __run_auth_flow(self) -> Credentials:
-        flow = InstalledAppFlow.from_client_secrets_file(self.cred_path, self.client.scopes)
+        flow = InstalledAppFlow.from_client_config(
+            FileHandler.get_env('GOOGLE_CREDENTIALS'), self.client.scopes
+        )
         return flow.run_local_server(port=0)

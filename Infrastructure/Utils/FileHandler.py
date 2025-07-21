@@ -1,3 +1,4 @@
+import json
 import os
 
 
@@ -10,12 +11,12 @@ class FileHandler:
             cls.__ROOT = cls.__find_root()
         return cls.__ROOT
 
-    @classmethod
-    def exists(cls, path: str):
+    @staticmethod
+    def exists(path: str):
         return os.path.exists(path)
 
-    @classmethod
-    def write(cls, path: str, text: str):
+    @staticmethod
+    def write(path: str, text: str):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding='utf8') as f:
             f.write(text)
@@ -26,8 +27,8 @@ class FileHandler:
             cls.root(), 'App', 'secrets', file
         )
 
-    @classmethod
-    def __find_root(cls, marker: str = "pyproject.toml") -> str:
+    @staticmethod
+    def __find_root(marker: str = "pyproject.toml") -> str:
         path = os.path.abspath(__file__)
         while True:
             path = os.path.dirname(path)
@@ -35,3 +36,12 @@ class FileHandler:
                 return path
             if path == os.path.dirname(path):
                 raise FileNotFoundError(f"{marker} not found in any parent directory")
+
+    @staticmethod
+    def read_json(file: str):
+        with open(file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+    @staticmethod
+    def get_env(key: str):
+        return os.getenv(key)
