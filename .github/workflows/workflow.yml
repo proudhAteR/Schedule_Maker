@@ -5,6 +5,8 @@ on: [ push ]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     steps:
       - uses: actions/checkout@v3
@@ -17,10 +19,6 @@ jobs:
       - name: Install package dependencies
         run: pip install -e .
 
-      - name: Create credentials.json from secret
-        run: echo "$GOOGLE_CREDENTIALS" > ./App/secrets/credentials.json
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Run app
         run: sm overview

@@ -44,4 +44,4 @@ class FileHandler:
 
     @staticmethod
     def get_env(key: str):
-        return os.getenv(key)
+        return os.environ.get(key)
