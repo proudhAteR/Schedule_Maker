@@ -23,4 +23,4 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       - name: Run app
-        run: python -m App.main
+        run: sm overview
