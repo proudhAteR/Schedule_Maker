@@ -13,6 +13,7 @@ from Infrastructure.Utils.Logs.Logger import Logger
 
 class App:
     def __init__(self):
+
         Imp.run()
         self.app = Typer()
         self.maker = Schedule_Maker(

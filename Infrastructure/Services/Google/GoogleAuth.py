@@ -44,7 +44,7 @@ class GoogleAuth(Auth):
         FileHandler.write(self.token_path, creds.to_json())
 
     def __run_auth_flow(self) -> Credentials:
-        config = FileHandler.get_env_json('GOOGLE_CREDENTIALS')
+        config = FileHandler.get_config()
         flow = InstalledAppFlow.from_client_config(
             config, self.client.scopes
         )

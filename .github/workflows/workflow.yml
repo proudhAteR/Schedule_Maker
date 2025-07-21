@@ -1,26 +1,15 @@
-name: Run Schedule Maker
+name: Test Google Credentials Secret
 
 on: [ push ]
 
 jobs:
-  build:
+  test-secret:
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install package dependencies
-        run: pip install -e .
-
-      - name: Check if env is set
+      - name: Check if GOOGLE_CREDENTIALS is set
         run: echo "Secret is set" && [ ! -z "$GOOGLE_CREDENTIALS" ]
-
-      - name: Run app
-        run: sm overview
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}

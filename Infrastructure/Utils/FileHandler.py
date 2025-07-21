@@ -43,10 +43,6 @@ class FileHandler:
             return json.load(f)
 
     @staticmethod
-    def get_env(key: str):
-        return os.getenv(key)
-
-    @staticmethod
-    def get_env_json(key: str) -> dict:
-        raw = os.getenv(key)
-        return json.loads(raw) if raw else {}
+    def get_config():
+        raw = os.getenv('GOOGLE_CREDENTIALS')
+        return json.loads(raw)
