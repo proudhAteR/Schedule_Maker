@@ -44,5 +44,9 @@ class FileHandler:
 
     @staticmethod
     def get_config():
+        if not os.getenv("GOOGLE_CREDENTIALS"):
+            with open("Conf/.google_credentials.json") as f:
+                os.environ["GOOGLE_CREDENTIALS"] = f.read()
+
         raw = os.getenv('GOOGLE_CREDENTIALS')
         return json.loads(raw)
