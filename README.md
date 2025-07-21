@@ -12,9 +12,14 @@ for speed and flexibility, it turns natural language inputs into structured cale
 #### ✨ Added
 
 - **Overview Command**: You can now get a quick summary of your schedule for a specific date.
-   ```bash
-   sm overview --on today
-   ```
+    - Running the command **without** the `-o` / `--on` option shows the schedule for **today** by default:
+      ```bash
+      sm overview
+      ```
+    - Using the `-o` / `--on` option lets you choose a specific date:
+      ```bash
+      sm overview -o tomorrow
+      ```
 
 ---
 
