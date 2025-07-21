@@ -41,3 +41,6 @@ class EventParser(Parser):
                 break
 
         return filtered_kwargs
+
+    async def get_date(self, date_str: str):
+        return await self.__language.parse(date_str)

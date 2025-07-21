@@ -71,3 +71,9 @@ class TimeParser(Parser):
                 return f"{groups[0]} {groups[1]}", f"{groups[0]} {groups[1]}"
 
         return "", ""
+
+    @staticmethod
+    def get_date(date_str: str | None):
+        settings = {'RETURN_AS_TIMEZONE_AWARE': True}
+        dt = dateparser.parse(date_str, settings=settings) if date_str else datetime.now().astimezone()
+        return dt or datetime.now().astimezone()

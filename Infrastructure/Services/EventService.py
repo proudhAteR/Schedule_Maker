@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
@@ -11,15 +10,13 @@ from Infrastructure.Utils.Parser.EventParser import EventParser
 
 class EventService:
     def __init__(self):
-        self.parser = EventParser()
+        self.__parser = EventParser()
 
     # @PerformanceTracker.timeit()
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
-
         try:
-            event = await self.parser.parse(sentence, recurrence)
-
+            event = await self.__parser.parse(sentence, recurrence)
             if priority:
                 event.priority = Priority.from_str(priority)
 
@@ -29,13 +26,6 @@ class EventService:
             raise
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
-        recurrence = None
-
-        if date_str:
-            recurrence = Recurrence(
-                first_occurrence=datetime.strptime(date_str, "%Y-%m-%d")
-            )
-
         async def parse_line(line: str):
             try:
                 return await self.create_event(line, recurrence=recurrence)
@@ -43,9 +33,17 @@ class EventService:
                 Logger().error(f"Failed to parse line: '{line}'. Reason: {e}")
                 return None
 
+        recurrence = None
+        if date_str:
+            recurrence = Recurrence(
+                first_occurrence=await self.get_date(date_str)
+            )
+
         tasks = [parse_line(line) for line in block]
         results = await asyncio.gather(*tasks)
-
         events = [e for e in results if e is not None]
 
         return Schedule(events, recurrence)
+
+    async def get_date(self, date_str: str):
+        return await self.__parser.get_date(date_str)

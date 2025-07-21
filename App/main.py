@@ -23,6 +23,7 @@ class App:
     def _setup_commands(self):
         self.app.command(help="Create an event from natural language input.")(self.event)
         self.app.command(help="Create a schedule using a block of events.")(self.schedule)
+        self.app.command(help="Gives the schedule for a given date.")(self.overview)
 
     @staticmethod
     def _validate_priority(priority: str) -> str:
@@ -34,7 +35,7 @@ class App:
 
         if priority not in valid_priorities:
             Logger.error(f"Priority must be one of: {', '.join(valid_priorities)}")
-            raise Exit(1)
+            raise
 
         return priority
 
@@ -44,7 +45,7 @@ class App:
             path = Path(file_path)
             if not path.exists():
                 Logger.error(f"File not found: {file_path}")
-                raise Exit(1)
+                raise
 
             with open(path, "r", encoding="utf-8") as f:
                 events = [line.strip() for line in f.readlines() if line.strip()]
@@ -56,7 +57,7 @@ class App:
 
         except IOError as e:
             Logger.error(f"Error reading file {file_path}: {e}")
-            raise Exit(1)
+            raise
 
     @staticmethod
     def _parse_events_string(events_str: str) -> List[str]:
@@ -64,7 +65,7 @@ class App:
 
         if not events:
             Logger.error("No valid events found in the provided string")
-            raise Exit(1)
+            raise
 
         return events
 
@@ -75,7 +76,7 @@ class App:
             return self._parse_events_string(events_str)
         else:
             Logger.error("You must provide either --file or a block of events as argument")
-            raise Exit(1)
+            raise
 
     def event(
             self,
@@ -116,10 +117,24 @@ class App:
         try:
             events_list = self._get_events_list(file, events)
             async_call(self.maker.schedule(events_list, start))
-
         except Exception as e:
             Logger.error(f"Failed to create schedule: {e}")
-            raise Exit(1)
+            raise Exit(2)
+
+    def overview(
+            self, date: Optional[str] = Option(
+                None,
+                "-o",
+                "--on",
+                help="The day or moment you want to see the schedule for (e.g., 'today', 'next Monday', '2025-07-22')."
+            )
+    ):
+
+        try:
+            async_call(self.maker.overview(date))
+        except Exception as e:
+            Logger.error(f"Failed to give overview: {e}")
+            raise Exit(3)
 
     def run(self):
         self.app()

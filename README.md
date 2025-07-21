@@ -7,12 +7,14 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## 🆕 Changelog
 
-### v0.1.5 (2025‑07‑18)
+### v0.1.6 (2025‑07‑21)
 
 #### ✨ Added
 
-- **Multilingual input support** using  [`deep-translator`](https://pypi.org/project/deep-translator/)
-- **Natural language parsing**: Terms like `"noon"`, `"evening"`, `"night"` now correctly resolve to actual times
+- **Overview Command**: You can now get a quick summary of your schedule for a specific date.
+   ```bash
+   sm overview --on today
+   ```
 
 ---
 

@@ -1,10 +1,12 @@
 import asyncio
+from datetime import datetime
 
 from Core.Interface.APIs.TranslationAPI import TranslationAPI
 from Core.Interface.Matcher import Matcher
 from Core.Models.Enum.Field import Field
 from Core.Models.LanguageMatch import LanguageMatch
 from Infrastructure.Services.Google.GoogleTranslator import GoogleTranslator
+from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
 class LanguageService:
@@ -27,6 +29,9 @@ class LanguageService:
         ), sentence
 
     async def __process(self, sentence: str):
+        if not sentence:
+            return ''
+
         sentence = sentence.strip()
         sentence = self.__translate(sentence)
 
@@ -46,3 +51,7 @@ class LanguageService:
             data.update(res)
 
         return data, sentence
+
+    async def parse(self, date_str: str | None) -> datetime:
+        date_str = await self.__process(date_str)
+        return TimeParser.get_date(date_str)
