@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.6.2"
+version = "0.1.6.3"
 description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,7 +19,9 @@ dependencies = [
     "google-auth",
     "google-auth-httplib2",
     "google-auth-oauthlib",
-    "googleapis-common-protos"
+    "googleapis-common-protos",
+    "spacy",
+    "en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"
 ]
 
 [project.scripts]

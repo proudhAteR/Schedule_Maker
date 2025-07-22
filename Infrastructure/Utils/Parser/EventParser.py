@@ -12,13 +12,13 @@ class EventParser(Parser):
         self.__language = LanguageService()
 
     async def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
-        match, sentence = await self.__language.pattern_match(sentence)
+        match, title = await self.__language.pattern_match(sentence)
         period = Period.from_match(match, recurrence)
 
-        event = Event.detect_type(sentence)
+        event = Event.detect_type(title)
 
         kwargs = {
-            'name': match.name,
+            'name': match.title,
             'period': period,
             'location': match.location,
         }

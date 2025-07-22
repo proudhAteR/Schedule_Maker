@@ -15,6 +15,7 @@ class EventService:
     # @PerformanceTracker.timeit()
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
+        event = None
         try:
             event = await self.__parser.parse(sentence, recurrence)
             if priority:
@@ -22,16 +23,12 @@ class EventService:
 
             return event
         except ValueError as e:
-            Logger.error(f"Unable to create event. Cause: {e}")
+            Logger.error(f"Unable to create {event.name}. Cause: {e}")
             raise
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
         async def parse_line(line: str):
-            try:
-                return await self.create_event(line, recurrence=recurrence)
-            except Exception as e:
-                Logger().error(f"Failed to parse line: '{line}'. Reason: {e}")
-                return None
+            return await self.create_event(line, recurrence=recurrence)
 
         recurrence = None
         if date_str:

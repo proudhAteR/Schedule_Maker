@@ -3,7 +3,7 @@ from datetime import datetime
 
 @dataclass
 class LanguageMatch :
-    name : str
+    title : str
     location : str
     start : datetime
     end : datetime

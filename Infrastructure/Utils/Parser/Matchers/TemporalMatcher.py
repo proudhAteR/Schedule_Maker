@@ -34,7 +34,8 @@ class TemporalMatcher(Matcher):
         self.normalizer = Normalizer(TIME_EXPRESSIONS)
         super().__init__()
 
-    async def match(self, sentence: str) -> dict:
+    async def match(self, tokens: dict) -> dict:
+        sentence = tokens.get('time', '')
         if not sentence or not sentence.strip():
             raise ValueError("No sentence detected.")
 

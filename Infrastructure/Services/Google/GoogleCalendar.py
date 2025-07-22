@@ -15,15 +15,11 @@ class GoogleCalendar(CalendarAPI, GoogleAPI):
 
     # @PerformanceTracker.timeit()
     async def insert(self, event: Event, calendar_id: str = 'primary'):
-        try:
-            insert = self.events.insert(
-                calendarId=calendar_id, body=event.to_google_event()
-            )
-            response = insert.execute()
-            Logger.info(f"Event created: {response.get('id')}")
-        except Exception as e:
-            Logger.error(f"Failed to create event: {e}")
-            raise
+        insert = self.events.insert(
+            calendarId=calendar_id, body=event.to_google_event()
+        )
+        response = insert.execute()
+        Logger.info(f"Event created: {response.get('id')}")
 
     async def insert_all(self, schedule: Schedule):
         tasks = [self.insert(event) for event in schedule.events]

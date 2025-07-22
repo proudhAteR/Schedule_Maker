@@ -20,6 +20,8 @@ for speed and flexibility, it turns natural language inputs into structured cale
       ```bash
       sm overview -o tomorrow
       ```
+- Improved Natural Language Processing: Thanks to [`spaCy`](https://spacy.io/), the app's NLP capabilities are now more
+  accurate and flexible.
 
 ---
 
