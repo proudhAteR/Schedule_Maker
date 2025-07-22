@@ -29,22 +29,27 @@ class App:
         self.app.command(help="Gives the schedule for a given date.")(self.overview)
 
     def _setup_callbacks(self):
-        @self.app.callback()
+        @self.app.callback(invoke_without_command=True)
         def main(
-            upgrade: bool = Option(
-                False,
-                "--upgrade",
-                "-u",
-                help="Upgrade Schedule Maker to the latest version",
-                is_flag=True,
-                show_default=True,
-            )
+                ctx: typer.Context,
+                upgrade: bool = Option(
+                    False,
+                    "--upgrade",
+                    "-u",
+                    help="Upgrade Schedule Maker to the latest version",
+                    is_flag=True,
+                    show_default=True,
+                )
         ):
             if upgrade:
                 self.run_update()
                 raise Exit()
 
-    # Your static or instance methods:
+            # Optional: show help if no command is provided
+            if ctx.invoked_subcommand is None:
+                typer.echo(ctx.get_help())
+                raise Exit()
+
     @staticmethod
     def is_pipx():
         return "pipx" in sys.executable.lower()
@@ -85,6 +90,7 @@ class App:
             self.update_pipx()
         else:
             self.update_pip()
+
     @staticmethod
     def _validate_priority(priority: str) -> str:
         if not priority:
