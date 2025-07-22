@@ -82,7 +82,7 @@ For more information on the commands use:
    cd Schedule_Maker
    ```
 
-2. Activate the virtual environment if it's not already (Optional)
+2. Activate the virtual environment if it's not already
 
    ```bash
    python -m venv .venv
@@ -92,12 +92,13 @@ For more information on the commands use:
 3. Go to the project root and install the project using
 
    ```bash
-   pip install -e .
+    pip install --upgrade pip
+    pip install --only-binary :all: .
    ````
-   If you don't want to use a virtual environment use:
-   ```bash
-   pipx install -e .
-   ````
+4. If you want the installation to be global run:
+   ```bash 
+   pipx install git+https://github.com/proudhAteR/Schedule_Maker.git --pip-args="--only-binary :all:"
+    ```
 
 ---
 
