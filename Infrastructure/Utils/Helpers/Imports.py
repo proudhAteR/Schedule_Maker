@@ -7,6 +7,7 @@ from spacy.util import is_package
 
 import Core.Models.Events
 import Infrastructure.Utils.Parser.Matchers
+from Infrastructure.Utils.Logs.Logger import Logger
 
 
 def run():
@@ -26,6 +27,6 @@ def __load_all_matchers():
 
 def ensure_spacy_model(model: str):
     if not is_package(model):
-        print(f"[INFO] spaCy model '{model}' not found. Downloading...")
+        Logger.warning(f"spaCy model '{model}' not found. Downloading...")
         spacy.cli.download(model)
     return spacy.load(model)
