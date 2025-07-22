@@ -1,4 +1,4 @@
-import spacy
+import Infrastructure.Utils.Helpers.Imports as Imp
 from spacy.matcher import Matcher
 from spacy.pipeline import EntityRuler
 from spacy.tokens.doc import Doc
@@ -225,7 +225,7 @@ EXTRA_PATTERNS = [
 class Spacy(Tokenizer):
 
     def __init__(self, model: str = "en_core_web_sm"):
-        self.core = spacy.load(model)
+        self.core = Imp.ensure_spacy_model(model)
         self.matcher = Matcher(self.core.vocab)
         self.__add_patterns()
 

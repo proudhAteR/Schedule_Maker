@@ -12,7 +12,6 @@ import Infrastructure.Utils.Parser.Matchers
 def run():
     __load_all_events()
     __load_all_matchers()
-    __ensure_spacy_model()
 
 
 def __load_all_events():
@@ -25,7 +24,8 @@ def __load_all_matchers():
         importlib.import_module(f"Infrastructure.Utils.Parser.Matchers.{module_name}")
 
 
-def __ensure_spacy_model(model: str = "en_core_web_sm"):
+def ensure_spacy_model(model: str):
     if not is_package(model):
         print(f"[INFO] spaCy model '{model}' not found. Downloading...")
         spacy.cli.download(model)
+    return spacy.load(model)
