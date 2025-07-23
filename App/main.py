@@ -1,16 +1,12 @@
-import subprocess
-import sys
 from asyncio import run as async_call
 from pathlib import Path
 from typing import Optional, List
 
-import typer
 from typer import Typer, Option, Argument, Exit
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from App.Schedule_Maker import Schedule_Maker
 from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
-from Infrastructure.Utils.FileHandler import FileHandler
 from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
 from Infrastructure.Utils.Logs.Logger import Logger
 
@@ -19,77 +15,15 @@ class App:
     def __init__(self):
         Imp.run()
         self.app = Typer()
-        self.maker = Schedule_Maker(GoogleCalendar())
+        self.maker = Schedule_Maker(
+            GoogleCalendar()
+        )
         self._setup_commands()
-        self._setup_callbacks()
 
     def _setup_commands(self):
         self.app.command(help="Create an event from natural language input.")(self.event)
         self.app.command(help="Create a schedule using a block of events.")(self.schedule)
         self.app.command(help="Gives the schedule for a given date.")(self.overview)
-
-    def _setup_callbacks(self):
-        @self.app.callback(invoke_without_command=True)
-        def main(
-                ctx: typer.Context,
-                upgrade: bool = Option(
-                    False,
-                    "--upgrade",
-                    "-u",
-                    help="Upgrade Schedule Maker to the latest version",
-                    is_flag=True,
-                    show_default=True,
-                )
-        ):
-            if upgrade:
-                self.run_update()
-                raise Exit()
-
-            # Optional: show help if no command is provided
-            if ctx.invoked_subcommand is None:
-                typer.echo(ctx.get_help())
-                raise Exit()
-
-    @staticmethod
-    def is_pipx():
-        return "pipx" in sys.executable.lower()
-
-    @staticmethod
-    def update_pipx():
-        try:
-            typer.echo("Updating Schedule Maker via pipx...")
-            subprocess.run([sys.executable, "-m", "pipx", "upgrade", "sm"], check=True)
-            typer.echo("Update completed successfully.")
-        except subprocess.CalledProcessError:
-            typer.echo("pipx upgrade failed, trying uninstall + install...")
-            subprocess.run([sys.executable, "-m", "pipx", "uninstall", "sm"], check=True)
-            subprocess.run(
-                [
-                    sys.executable,
-                    "-m",
-                    "pipx",
-                    "install",
-                    "git+https://github.com/proudhAteR/Schedule_Maker.git",
-                    "--pip-args=--only-binary :all:",
-                ],
-                check=True,
-            )
-            typer.echo("Update completed successfully.")
-
-    @staticmethod
-    def update_pip():
-        repo_path = FileHandler.root()
-        typer.echo(f"Updating from git in {repo_path} ...")
-        subprocess.run(["git", "-C", str(repo_path), "pull"], check=True)
-        typer.echo("Reinstalling package...")
-        subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "-e", str(repo_path)], check=True)
-        typer.echo("Update completed successfully.")
-
-    def run_update(self):
-        if self.is_pipx():
-            self.update_pipx()
-        else:
-            self.update_pip()
 
     @staticmethod
     def _validate_priority(priority: str) -> str:

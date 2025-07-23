@@ -22,7 +22,7 @@ class Logger:
         if not __logger.handlers:
             __logger.setLevel(INFO)
             handler = StreamHandler()
-            formatter = ColorFormatter('%(asctime)s - [%(levelname)s] - %(message)s')
+            formatter = ColorFormatter('[%(levelname)s] - %(message)s')
             handler.setFormatter(formatter)
             __logger.addHandler(handler)
             __logger.propagate = False

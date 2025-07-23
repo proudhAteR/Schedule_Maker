@@ -74,7 +74,7 @@ For more information on the commands use:
 
 - (Optional but recommended) Python virtual environment
 
-## 🔧 Installation Steps
+### 🔧 Installation Steps
 
 1. Clone the repository
    ```bash
@@ -93,13 +93,27 @@ For more information on the commands use:
 
    ```bash
     pip install --upgrade pip
-    pip install --only-binary :all: .
+    pip install .
    ````
 4. If you want the installation to be global run:
    ```bash 
-   pipx install git+https://github.com/proudhAteR/Schedule_Maker.git --pip-args="--only-binary :all:"
+   pipx install git+https://github.com/proudhAteR/Schedule_Maker.git"
     ```
 
+### 🔄 Upgrade Instructions
+- If installed via pipx (recommended for global use):
+    ```bash
+    pipx upgrade sm
+    ```
+- If installed manually in a virtual environment:
+  1. Activate your virtual environment:
+      ```bash
+     source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+      ```
+  2. Run the upgrade command:
+     ```bash
+      pip install --upgrade git+https://github.com/proudhAteR/Schedule_Maker.git
+       ```
 ---
 
 ## 📬 Contact
