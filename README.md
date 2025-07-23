@@ -7,7 +7,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## 🆕 Changelog
 
-### v0.1.6 (2025‑07‑21)
+### v0.1.7 (2025‑07‑22)
 
 #### ✨ Added
 
