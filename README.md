@@ -97,7 +97,7 @@ For more information on the commands use:
    ````
 4. If you want the installation to be global run:
    ```bash 
-   pipx install git+https://github.com/proudhAteR/Schedule_Maker.git"
+   pipx install git+https://github.com/proudhAteR/Schedule_Maker.git
     ```
 
 ### 🔄 Upgrade Instructions
