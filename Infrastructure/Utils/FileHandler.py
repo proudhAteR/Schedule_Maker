@@ -10,43 +10,29 @@ class FileHandler:
 
     @classmethod
     def root(cls) -> Path:
-        """Get the root directory for the app's files."""
         if cls.__ROOT is None:
             cls.__ROOT = cls.__find_root()
         return cls.__ROOT
 
     @classmethod
     def __find_root(cls) -> Path:
-        """
-        Find the root directory by checking:
-        1. Environment variable override
-        2. Presence of pyproject.toml in parent directories (dev)
-        3. Fallback to user home config directory (~/.sm)
-        """
-        # 1. Check environment variable override
         env_path = os.getenv(cls.ROOT_ENV_VAR)
         if env_path:
             p = Path(env_path).expanduser().resolve()
             if p.exists():
                 return p
 
-        # 2. Search for pyproject.toml upwards from this file (dev environment)
         cur = Path(__file__).parent.resolve()
         for parent in [cur] + list(cur.parents):
             if (parent / "pyproject.toml").exists():
                 return parent
 
-        # 3. Fallback to user home config directory
         fallback = Path.home() / ".sm"
         fallback.mkdir(parents=True, exist_ok=True)
         return fallback
 
     @classmethod
     def secret_path(cls, filename: str) -> Path:
-        """
-        Return the full path to a secret file inside the secrets' directory.
-        Example: ~/.sm/App/secrets/token.json or project_root/App/secrets/token.json
-        """
         return cls.root() / "App" / "secrets" / filename
 
     @staticmethod
@@ -68,10 +54,6 @@ class FileHandler:
 
     @staticmethod
     def get_config() -> dict:
-        """
-        Load Google credentials from env var or fallback file.
-        Assumes `Conf/.google_credentials.json` exists relative to working dir.
-        """
         if not os.getenv("GOOGLE_CREDENTIALS"):
             cred_path = Path("Conf/.google_credentials.json")
             if cred_path.exists():

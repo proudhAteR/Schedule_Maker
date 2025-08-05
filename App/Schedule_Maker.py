@@ -5,7 +5,6 @@ from Infrastructure.Services.EventService import EventService
 
 TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
-
 class Schedule_Maker(Generic[TCalendar]):
     def __init__(self, calendar: TCalendar):
         self.calendar: TCalendar = calendar
