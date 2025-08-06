@@ -76,26 +76,11 @@ For more information on the commands use:
 
 ### 🔧 Installation Steps
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/proudhAteR/Schedule_Maker.git
-   cd Schedule_Maker
-   ```
-
-2. Activate the virtual environment if it's not already
-
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-   ````
-
-3. Go to the project root and install the project using
-
-   ```bash
-    pip install --upgrade pip
-    pip install .
-   ````
-4. If you want the installation to be global run:
+1. If you want the app to be installed in your venv:
+   ```bash 
+   pip install git+https://github.com/proudhAteR/Schedule_Maker.git
+    ```
+2. If you want the installation to be global run:
    ```bash 
    pipx install git+https://github.com/proudhAteR/Schedule_Maker.git
     ```
