@@ -8,4 +8,4 @@ class LanguageMatch :
     start : datetime
     end : datetime
     day_str : str
-    more : str
+    extra : str

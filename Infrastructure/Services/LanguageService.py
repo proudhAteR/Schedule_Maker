@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+from typing import Any
 
 from Core.Interface.APIs.TranslationAPI import TranslationAPI
 from Core.Interface.Matcher import Matcher
@@ -13,54 +14,42 @@ from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 class LanguageService:
     def __init__(self, translator: TranslationAPI = GoogleTranslator(), tokenizer: Tokenizer = Spacy()):
-        self.__matchers: list[Matcher] = [
-            matcher() for matcher in Matcher.all_subclasses()
-        ]
-        self.__translator = translator
-        self.__tokenizer = tokenizer
+        self._translator = translator
+        self._tokenizer = tokenizer
+        self._matchers: list[Matcher] = [matcher() for matcher in Matcher.all_subclasses()]
 
-    async def pattern_match(self, title: str) -> tuple:
-        data, title = await self.match_all(title)
-
-        return LanguageMatch(
-            title=data.get(Field.TITLE, ""),
-            location=data.get(Field.LOCATION, ""),
-            start=data.get(Field.START),
-            end=data.get(Field.END),
-            day_str=data.get(Field.DAY, ""),
-            more=data.get(Field.EXTRA, "")
-        ), title
-
-    async def process(self, sentence: str) -> dict:
+    async def process_sentence(self, sentence: str) -> dict[str, Any]:
         if not sentence:
             return {}
 
-        sentence = sentence.strip()
-        sentence = self.__translate(sentence)
+        translated = self._translator.translate(sentence.strip())
+        return self._tokenizer.tokenize(translated)
 
-        return self.__tokenizer.tokenize(sentence)
+    async def match(self, sentence: str) -> LanguageMatch:
+        tokenized_data = await self.process_sentence(sentence)
+        match_results = await asyncio.gather(
+            *[matcher.match(tokenized_data) for matcher in self._matchers],
+            return_exceptions=True
+        )
+        aggr = self._aggregate_matches(match_results)
 
-    def __translate(self, text: str, to_lang: str = 'en'):
-        return self.__translator.translate(text, to_lang)
+        return LanguageMatch(
+            title=aggr.get(Field.TITLE, ''),
+            location=aggr.get(Field.LOCATION, ''),
+            start=aggr.get(Field.START),
+            end=aggr.get(Field.END),
+            day_str=aggr.get(Field.DAY, ''),
+            extra=aggr.get(Field.EXTRA, '')
+        )
 
-    async def match_all(self, sentence: str) -> tuple:
+    @staticmethod
+    def _aggregate_matches(results: list) -> dict:
         data = {}
-
-        tokens = await self.process(sentence)
-
-        tasks = [matcher.match(tokens) for matcher in self.__matchers]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-
         for res in results:
             if isinstance(res, dict):
                 data.update(res)
+        return data
 
-        title = tokens.get('title')
-
-        return data, title
-
-    async def parse(self, date_str: str | None) -> datetime:
-        tokens = await self.process(date_str)
-        return TimeParser.get_date(
-            tokens.get('time', '')
-        )
+    async def parse_datetime(self, date_str: str | None) -> datetime:
+        tokens = await self.process_sentence(date_str or '')
+        return TimeParser.get_date(tokens.get("time", ''))

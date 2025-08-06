@@ -12,10 +12,10 @@ class EventParser(Parser):
         self.__language = LanguageService()
 
     async def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
-        match, title = await self.__language.pattern_match(sentence)
+        match = await self.__language.match(sentence)
         period = Period.from_match(match, recurrence)
 
-        event = Event.detect_type(title)
+        event = Event.detect_type(match.title)
 
         kwargs = {
             'name': match.title,
@@ -23,7 +23,7 @@ class EventParser(Parser):
             'location': match.location,
         }
 
-        kwargs = self.__define_args(kwargs, event, match.more)
+        kwargs = self.__define_args(kwargs, event, match.extra)
 
         # noinspection PyArgumentList
         return event(**kwargs)
@@ -43,4 +43,4 @@ class EventParser(Parser):
         return filtered_kwargs
 
     async def get_date(self, date_str: str):
-        return await self.__language.parse(date_str)
+        return await self.__language.parse_datetime(date_str)
