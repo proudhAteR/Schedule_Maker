@@ -76,29 +76,38 @@ For more information on the commands use:
 
 ### 🔧 Installation Steps
 
-1. If you want the app to be installed in your venv:
-   ```bash 
-   pip install git+https://github.com/proudhAteR/Schedule_Maker.git
-    ```
-2. If you want the installation to be global run:
+- If you want the app to be installed in your venv:
+
+    1. Activate your virtual environment:
+          ```bash
+         source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+          ```
+    2. Run the installation command:
+         ```bash
+        pip install git+https://github.com/proudhAteR/Schedule_Maker.git
+       ```
+
+- If you want the installation to be global run:
    ```bash 
    pipx install git+https://github.com/proudhAteR/Schedule_Maker.git
     ```
 
 ### 🔄 Upgrade Instructions
+
 - If installed via pipx (recommended for global use):
     ```bash
     pipx upgrade sm
     ```
 - If installed manually in a virtual environment:
-  1. Activate your virtual environment:
-      ```bash
-     source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-      ```
-  2. Run the upgrade command:
-     ```bash
-      pip install --upgrade git+https://github.com/proudhAteR/Schedule_Maker.git
-       ```
+    1. Activate your virtual environment:
+        ```bash
+       source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+        ```
+    2. Run the upgrade command:
+       ```bash
+        pip install --upgrade sm
+         ```
+
 ---
 
 ## 📬 Contact
