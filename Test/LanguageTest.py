@@ -1,6 +1,6 @@
 import pytest
 
-from Infrastructure.Services.LanguageService import LanguageService
+from Infrastructure.Services.Language.LanguageService import LanguageService
 
 
 @pytest.mark.parametrize("sentence, expected_time, expected_location_contains, expected_title_contains", [

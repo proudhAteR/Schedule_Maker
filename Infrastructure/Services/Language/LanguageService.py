@@ -6,7 +6,7 @@ from Core.Interface.Matcher import Matcher
 from Core.Interface.Tokenizer import Tokenizer
 from Core.Models.Match import Match
 from Infrastructure.Services.Google.GoogleTranslator import GoogleTranslator
-from Infrastructure.Services.Spacy import Spacy
+from Infrastructure.Services.Language.Spacy import Spacy
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
