@@ -2,12 +2,14 @@ from typing import Generic, TypeVar
 
 from Core.Interface.APIs.CalendarAPI import CalendarAPI
 from Infrastructure.Services.EventService import EventService
+from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
 
 TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
+
 class Schedule_Maker(Generic[TCalendar]):
-    def __init__(self, calendar: TCalendar):
-        self.calendar: TCalendar = calendar
+    def __init__(self, calendar: TCalendar = GoogleCalendar()):
+        self.calendar = calendar
         self.service = EventService()
 
     async def event(self, sentence: str, priority: str):

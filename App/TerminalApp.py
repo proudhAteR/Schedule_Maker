@@ -6,17 +6,15 @@ from typer import Typer, Option, Argument, Exit
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from App.Schedule_Maker import Schedule_Maker
-from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
 from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
 from Infrastructure.Utils.Logs.Logger import Logger
+
 
 class TerminalApp:
     def __init__(self):
         Imp.run()
         self.app = Typer()
-        self.maker = Schedule_Maker(
-            GoogleCalendar()
-        )
+        self.maker = Schedule_Maker()
         self._setup_commands()
 
     def _setup_commands(self):

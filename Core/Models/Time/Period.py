@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from Core.Models.Enum.Day import Day
-from Core.Models.LanguageMatch import LanguageMatch
+from Core.Models.Match import Match
 from Core.Models.Time.Recurrence import Recurrence
 
 
@@ -13,7 +13,7 @@ class Period:
         self.streak = recurrence.streak
 
     @classmethod
-    def from_match(cls, match: LanguageMatch, recurrence: Recurrence | None) -> "Period":
+    def from_match(cls, match: Match, recurrence: Recurrence | None) -> "Period":
         recurrence = Recurrence.update_from(recurrence, match.day_str)
         return cls(match.start, match.end, match.day_str, recurrence)
 

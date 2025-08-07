@@ -14,7 +14,6 @@ class EventParser(Parser):
     async def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
         match = await self.__language.match(sentence)
         period = Period.from_match(match, recurrence)
-
         event = Event.detect_type(match.title)
 
         kwargs = {
