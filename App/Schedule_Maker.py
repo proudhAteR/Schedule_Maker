@@ -18,9 +18,7 @@ class Schedule_Maker(Generic[TCalendar]):
 
     async def schedule(self, block: list[str], date: str | None = None):
         s = await self.service.create_schedule(block, date)
-        for e in s:
-            print(e.name)
-        # await self.calendar.insert_all(schedule)
+        await self.calendar.insert_all(schedule)
 
     async def overview(self, date_str: str | None):
         date = await self.service.get_date(date_str)
