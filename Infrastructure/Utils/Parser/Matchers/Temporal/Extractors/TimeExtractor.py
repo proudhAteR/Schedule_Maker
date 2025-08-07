@@ -48,7 +48,8 @@ class TimeExtractor(Extractor):
         sentence = self._sanitize(sentence)
 
         for idx, pattern in enumerate(self.patterns):
-            if match := pattern.search(sentence):
+            match = pattern.search(sentence)
+            if match:
                 return self._handle_pattern_match(match, idx)
 
         return self._fallback_time_extraction(sentence)
@@ -67,10 +68,12 @@ class TimeExtractor(Extractor):
         return start, end
 
     def _fallback_time_extraction(self, sentence: str) -> tuple[str | None, str | None]:
-        if (matches := self.time_only_pattern.findall(sentence)) and len(matches) >= 2:
-            return f"{matches[0][0]} {matches[0][1]}", f"{matches[1][0]} {matches[1][1]}"
+        match = self.time_only_pattern.findall(sentence)
+        if len(match) >= 2:
+            return f"{match[0][0]} {match[0][1]}", f"{match[1][0]} {match[1][1]}"
 
-        if (numbers := self.number_pattern.findall(sentence)) and len(numbers) >= 2:
+        numbers = self.number_pattern.findall(sentence)
+        if len(numbers) >= 2:
             return self.meridiem_helper.infer(numbers[0], numbers[1], sentence)
 
         return None, None

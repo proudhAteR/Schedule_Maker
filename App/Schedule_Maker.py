@@ -8,17 +8,19 @@ TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
 
 class Schedule_Maker(Generic[TCalendar]):
-    def __init__(self, calendar: TCalendar = GoogleCalendar()):
-        self.calendar = calendar
+    def __init__(self, calendar: TCalendar | None = None):
+        self.calendar = calendar or GoogleCalendar()
         self.service = EventService()
 
     async def event(self, sentence: str, priority: str):
-        event = await self.service.create_event(sentence, priority)
-        await self.calendar.insert(event)
+        e = await self.service.create_event(sentence, priority)
+        await self.calendar.insert(e)
 
     async def schedule(self, block: list[str], date: str | None = None):
-        schedule = await self.service.create_schedule(block, date)
-        await self.calendar.insert_all(schedule)
+        s = await self.service.create_schedule(block, date)
+        for e in s:
+            print(e.name)
+        # await self.calendar.insert_all(schedule)
 
     async def overview(self, date_str: str | None):
         date = await self.service.get_date(date_str)

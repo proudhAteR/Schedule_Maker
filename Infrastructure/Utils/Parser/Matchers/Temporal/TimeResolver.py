@@ -1,5 +1,6 @@
-import calendar
 from datetime import datetime, timedelta, time
+
+import dateparser
 
 from Infrastructure.Utils.Parser.Matchers.Temporal.FallbackHandler import FallbackHandler
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
@@ -11,8 +12,7 @@ class TimeResolver:
         self.parser = TimeParser()
 
     def run(self, day_str: str, start_raw: str, end_raw: str) -> tuple:
-        """Resolve time range with better error handling."""
-        base_date = self._get_next_weekday(day_str)
+        base_date = self._resolve_day_expression(day_str)
         start_time, end_time = self.__get_period(end_raw, start_raw)
 
         if not start_time or not end_time:
@@ -25,7 +25,7 @@ class TimeResolver:
         start = datetime.combine(base_date.date(), start_time)
         end = datetime.combine(base_date.date(), end_time)
 
-        # Handle overnight periods
+        # Handle overnight periods (e.g., 10 PM – 2 AM)
         if end <= start:
             end += timedelta(days=1)
 
@@ -41,22 +41,15 @@ class TimeResolver:
         return start_time, end_time
 
     @staticmethod
-    def _get_next_weekday(day_name: str | None) -> datetime:
+    def _resolve_day_expression(day_str: str | None) -> datetime:
         base_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-        if not day_name or not day_name.strip():
+        if not day_str or not day_str.strip():
             return base_time
 
-        day_name = day_name.strip().capitalize()
+        parsed = dateparser.parse(day_str.strip(), settings={"PREFER_DATES_FROM": "future"})
 
-        try:
-            target_index = list(calendar.day_name).index(day_name)
-            today = datetime.now()
-            days_ahead = (target_index - today.weekday() + 7) % 7
+        if parsed:
+            return parsed.replace(hour=0, minute=0, second=0, microsecond=0)
 
-            if days_ahead == 0:
-                days_ahead = 7  # Get next occurrence
-
-            return base_time + timedelta(days=days_ahead)
-        except ValueError:
-            return base_time
+        return base_time

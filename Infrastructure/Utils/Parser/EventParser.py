@@ -28,15 +28,15 @@ class EventParser(Parser):
         return event(**kwargs)
 
     @staticmethod
-    def __define_args(kwargs: dict, event: type['Event'], more: str):
+    def __define_args(kwargs: dict, event: type['Event'], extra: str):
         sig = inspect.signature(event.__init__)
         param_names = [p for p in sig.parameters if p != "self"]
         filtered_kwargs = {k: v for k, v in kwargs.items() if k in param_names}
 
         for param in param_names:
             if param not in filtered_kwargs:
-                if more.strip():
-                    filtered_kwargs[param] = more.strip()
+                if extra.strip():
+                    filtered_kwargs[param] = extra.strip()
                 break
 
         return filtered_kwargs

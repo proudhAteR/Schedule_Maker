@@ -1,20 +1,23 @@
 import re
+import dateparser
+from datetime import datetime
 
 from Core.Interface.Extractor import Extractor
 
-# Enhanced day patterns with better context awareness
 DAY_PATTERNS = [
-    # Explicit day mentions with context
-    re.compile(r"\b(?:every|on|this|next)\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b",
-               re.IGNORECASE),
-    re.compile(r"\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?\b", re.IGNORECASE),
-    # Shortened versions
-    re.compile(r"\b(?:every|on|this|next)?\s*(mon|tue|tues|wed|weds|thu|thurs|fri|sat|sun)(?:day)?s?\b",
-               re.IGNORECASE),
+    re.compile(
+        r"\b(?:every|on|this|next)?\s*"
+        r"(?P<day>mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|thu(?:rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)s?\b",
+        re.IGNORECASE
+    ),
+    re.compile(
+        r"\b(?P<day>today|tomorrow|tonight|yesterday|day after tomorrow|day before yesterday|this weekend|next week|this week|next weekend)\b",
+        re.IGNORECASE
+    ),
 ]
 
-# Day name mappings
 DAY_MAPPINGS = {
+    # Weekdays (lowercased for matching)
     'mon': 'Monday', 'monday': 'Monday',
     'tue': 'Tuesday', 'tues': 'Tuesday', 'tuesday': 'Tuesday',
     'wed': 'Wednesday', 'weds': 'Wednesday', 'wednesday': 'Wednesday',
@@ -27,11 +30,15 @@ DAY_MAPPINGS = {
 
 class DayExtractor(Extractor):
     async def extract(self, sentence: str) -> str | tuple:
-        """Extract day with improved pattern matching."""
-
         for pattern in DAY_PATTERNS:
             match = pattern.search(sentence)
             if match:
-                day_part = match.group(1).lower()
-                return DAY_MAPPINGS.get(day_part, "")
+                day_part = match.group("day").lower().strip()
+                if day_part in DAY_MAPPINGS:
+                    return DAY_MAPPINGS[day_part]
+
+                parsed = dateparser.parse(day_part)
+                if parsed:
+                    return parsed.strftime("%A")
+
         return ""

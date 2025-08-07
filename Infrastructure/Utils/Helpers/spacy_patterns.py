@@ -147,6 +147,17 @@ TIME_PATTERNS = [
         {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
         {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
     ],
+    # NEW: Relative day + time range (e.g., "tomorrow from 2 p.m. to 3.30 p.m.")
+    [
+        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday"]}},
+        {"LOWER": {"IN": ["from", "at", "between", "starting"]}},
+        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
+        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}, "OP": "?"},
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
+    ],
 
     # --- EVEN LOWER PRIORITY: Partial patterns ---
 
@@ -197,6 +208,31 @@ TIME_PATTERNS = [
     [
         {"LOWER": {"IN": ["business", "office", "working", "shop", "store"]}},
         {"LOWER": {"IN": ["hours", "time"]}}
+    ],
+    # 16. Relative date: Single words like "tomorrow", "today", "tonight"
+    [
+        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "now", "yesterday"]}}
+    ],
+
+    # 17. Phrases like "day after tomorrow", "the day after tomorrow"
+    [
+        {"LOWER": {"IN": ["the", "day"]}, "OP": "?"},
+        {"LOWER": "after"},
+        {"LOWER": "tomorrow"}
+    ],
+
+    # 18. Relative future time like "in 2 days", "in a few weeks"
+    [
+        {"LOWER": "in"},
+        {"LIKE_NUM": True, "OP": "?"},
+        {"LOWER": {"IN": ["a", "an", "few"]}, "OP": "?"},
+        {"LOWER": {"IN": ["minute", "minutes", "hour", "hours", "day", "days", "week", "weeks", "month", "months"]}}
+    ],
+
+    # 19. "Next/This/Coming [unit]" — e.g. "next week", "this weekend"
+    [
+        {"LOWER": {"IN": ["next", "this", "coming"]}},
+        {"LOWER": {"IN": ["minute", "hour", "day", "week", "month", "weekend"]}}
     ]
 ]
 LOCATION_PATTERNS = [

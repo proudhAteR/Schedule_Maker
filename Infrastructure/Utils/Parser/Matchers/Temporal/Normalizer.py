@@ -5,42 +5,52 @@ class Normalizer:
 
     def __init__(self, expr: dict):
         self.expressions = expr
-
-    def run(self, sentence: str) -> str:
-        normalized = sentence.lower()
-
-        # Standardize meridiem (am/pm) with dots and spaces
-        normalized = re.sub(r'\b(a\.m\.|a m|am)\b', 'am', normalized)
-        normalized = re.sub(r'\b(p\.m\.|p m|pm)\b', 'pm', normalized)
-
-        # Replace dotted times like 3.30 with 3:30
-        normalized = re.sub(r'(\d{1,2})\.(\d{2})', r'\1:\2', normalized)
-        normalized = re.sub(r"(\d{1,2})\s*:\s*(\d{2})", r"\1:\2", normalized)
-
-        # Normalize spacing around time range separators
-        normalized = re.sub(r'\s*(to|–|—|-)\s*', ' to ', normalized)
-
-        # Replace spelled-out numbers (optional)
-        word_to_digit = {
+        self.patterns = {
+            "am": re.compile(r'\b(a\.m\.|a m|am)\b', re.IGNORECASE),
+            "pm": re.compile(r'\b(p\.m\.|p m|pm)\b', re.IGNORECASE),
+            "dot_time": re.compile(r'(\d{1,2})\.(\d{2})'),
+            "colon_spacing": re.compile(r"(\d{1,2})\s*:\s*(\d{2})"),
+            "range_sep": re.compile(r'\bto\b|\s*([–—\-])\s*'),
+            "trailing_punc": re.compile(r'[.,;:]$'),
+            "tight_meridiem": re.compile(r'(\d)(am|pm)\b'),
+            "article_the": re.compile(r"\bthe\s+(?=\w+)", re.IGNORECASE),
+            "whitespace": re.compile(r"\s+"),
+        }
+        self.word_to_digit = {
             'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
             'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'ten': '10',
         }
-        for word, digit in word_to_digit.items():
-            normalized = re.sub(rf'\b{word}\b', digit, normalized)
 
-        # Remove trailing punctuation that can interfere
-        normalized = re.sub(r'[.,;:]$', '', normalized)
+        self.word_to_digit_patterns = {
+            re.compile(rf'\b{word}\b'): digit
+            for word, digit in self.word_to_digit.items()
+        }
 
-        # Normalize AM/PM spacing, e.g. "3pm" -> "3 pm"
-        normalized = re.sub(r'(\d)(am|pm)\b', r'\1 \2', normalized)
+        self.expr_patterns = {
+            re.compile(rf"(?<!\w){re.escape(k)}(?!\w)"): v
+            for k, v in expr.items()
+        }
 
-        # Remove common articles before normalization
-        normalized = re.sub(r"\bthe\s+(?=\w+)", "", normalized, flags=re.IGNORECASE)
-        # Normalize common time expressions
-        for expr, replacement in self.expressions.items():
-            normalized = re.sub(rf"\b{expr}\b", replacement, normalized)
+    def run(self, sentence: str) -> str:
+        normalized = sentence.lower()
+        p = self.patterns
 
-        # Clean up extra whitespace
-        normalized = re.sub(r"\s+", " ", normalized).strip()
+        normalized = p["am"].sub('am', normalized)
+        normalized = p["pm"].sub('pm', normalized)
+        normalized = p["dot_time"].sub(r'\1:\2', normalized)
+        normalized = p["colon_spacing"].sub(r"\1:\2", normalized)
+        normalized = p["range_sep"].sub(' to ', normalized)
+
+        for pattern, digit in self.word_to_digit_patterns.items():
+            normalized = pattern.sub(digit, normalized)
+
+        normalized = p["trailing_punc"].sub('', normalized)
+        normalized = p["tight_meridiem"].sub(r'\1 \2', normalized)
+        normalized = p["article_the"].sub('', normalized)
+
+        for pattern, repl in self.expr_patterns.items():
+            normalized = pattern.sub(repl, normalized)
+
+        normalized = p["whitespace"].sub(" ", normalized).strip()
 
         return normalized

@@ -31,8 +31,7 @@ class Spacy(Tokenizer):
 
     def tokenize(self, sentence: str) -> dict:
         doc = self.core(sentence)
-        tokens = self.__process_output(doc)
-        return tokens
+        return self.__process_output(doc)
 
     def __match(self, doc: Doc, matched_token_ids: set) -> dict:
         res = {}

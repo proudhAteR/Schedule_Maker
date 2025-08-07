@@ -54,7 +54,6 @@ class TemporalMatcher(Matcher):
 
     async def __extract_time(self, sentence: str):
         normalized = self.normalizer.run(sentence)
-
         day_str_task = self.day_extract.extract(normalized)
         time_task = self.time_extract.extract(normalized)
 
