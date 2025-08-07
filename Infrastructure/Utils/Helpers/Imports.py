@@ -3,7 +3,6 @@ import pkgutil
 
 import spacy
 import spacy.cli
-from spacy.util import is_package
 
 import Core.Models.Events
 import Infrastructure.Utils.Parser.Matchers
@@ -11,22 +10,23 @@ from Infrastructure.Utils.Logs.Logger import Logger
 
 
 def run():
-    __load_all_events()
-    __load_all_matchers()
+    _load_all_modules(Core.Models.Events.__path__, "Core.Models.Events")
+    _load_all_modules(Infrastructure.Utils.Parser.Matchers.__path__, "Infrastructure.Utils.Parser.Matchers")
 
 
-def __load_all_events():
-    for _, module_name, _ in pkgutil.iter_modules(Core.Models.Events.__path__):
-        importlib.import_module(f"Core.Models.Events.{module_name}")
+def _load_all_modules(package_path, package_prefix : str):
+    for _, module_name, _ in pkgutil.iter_modules(package_path):
+        full_name = f"{package_prefix}.{module_name}"
+        try:
+            importlib.import_module(full_name)
+        except Exception as e:
+            Logger.warning(f"Failed to import {full_name}: {e}")
 
 
-def __load_all_matchers():
-    for _, module_name, _ in pkgutil.iter_modules(Infrastructure.Utils.Parser.Matchers.__path__):
-        importlib.import_module(f"Infrastructure.Utils.Parser.Matchers.{module_name}")
-
-
-def ensure_spacy_model(model: str):
-    if not is_package(model):
-        Logger.warning(f"spaCy model '{model}' not found. Downloading...")
-        spacy.cli.download(model)
-    return spacy.load(model)
+def load_spacy_model(model_name: str):
+    try:
+        return spacy.load(model_name)
+    except OSError:
+        Logger.warning(f"spaCy model '{model_name}' not found. Downloading...")
+        spacy.cli.download(model_name)
+        return spacy.load(model_name)

@@ -10,7 +10,7 @@ from Infrastructure.Utils.Helpers.spacy_patterns import *
 class Spacy(Tokenizer):
 
     def __init__(self, model: str = "en_core_web_sm"):
-        self.core = Imp.ensure_spacy_model(model)
+        self.core = Imp.load_spacy_model(model)
         self.matcher = Matcher(self.core.vocab)
         self.__add_patterns()
 
