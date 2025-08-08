@@ -9,7 +9,7 @@ authors = [
 ]
 
 dependencies = [
-    "typer[all]",
+    "typer",
     "aiohttp",
     "deep-translator",
     "dateparser",
@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-sm = "App.main:app"
+sm = "App.main:run"
 
 [build-system]
 requires = ["setuptools>=61", "wheel"]
