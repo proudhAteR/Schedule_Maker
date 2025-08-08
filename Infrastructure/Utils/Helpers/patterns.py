@@ -160,6 +160,17 @@ S_TIME_PATTERNS = [
         {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
         {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
     ],
+    # NEW: Time range + relative day (e.g., "from 8 to noon tomorrow")
+    [
+        {"LOWER": {"IN": ["from", "between"]}},
+        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # Start time
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
+        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}},
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # End time
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
+        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday"]}}  # Relative day
+    ],
 
     # --- EVEN LOWER PRIORITY: Partial patterns ---
 
@@ -289,3 +300,24 @@ TIME_PATTERNS = [
     ),
 
 ]
+DAY_PATTERNS = [
+    re.compile(
+        r"\b(?:every|on|this|next)?\s*"
+        r"(?P<day>mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|thu(?:rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)s?\b",
+        re.IGNORECASE
+    ),
+    re.compile(
+        r"\b(?P<day>today|tomorrow|tonight|yesterday|day after tomorrow|day before yesterday|this weekend|next week|this week|next weekend)\b",
+        re.IGNORECASE
+    ),
+]
+DAY_MAPPINGS = {
+    # Weekdays (lowercased for matching)
+    'mon': 'Monday', 'monday': 'Monday',
+    'tue': 'Tuesday', 'tues': 'Tuesday', 'tuesday': 'Tuesday',
+    'wed': 'Wednesday', 'weds': 'Wednesday', 'wednesday': 'Wednesday',
+    'thu': 'Thursday', 'thurs': 'Thursday', 'thursday': 'Thursday',
+    'fri': 'Friday', 'friday': 'Friday',
+    'sat': 'Saturday', 'saturday': 'Saturday',
+    'sun': 'Sunday', 'sunday': 'Sunday',
+}

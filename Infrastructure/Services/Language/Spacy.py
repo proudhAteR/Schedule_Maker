@@ -1,5 +1,3 @@
-import re
-
 from spacy.matcher import Matcher
 from spacy.pipeline import EntityRuler
 from spacy.tokens.doc import Doc

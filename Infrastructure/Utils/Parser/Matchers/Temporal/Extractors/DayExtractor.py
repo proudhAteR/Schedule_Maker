@@ -1,53 +1,26 @@
-import re
-
 import dateparser
 
 from Core.Interface.Extractor import Extractor
-
-DAY_PATTERNS = [
-    re.compile(
-        r"\b(?:every|on|this|next)?\s*"
-        r"(?P<day>mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|thu(?:rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)s?\b",
-        re.IGNORECASE
-    ),
-    re.compile(
-        r"\b(?P<day>today|tomorrow|tonight|yesterday|day after tomorrow|day before yesterday|this weekend|next week|this week|next weekend)\b",
-        re.IGNORECASE
-    ),
-]
-
-DAY_MAPPINGS = {
-    # Weekdays (lowercased for matching)
-    'mon': 'Monday', 'monday': 'Monday',
-    'tue': 'Tuesday', 'tues': 'Tuesday', 'tuesday': 'Tuesday',
-    'wed': 'Wednesday', 'weds': 'Wednesday', 'wednesday': 'Wednesday',
-    'thu': 'Thursday', 'thurs': 'Thursday', 'thursday': 'Thursday',
-    'fri': 'Friday', 'friday': 'Friday',
-    'sat': 'Saturday', 'saturday': 'Saturday',
-    'sun': 'Sunday', 'sunday': 'Sunday',
-}
+from Infrastructure.Utils.Helpers.patterns import DAY_PATTERNS, DAY_MAPPINGS
 
 
 class DayExtractor(Extractor):
     async def extract(self, sentence: str) -> tuple[str, bool]:
         lowered = sentence.lower()
-        recurring_keywords = {"every", "each", "weekly"}
-        is_recurring = any(word in lowered for word in recurring_keywords)
+        is_recurring = any(kw in lowered for kw in {"every", "each", "weekly"})
 
         for pattern in DAY_PATTERNS:
             match = pattern.search(lowered)
             if not match:
                 continue
 
-            day_part = match.group("day").lower().strip()
+            day_str = match.group("day").strip().lower()
 
-            # Direct mapping
-            if day_part in DAY_MAPPINGS:
-                return DAY_MAPPINGS[day_part], is_recurring
+            if day_str in DAY_MAPPINGS:
+                return DAY_MAPPINGS[day_str], is_recurring
 
-            # Parsed with dateparser (e.g., "tomorrow", "next weekend")
-            parsed = dateparser.parse(day_part)
-            if parsed:
-                return parsed.strftime("%A"), False  # parsed values are assumed one-time
+            parsed_day = dateparser.parse(day_str)
+            if parsed_day:
+                return parsed_day.strftime("%A"), False
 
-        return "", False
+        return dateparser.parse("today").strftime("%A"), False
