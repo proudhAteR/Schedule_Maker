@@ -22,7 +22,7 @@ class TemporalMatcher(Matcher):
     async def match(self, tokens: dict) -> dict:
         sentence = tokens.get('time', '').strip()
         if not sentence:
-            raise ValueError("No time detected.")
+            raise ValueError("No sentence detected.")
 
         day_str, is_recurring, start_raw, end_raw = await self.__extract_components(sentence)
 

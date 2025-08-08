@@ -36,8 +36,22 @@ class TimeResolver:
         if not day_str or not day_str.strip():
             return today
 
-        parsed_date = dateparser.parse(day_str.strip())
-        return parsed_date.replace(hour=0, minute=0, second=0, microsecond=0) if parsed_date else today
+        day_str_clean = day_str.strip().lower()
+        today_weekday_name = today.strftime("%A").lower()
+
+        if day_str_clean == today_weekday_name:
+            return today
+
+        # Fallback to dateparser for other cases
+        parsed_date = dateparser.parse(
+            day_str_clean,
+            settings={"PREFER_DATES_FROM": "future"}
+        )
+
+        if not parsed_date:
+            return today
+
+        return parsed_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
     def _resolve_datetime_range(base_date: datetime, start_time: time, end_time: time) -> tuple:
@@ -45,10 +59,16 @@ class TimeResolver:
         start_dt = datetime.combine(base_date.date(), start_time)
         end_dt = datetime.combine(base_date.date(), end_time)
 
-        if end_dt <= start_dt:
+        def is_overnight(start: datetime, end: datetime) -> bool:
+            return end <= start
+
+        if is_overnight(start_dt, end_dt):
             end_dt += timedelta(days=1)
 
-        if base_date.date() == now.date() and start_dt <= now:
+        if start_dt <= now < end_dt:
+            return start_dt, end_dt
+
+        if start_dt <= now:
             start_dt += timedelta(days=7)
             end_dt += timedelta(days=7)
 

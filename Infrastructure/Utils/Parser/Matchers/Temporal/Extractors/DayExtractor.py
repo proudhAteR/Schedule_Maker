@@ -5,7 +5,7 @@ from Infrastructure.Utils.Helpers.patterns import DAY_PATTERNS, DAY_MAPPINGS
 
 
 class DayExtractor(Extractor):
-    async def extract(self, sentence: str) -> tuple[str, bool]:
+    async def extract(self, sentence: str) -> tuple:
         lowered = sentence.lower()
         is_recurring = any(kw in lowered for kw in {"every", "each", "weekly"})
 

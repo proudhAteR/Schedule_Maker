@@ -259,7 +259,10 @@ EXTRA_PATTERNS = [
     [
         {"LOWER": {"IN": ["by", "with", "for"]}},
         {"LOWER": "the", "OP": "?"},
-        {"IS_PUNCT": False, "IS_SPACE": False, "OP": "+"}
+        # Match word, optional period, more words
+        {"IS_ALPHA": True},  # Required first word
+        {"TEXT": ".", "OP": "?"},  # Optional period
+        {"IS_ALPHA": True, "OP": "*"}  # Optional additional words
     ]
 ]
 TIME_EXPRESSIONS = {
