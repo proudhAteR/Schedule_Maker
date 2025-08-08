@@ -14,7 +14,7 @@ class TimeExtractor(Extractor):
         self.number_pattern = compile(r"\b(\d{1,2}(?::\d{2})?)\b")
         self.meridiem_helper = MeridiemHelper()
 
-    async def extract(self, sentence: str) -> tuple[str | None, str | None]:
+    async def extract(self, sentence: str) -> tuple:
         sentence = self._sanitize(sentence)
 
         for idx, pattern in enumerate(self.patterns):
@@ -28,16 +28,16 @@ class TimeExtractor(Extractor):
     def _sanitize(sentence: str) -> str:
         return sentence.replace(".", "")
 
-    def _handle_pattern_match(self, p_match: Match, idx: int) -> tuple[str, str]:
+    def _handle_pattern_match(self, p_match: Match, idx: int) -> tuple:
         raw_start, raw_end = TimeParser.pattern(p_match, idx)
         return self._normalize_time_pair(raw_start, raw_end)
 
-    def _normalize_time_pair(self, start_raw: str, end_raw: str) -> tuple[str, str]:
+    def _normalize_time_pair(self, start_raw: str, end_raw: str) -> tuple:
         start = self.meridiem_helper.normalize(start_raw, end_raw, is_start=True)
         end = self.meridiem_helper.normalize(end_raw, start_raw, is_start=False)
         return start, end
 
-    def _fallback_time_extraction(self, sentence: str) -> tuple[str | None, str | None]:
+    def _fallback_time_extraction(self, sentence: str) -> tuple:
         p_match = self.time_only_pattern.findall(sentence)
         if len(p_match) >= 2:
             return f"{p_match[0][0]} {p_match[0][1]}", f"{p_match[1][0]} {p_match[1][1]}"
