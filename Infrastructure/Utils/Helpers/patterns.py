@@ -1,3 +1,5 @@
+import re
+
 REPS = [
     # Full days with modifiers
     {"label": "REPEAT", "pattern": [{"LOWER": {"IN": ["every", "on", "this", "next"]}}, {"LOWER": {"IN": [
@@ -17,7 +19,7 @@ MONTHS = ["january", "february", "march", "april", "may", "june", "july", "augus
           "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 TIME_QUALIFIERS = ["sharp", "exactly", "approximately", "around", "about", "roughly",
                    "before", "after", "by", "no later than", "no earlier than"]
-TIME_PATTERNS = [
+S_TIME_PATTERNS = [
     # 0. HIGHEST PRIORITY: Complete "between X and Y every DAY" pattern (NO trailing info)
     [
         {"LOWER": {"IN": ["between", "from"]}},
@@ -248,4 +250,42 @@ EXTRA_PATTERNS = [
         {"LOWER": "the", "OP": "?"},
         {"IS_PUNCT": False, "IS_SPACE": False, "OP": "+"}
     ]
+]
+TIME_EXPRESSIONS = {
+    'noon': '12:00 pm',
+    'midnight': '12:00 am',
+    'morning': '9:00 am',
+    'afternoon': '2:00 pm',
+    'evening': '6:00 pm',
+    'night': '9:00 pm'
+}
+TIME_PATTERNS = [
+    # Natural language patterns first (higher priority)
+    re.compile(
+        r"\b(?:from|starting(?:\s+at)?|begins?(?:\s+at)?)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+(?:to|until|through|ending(?:\s+at)?|till)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
+        re.IGNORECASE),
+
+    # Time ranges with meridiem
+    re.compile(r"\b(\d{1,2}(?::\d{2})?)\s*(am|pm)\s*(?:to|until|through|-|–|—)\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+               re.IGNORECASE),
+
+    # Single meridiem shared between times
+    re.compile(r"\b(\d{1,2}(?::\d{2})?)\s*(?:to|until|through|-|–|—)\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+               re.IGNORECASE),
+
+    # 24-hour formats
+    re.compile(r"\b([01]?\d|2[0-3]):([0-5]\d)\s*(?:to|until|through|-|–|—)\s*([01]?\d|2[0-3]):([0-5]\d)\b",
+               re.IGNORECASE),
+    re.compile(r"\b([01]?\d|2[0-3])\s*(?:to|until|through|-|–|—)\s*([01]?\d|2[0-3])\b", re.IGNORECASE),
+
+    # Contextual patterns
+    re.compile(
+        r"\b(?:between|from)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+(?:and|to|until)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
+        re.IGNORECASE),
+    # Matches "at 2:00 pm", "in 2:00 pm", "on 2:00 pm"
+    re.compile(
+        r"\b(?:at|in|on|around|about)?\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        re.IGNORECASE
+    ),
+
 ]

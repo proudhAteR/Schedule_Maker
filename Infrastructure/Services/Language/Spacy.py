@@ -1,10 +1,13 @@
+import re
+
 from spacy.matcher import Matcher
 from spacy.pipeline import EntityRuler
 from spacy.tokens.doc import Doc
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from Core.Interface.Tokenizer import Tokenizer
-from Infrastructure.Utils.Helpers.spacy_patterns import *
+from Infrastructure.Utils.Helpers.patterns import *
+from Infrastructure.Utils.Parser.Matchers.Temporal.Normalizer import Normalizer
 
 
 class Spacy(Tokenizer):
@@ -12,6 +15,7 @@ class Spacy(Tokenizer):
     def __init__(self, model: str = "en_core_web_sm"):
         self.core = Imp.load_spacy_model(model)
         self.matcher = Matcher(self.core.vocab)
+        self.normalizer = Normalizer()
         self.__add_patterns()
 
     def __add_patterns(self):
@@ -20,8 +24,8 @@ class Spacy(Tokenizer):
         self._add_matcher_patterns()
 
     def _add_matcher_patterns(self):
-        for i, pattern in enumerate(TIME_PATTERNS):
-            self.matcher.add(f"time_{i}", [pattern])
+        for i, p in enumerate(S_TIME_PATTERNS):
+            self.matcher.add(f"time_{i}", [p])
 
         for i, p in enumerate(LOCATION_PATTERNS):
             self.matcher.add(f"location_{i}", [p])
@@ -59,7 +63,6 @@ class Spacy(Tokenizer):
         res[label] = span.text
 
     def __process_output(self, doc: Doc) -> dict:
-
         matched_token_ids = set()
         res = self.__match(doc, matched_token_ids)
 
@@ -87,7 +90,7 @@ class Spacy(Tokenizer):
 
     @staticmethod
     def quick_clean(time_str: str):
-        return time_str.replace(": ", ":").replace(" :", ":").replace("- ", "-").replace(" -", "-")
+        return re.sub(r'\s*([:-])\s*', r'\1', time_str)
 
     @staticmethod
     def __sanitize_tokens(raw_tokens: dict) -> dict:

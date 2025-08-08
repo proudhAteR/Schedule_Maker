@@ -1,10 +1,12 @@
 import re
 
+from Infrastructure.Utils.Helpers.patterns import TIME_EXPRESSIONS
+
 
 class Normalizer:
 
-    def __init__(self, expr: dict):
-        self.expressions = expr
+    def __init__(self):
+        self.expressions = TIME_EXPRESSIONS
         self.patterns = {
             "am": re.compile(r'\b(a\.m\.|a m|am)\b', re.IGNORECASE),
             "pm": re.compile(r'\b(p\.m\.|p m|pm)\b', re.IGNORECASE),
@@ -28,7 +30,7 @@ class Normalizer:
 
         self.expr_patterns = {
             re.compile(rf"(?<!\w){re.escape(k)}(?!\w)"): v
-            for k, v in expr.items()
+            for k, v in self.expressions.items()
         }
 
     def run(self, sentence: str) -> str:

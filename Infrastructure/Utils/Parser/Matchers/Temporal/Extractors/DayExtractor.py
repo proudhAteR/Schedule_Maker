@@ -1,6 +1,6 @@
 import re
+
 import dateparser
-from datetime import datetime
 
 from Core.Interface.Extractor import Extractor
 
@@ -29,16 +29,25 @@ DAY_MAPPINGS = {
 
 
 class DayExtractor(Extractor):
-    async def extract(self, sentence: str) -> str | tuple:
+    async def extract(self, sentence: str) -> tuple[str, bool]:
+        lowered = sentence.lower()
+        recurring_keywords = {"every", "each", "weekly"}
+        is_recurring = any(word in lowered for word in recurring_keywords)
+
         for pattern in DAY_PATTERNS:
-            match = pattern.search(sentence)
-            if match:
-                day_part = match.group("day").lower().strip()
-                if day_part in DAY_MAPPINGS:
-                    return DAY_MAPPINGS[day_part]
+            match = pattern.search(lowered)
+            if not match:
+                continue
 
-                parsed = dateparser.parse(day_part)
-                if parsed:
-                    return parsed.strftime("%A")
+            day_part = match.group("day").lower().strip()
 
-        return ""
+            # Direct mapping
+            if day_part in DAY_MAPPINGS:
+                return DAY_MAPPINGS[day_part], is_recurring
+
+            # Parsed with dateparser (e.g., "tomorrow", "next weekend")
+            parsed = dateparser.parse(day_part)
+            if parsed:
+                return parsed.strftime("%A"), False  # parsed values are assumed one-time
+
+        return "", False

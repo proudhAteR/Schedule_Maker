@@ -7,6 +7,7 @@ from Core.Interface.Tokenizer import Tokenizer
 from Core.Models.Match import Match
 from Infrastructure.Services.Google.GoogleTranslator import GoogleTranslator
 from Infrastructure.Services.Language.Spacy import Spacy
+from Infrastructure.Utils.Parser.Matchers.Temporal.Normalizer import Normalizer
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
@@ -14,6 +15,7 @@ class LanguageService:
     def __init__(self, translator: TranslationAPI = GoogleTranslator(), tokenizer: Tokenizer = Spacy()):
         self._translator = translator
         self._tokenizer = tokenizer
+        self._normalizer = Normalizer()
         self._matchers = [matcher() for matcher in Matcher.all_subclasses()]
 
     async def process(self, sentence: str) -> dict:
@@ -21,7 +23,8 @@ class LanguageService:
             return {}
 
         translated = await self._translator.translate_async(sentence.strip())
-        return self._tokenizer.tokenize(translated)
+        normalized = self._normalizer.run(translated)
+        return self._tokenizer.tokenize(normalized)
 
     async def match(self, sentence: str) -> Match:
         tokens = await self.process(sentence)

@@ -4,15 +4,16 @@ from datetime import datetime, timedelta, time
 import dateparser
 
 from Core.Models.Enum.Field import Field
+from Infrastructure.Utils.Helpers.patterns import TIME_EXPRESSIONS
 from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.DayExtractor import DayExtractor
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
 class FallbackHandler:
-    def __init__(self, expressions: dict, pattern: re.Pattern):
+    def __init__(self, pattern: re.Pattern):
         self.time_only_pattern = pattern
         self.parser = TimeParser()
-        self.expressions = expressions
+        self.expressions = TIME_EXPRESSIONS
         self.day = DayExtractor()
 
     def handle(self, sentence: str, day_str: str) -> dict:
