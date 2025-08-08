@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.8"
+version = "0.1.8.1"
 description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
 readme = "README.md"
 requires-python = ">=3.10"
