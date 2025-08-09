@@ -3,20 +3,19 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 
 from Core.Interface.APIs.Auth import Auth
 from Infrastructure.Clients.GoogleClient import GoogleClient
-from Infrastructure.Utils.FileHandler import FileHandler
+from Infrastructure.Services.Files.FileService import FileService
 from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class GoogleAuth(Auth):
-    def __init__(self, client: GoogleClient):
-        self.token_path = FileHandler.secret_path('token.json')
+    def __init__(self, client: GoogleClient, token: str = 'token.json'):
+        self.token_path = FileService.secret_path(token)
         self.client = client
 
     def auth(self) -> Credentials:
         creds = self.__load_token()
         if not creds or not creds.valid:
             creds = self.__process_token(creds)
-
         return creds
 
     def __process_token(self, creds: Credentials):
@@ -28,7 +27,7 @@ class GoogleAuth(Auth):
                 creds = self.__run_auth_flow()
         else:
             creds = self.__run_auth_flow()
-        self.__save_token(creds)
+        FileService.write(self.token_path, creds.to_json())
         return creds
 
     @staticmethod
@@ -36,16 +35,11 @@ class GoogleAuth(Auth):
         return creds and creds.expired and creds.refresh_token
 
     def __load_token(self) -> Credentials | None:
-        if FileHandler.exists(self.token_path):
+        if FileService.exists(self.token_path):
             return Credentials.from_authorized_user_file(self.token_path, self.client.scopes)
         return None
 
-    def __save_token(self, creds: Credentials):
-        FileHandler.write(self.token_path, creds.to_json())
-
     def __run_auth_flow(self) -> Credentials:
-        config = FileHandler.get_config()
-        flow = InstalledAppFlow.from_client_config(
-            config, self.client.scopes
-        )
+        config = FileService.load_secret_config()
+        flow = InstalledAppFlow.from_client_config(config, self.client.scopes)
         return flow.run_local_server(port=0)
