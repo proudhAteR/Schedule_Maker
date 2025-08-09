@@ -15,12 +15,11 @@ class DayExtractor(Extractor):
                 continue
 
             day_str = match.group("day").strip().lower()
+            parsed_day = dateparser.parse(
+                DAY_MAPPINGS.get(day_str, day_str)
+            )
 
-            if day_str in DAY_MAPPINGS:
-                return DAY_MAPPINGS[day_str], is_recurring
-
-            parsed_day = dateparser.parse(day_str)
             if parsed_day:
-                return parsed_day.strftime("%A"), False
+                return parsed_day, is_recurring if day_str in DAY_MAPPINGS else False
 
-        return dateparser.parse("today").strftime("%A"), False
+        return dateparser.parse("today"), False

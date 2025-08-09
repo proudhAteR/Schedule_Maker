@@ -11,14 +11,28 @@ REPS = [
 
     # Abbreviated forms (e.g., "Mon", "Thurs")
     {"label": "REPEAT", "pattern": [{"LOWER": {"REGEX": r"^(mon|tue|tues|wed|weds|thu|thurs|fri|sat|sun)(day)?s?$"}}]},
-
 ]
+
 DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
           "september", "october", "november", "december", "jan", "feb", "mar", "apr",
           "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 TIME_QUALIFIERS = ["sharp", "exactly", "approximately", "around", "about", "roughly",
                    "before", "after", "by", "no later than", "no earlier than"]
+
+TIME_RANGE_PART = [
+    {"LOWER": {"IN": ["from", "between"]}},
+    {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
+    {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # Start time
+    {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
+    {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}},
+    {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # End time
+    {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"}
+]
+
+RELATIVE_SINGLE = [{"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday", "weekend"]}}]
+RELATIVE_MULTI = [{"LOWER": "next"}, {"LOWER": {"IN": ["week", "month", "year", "weekend"]}}]
+
 S_TIME_PATTERNS = [
     # 0. HIGHEST PRIORITY: Complete "between X and Y every DAY" pattern (NO trailing info)
     [
@@ -149,9 +163,9 @@ S_TIME_PATTERNS = [
         {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
         {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
     ],
-    # NEW: Relative day + time range (e.g., "tomorrow from 2 p.m. to 3.30 p.m.")
-    [
-        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday"]}},
+
+    # Relative day + time range
+    RELATIVE_SINGLE + [
         {"LOWER": {"IN": ["from", "at", "between", "starting"]}},
         {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
         {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},
@@ -160,17 +174,20 @@ S_TIME_PATTERNS = [
         {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
         {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
     ],
-    # NEW: Time range + relative day (e.g., "from 8 to noon tomorrow")
-    [
-        {"LOWER": {"IN": ["from", "between"]}},
+
+    RELATIVE_MULTI + [
+        {"LOWER": {"IN": ["from", "at", "between", "starting"]}},
         {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # Start time
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # End time
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
-        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday"]}}  # Relative day
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
+        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}, "OP": "?"},
+        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
+        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
     ],
+
+    # Time range + relative day
+    TIME_RANGE_PART + RELATIVE_SINGLE,
+    TIME_RANGE_PART + RELATIVE_MULTI,
 
     # --- EVEN LOWER PRIORITY: Partial patterns ---
 
@@ -222,6 +239,7 @@ S_TIME_PATTERNS = [
         {"LOWER": {"IN": ["business", "office", "working", "shop", "store"]}},
         {"LOWER": {"IN": ["hours", "time"]}}
     ],
+
     # 16. Relative date: Single words like "tomorrow", "today", "tonight"
     [
         {"LOWER": {"IN": ["tomorrow", "today", "tonight", "now", "yesterday"]}}
@@ -248,6 +266,7 @@ S_TIME_PATTERNS = [
         {"LOWER": {"IN": ["minute", "hour", "day", "week", "month", "weekend"]}}
     ]
 ]
+
 LOCATION_PATTERNS = [
     [
         {"LOWER": {"IN": ["in", "at", "inside", "near"]}},
@@ -255,6 +274,7 @@ LOCATION_PATTERNS = [
         {"POS": {"IN": ["NOUN", "PROPN", "NUM", "X"]}, "OP": "+"}
     ],
 ]
+
 EXTRA_PATTERNS = [
     [
         {"LOWER": {"IN": ["by", "with", "for"]}},
@@ -265,6 +285,7 @@ EXTRA_PATTERNS = [
         {"IS_ALPHA": True, "OP": "*"}  # Optional additional words
     ]
 ]
+
 TIME_EXPRESSIONS = {
     'noon': '12:00 pm',
     'midnight': '12:00 am',
@@ -273,6 +294,7 @@ TIME_EXPRESSIONS = {
     'evening': '6:00 pm',
     'night': '9:00 pm'
 }
+
 TIME_PATTERNS = [
     # Natural language patterns first (higher priority)
     re.compile(
@@ -301,8 +323,8 @@ TIME_PATTERNS = [
         r"\b(?:at|in|on|around|about)?\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
         re.IGNORECASE
     ),
-
 ]
+
 DAY_PATTERNS = [
     re.compile(
         r"\b(?:every|on|this|next)?\s*"
@@ -314,6 +336,7 @@ DAY_PATTERNS = [
         re.IGNORECASE
     ),
 ]
+
 DAY_MAPPINGS = {
     # Weekdays (lowercased for matching)
     'mon': 'Monday', 'monday': 'Monday',

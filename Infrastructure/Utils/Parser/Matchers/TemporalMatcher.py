@@ -24,15 +24,15 @@ class TemporalMatcher(Matcher):
         if not sentence:
             raise ValueError("No sentence detected.")
 
-        day_str, is_recurring, start_raw, end_raw = await self.__extract_components(sentence)
+        date, is_recurring, start_raw, end_raw = await self.__extract_components(sentence)
 
         if not start_raw or not end_raw:
-            return self.fallback_handler.handle(sentence, day_str)
+            return self.fallback_handler.handle(sentence, date)
 
-        start, end = self.resolver.run(day_str, start_raw, end_raw)
+        start, end = self.resolver.run(date, start_raw, end_raw)
 
         return {
-            Field.DAY: day_str if is_recurring else '',
+            Field.DAY: date if is_recurring else '',
             Field.START: start,
             Field.END: end
         }
@@ -41,5 +41,5 @@ class TemporalMatcher(Matcher):
         day_task = self.day_extractor.extract(sentence)
         time_task = self.time_extractor.extract(sentence)
 
-        (day_str, is_recurring), (start_raw, end_raw) = await gather(day_task, time_task)
-        return day_str, is_recurring, start_raw, end_raw
+        (day, is_recurring), (start_raw, end_raw) = await gather(day_task, time_task)
+        return day, is_recurring, start_raw, end_raw

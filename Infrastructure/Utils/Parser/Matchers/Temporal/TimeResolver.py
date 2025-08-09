@@ -11,14 +11,13 @@ class TimeResolver:
     def __init__(self):
         self.parser = TimeParser()
 
-    def run(self, day_str: str, start_raw: str, end_raw: str) -> tuple:
-        base_date = self._resolve_day_expression(day_str)
+    def run(self, date: datetime, start_raw: str, end_raw: str) -> tuple:
         start_time, end_time = self._parse_time_period(start_raw, end_raw)
 
         if not start_time or not end_time:
-            return base_date, base_date
+            return date, date
 
-        return self._resolve_datetime_range(base_date, start_time, end_time)
+        return self._resolve_datetime_range(date, start_time, end_time)
 
     def _parse_time_period(self, start_raw: str, end_raw: str) -> tuple:
         start_time = self.parser.parse(start_raw)
@@ -28,30 +27,6 @@ class TimeResolver:
             end_time = FallbackHandler.next_hour(end_time)
 
         return start_time, end_time
-
-    @staticmethod
-    def _resolve_day_expression(day_str: str | None) -> datetime:
-        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-        if not day_str or not day_str.strip():
-            return today
-
-        day_str_clean = day_str.strip().lower()
-        today_weekday_name = today.strftime("%A").lower()
-
-        if day_str_clean == today_weekday_name:
-            return today
-
-        # Fallback to dateparser for other cases
-        parsed_date = dateparser.parse(
-            day_str_clean,
-            settings={"PREFER_DATES_FROM": "future"}
-        )
-
-        if not parsed_date:
-            return today
-
-        return parsed_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
     def _resolve_datetime_range(base_date: datetime, start_time: time, end_time: time) -> tuple:

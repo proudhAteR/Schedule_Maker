@@ -16,15 +16,12 @@ class FallbackHandler:
         self.expressions = TIME_EXPRESSIONS
         self.day = DayExtractor()
 
-    def handle(self, sentence: str, day_str: str) -> dict:
-        """Handle fallback cases when time extraction fails."""
+    def handle(self, sentence: str, day: datetime) -> dict:
         fallback_time = self._extract_any_time(sentence)
-        fallback_date = dateparser.parse(day_str)
-
-        fallback_time = self.__get_fallback(fallback_date, fallback_time)
+        fallback_time = self.__get_fallback(day, fallback_time)
 
         return {
-            Field.DAY: day_str,
+            Field.DAY: day.strftime('%A'),
             Field.START: fallback_time,
             Field.END: self.next_hour(fallback_time),
         }
@@ -47,7 +44,6 @@ class FallbackHandler:
         return incremented.time()
 
     def _extract_any_time(self, sentence: str) -> datetime | None:
-        """Extract any time information as fallback."""
         times = self.time_only_pattern.findall(sentence)
         if times:
             time_str = f"{times[0][0]} {times[0][1]}"
