@@ -1,280 +1,223 @@
 import re
 
-REPS = [
-    # Full days with modifiers
-    {"label": "REPEAT", "pattern": [{"LOWER": {"IN": ["every", "on", "this", "next"]}}, {"LOWER": {"IN": [
-        "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}}]},
-
-    # Just day names (e.g., "Friday")
-    {"label": "REPEAT", "pattern": [{"LOWER": {"IN": [
-        "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}}]},
-
-    # Abbreviated forms (e.g., "Mon", "Thurs")
-    {"label": "REPEAT", "pattern": [{"LOWER": {"REGEX": r"^(mon|tue|tues|wed|weds|thu|thurs|fri|sat|sun)(day)?s?$"}}]},
-]
-
+# Core constants - optimized for better coverage and maintainability
 DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday"]
+WEEKENDS = ["saturday", "sunday"]
+
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
           "september", "october", "november", "december", "jan", "feb", "mar", "apr",
           "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+# Time qualifiers and connectors
 TIME_QUALIFIERS = ["sharp", "exactly", "approximately", "around", "about", "roughly",
                    "before", "after", "by", "no later than", "no earlier than"]
+TIME_CONNECTORS = ["to", "until", "through", "thru", "till", "and", "-", "–", "—"]
+TIME_PREPOSITIONS = ["at", "from", "between", "starting", "beginning"]
 
-TIME_RANGE_PART = [
-    {"LOWER": {"IN": ["from", "between"]}},
-    {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-    {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # Start time
-    {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"},
-    {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}},
-    {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # End time
-    {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm", "noon", "midnight"]}, "OP": "?"}
+# Meridiem indicators
+MERIDIEM = ["a.m.", "am", "p.m.", "pm"]
+SPECIAL_TIMES = ["noon", "midnight", "morning", "afternoon", "evening", "night"]
+
+# Day modifiers
+DAY_MODIFIERS = ["every", "on", "each", "this", "next", "coming"]
+RELATIVE_DAYS = ["today", "tomorrow", "tonight", "yesterday", "weekend"]
+
+# Optimized regex patterns - compiled once for better performance
+TIME_REGEX = r"^\d{1,2}([:.]\d{2})?$"
+HOUR_REGEX = r"^\d{1,2}$"
+MINUTES_REGEX = r"^\d{2}$"
+ORDINAL_REGEX = r"^\d{1,2}(st|nd|rd|th)?$"
+DAY_ABBREV_REGEX = r"^(mon|tue|tues|wed|weds|thu|thurs|fri|sat|sun)(day)?s?$"
+
+# Repeat patterns - simplified and more maintainable
+REPS = [
+    {"label": "REPEAT", "pattern": [
+        {"LOWER": {"IN": DAY_MODIFIERS}},
+        {"LOWER": {"IN": DAYS}}
+    ]},
+    {"label": "REPEAT", "pattern": [
+        {"LOWER": {"IN": DAYS}}
+    ]},
+    {"label": "REPEAT", "pattern": [
+        {"LOWER": {"REGEX": DAY_ABBREV_REGEX}}
+    ]},
 ]
 
-RELATIVE_SINGLE = [{"LOWER": {"IN": ["tomorrow", "today", "tonight", "yesterday", "weekend"]}}]
-RELATIVE_MULTI = [{"LOWER": "next"}, {"LOWER": {"IN": ["week", "month", "year", "weekend"]}}]
+# Core building blocks for complex patterns
+TIME_COMPONENT = {"TEXT": {"REGEX": TIME_REGEX}}
+MERIDIEM_COMPONENT = {"LOWER": {"IN": MERIDIEM}, "OP": "?"}
+QUALIFIER_COMPONENT = {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"}
+CONNECTOR_COMPONENT = {"LOWER": {"IN": TIME_CONNECTORS}}
+DAY_COMPONENT = {"LOWER": {"IN": DAYS}}
+DAY_MODIFIER_COMPONENT = {"LOWER": {"IN": DAY_MODIFIERS}}
 
+# Optimized time patterns - prioritized by complexity and frequency
 S_TIME_PATTERNS = [
-    # 0. HIGHEST PRIORITY: Complete "between X and Y every DAY" pattern (NO trailing info)
+    # High Priority: Complete recurring patterns with days
+
+    # Pattern 1: "every DAY from X to Y" / "every DAY X to Y"
     [
-        {"LOWER": {"IN": ["between", "from"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # start time (accepts both : and .)
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},  # start meridiem
-        {"LOWER": {"IN": ["and", "to", "until", "&", "-", "–", "—"]}},  # range separator
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # end time (accepts both : and .)
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},  # end meridiem
-        {"LOWER": {"IN": ["every", "on", "each"]}},  # REQUIRED for complete pattern
-        {"LOWER": {"IN": DAYS}}  # REQUIRED day - STOP HERE
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT,
+        {"LOWER": {"IN": ["from", "at"]}, "OP": "?"},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        CONNECTOR_COMPONENT,
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # 1. Complete "from X to Y every DAY" pattern (NO trailing info)
+    # Pattern 2: "from X to Y every DAY"
     [
-        {"LOWER": {"IN": ["from", "starting"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "until", "through", "thru", "till", "ending"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["every", "on", "each"]}},  # REQUIRED
-        {"LOWER": {"IN": DAYS}}  # REQUIRED - STOP HERE
+        {"LOWER": {"IN": ["from", "between"]}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        CONNECTOR_COMPONENT,
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT
     ],
 
-    # 2. Complete "every DAY from X to Y" pattern (NO trailing info)
+    # Pattern 3: 24-hour format with days - "HH:MM-HH:MM every DAY"
     [
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}},
-        {"LOWER": {"IN": ["from", "between"]}, "OP": "?"},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "and", "until", "-", "–", "—", "through", "thru", "till"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
+        {"TEXT": {"REGEX": r"^\d{1,2}[:.]\d{2}$"}},
+        {"TEXT": {"IN": ["-", "–", "—", "to"]}},
+        {"TEXT": {"REGEX": r"^\d{1,2}[:.]\d{2}$"}},
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT
     ],
 
-    # NEW: Handle 24-hour format - "XX:XX-XX:XX every DAY" or "XX.XX-XX.XX every DAY"
+    # Pattern 4: Cross-meridiem ranges - "X am to Y pm every DAY"
     [
-        {"TEXT": {"REGEX": r"^\d{1,2}$"}},  # First number (17)
-        {"TEXT": {"IN": [":", "."]}},  # Colon or period
-        {"TEXT": {"REGEX": r"^\d{2}$"}},  # Minutes (00)
-        {"TEXT": {"IN": ["-", "–", "—", "to", "until"]}},  # Range separator
-        {"TEXT": {"REGEX": r"^\d{1,2}$"}},  # End hour (19)
-        {"TEXT": {"IN": [":", "."]}},  # Colon or period
-        {"TEXT": {"REGEX": r"^\d{2}$"}},  # End minutes (15)
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}}  # STOP HERE
+        TIME_COMPONENT,
+        {"LOWER": {"IN": MERIDIEM}},  # Required
+        CONNECTOR_COMPONENT,
+        TIME_COMPONENT,
+        {"LOWER": {"IN": MERIDIEM}},  # Required
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT
     ],
 
-    # NEW: Enhanced 24-hour format - more flexible (accepts both : and .)
+    # Pattern 5: Simple time ranges - "X-Y every DAY"
     [
-        {"TEXT": {"REGEX": r"^\d{1,2}[:.]\d{2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"TEXT": {"IN": ["to", "-", "–", "—", "through", "until"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}[:.]\d{2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}}  # STOP HERE
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        CONNECTOR_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT
     ],
 
-    # 3. Complete "every DAY at X to Y" pattern (NO trailing info)
+    # Medium Priority: Single time patterns
+
+    # Pattern 6: "every DAY at X"
     [
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}},
-        {"LOWER": {"IN": ["at", "from"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "until", "-", "–", "—", "through", "till"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
+        DAY_MODIFIER_COMPONENT,
+        DAY_COMPONENT,
+        {"LOWER": {"IN": TIME_PREPOSITIONS}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # 4. Simple range with day: "X - Y every DAY" (NO trailing info)
+    # Pattern 7: "DAY at X"
     [
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"TEXT": {"IN": ["-", "–", "—", "to", "until"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}}  # STOP HERE
+        DAY_COMPONENT,
+        {"LOWER": {"IN": TIME_PREPOSITIONS}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # 6. Cross-meridiem ranges: "11:30 am - 2:30 pm every Tuesday" (NO trailing info)
+    # Relative time patterns
+
+    # Pattern 8: Relative single days with times - "tomorrow at X"
     [
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}},  # Required start meridiem
-        {"TEXT": {"IN": ["to", "-", "–", "—", "through", "until"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}},  # Required end meridiem
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}}  # STOP HERE
+        {"LOWER": {"IN": RELATIVE_DAYS}},
+        {"LOWER": {"IN": TIME_PREPOSITIONS}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # 7. Hour-only ranges with day: "9 to 5 every weekday" (NO trailing info)
+    # Pattern 9: Relative multi-word - "next week at X"
     [
-        {"TEXT": {"REGEX": r"^\d{1,2}$"}},
-        {"TEXT": {"IN": ["to", "until", "-", "–", "—", "through", "till"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}$"}},
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}}  # STOP HERE
+        {"LOWER": {"IN": ["next", "this", "coming"]}},
+        {"LOWER": {"IN": ["week", "month", "weekend"]}},
+        {"LOWER": {"IN": TIME_PREPOSITIONS}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # --- LOWER PRIORITY: Single time patterns (only after range patterns fail) ---
+    # Lower Priority: Fallback patterns
 
-    # 8. Single time with day: "every Tuesday at 3 pm" (NO trailing info)
+    # Pattern 10: Generic time ranges (no day specified)
     [
-        {"LOWER": {"IN": ["every", "on", "each"]}},
-        {"LOWER": {"IN": DAYS}},
-        {"LOWER": {"IN": ["at", "from", "starting"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
+        {"LOWER": {"IN": ["from", "between"]}},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        CONNECTOR_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # 9. Day-first single time: "Tuesday at 3pm" (NO trailing info)
+    # Pattern 11: Simple range fallback
     [
-        {"LOWER": {"IN": DAYS}},
-        {"LOWER": {"IN": ["at", "from", "starting"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}  # STOP HERE
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
+        CONNECTOR_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
 
-    # Relative day + time range
-    RELATIVE_SINGLE + [
-        {"LOWER": {"IN": ["from", "at", "between", "starting"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
-    ],
-
-    RELATIVE_MULTI + [
-        {"LOWER": {"IN": ["from", "at", "between", "starting"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["to", "until", "and", "-", "–", "—"]}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}, "OP": "?"},
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
-    ],
-
-    # Time range + relative day
-    TIME_RANGE_PART + RELATIVE_SINGLE,
-    TIME_RANGE_PART + RELATIVE_MULTI,
-
-    # --- EVEN LOWER PRIORITY: Partial patterns ---
-
-    # 10. Enhanced between pattern (without required day - for fallback)
+    # Pattern 12: Single time fallback
     [
-        {"LOWER": {"IN": ["between", "from"]}},
-        {"LOWER": {"IN": TIME_QUALIFIERS}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"LOWER": {"IN": ["and", "to", "until", "&"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
-    ],
-
-    # 11. Basic range pattern (fallback)
-    [
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
-        {"TEXT": {"IN": ["to", "-", "–", "—", "through", "until"]}},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
-    ],
-
-    # 12. Single time patterns (lowest priority)
-    [
-        {"LOWER": {"IN": ["at", "by", "around", "about", "approximately", "roughly", "exactly"]}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"},
+        {"LOWER": {"IN": TIME_PREPOSITIONS}, "OP": "?"},
+        QUALIFIER_COMPONENT,
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT,
         {"LOWER": "sharp", "OP": "?"}
     ],
 
-    # 13. Ordinal dates with times
+    # Specialized patterns
+
+    # Pattern 13: Date with time - "January 15th at 3pm"
     [
         {"LOWER": {"IN": MONTHS}},
-        {"TEXT": {"REGEX": r"^\d{1,2}(st|nd|rd|th)?$"}},
-        {"LOWER": {"IN": ["at", "from", "starting"]}, "OP": "?"},
-        {"TEXT": {"REGEX": r"^\d{1,2}([:.]\d{2})?$"}},  # accepts both : and .
-        {"LOWER": {"IN": ["a.m.", "am", "p.m.", "pm"]}, "OP": "?"}
+        {"TEXT": {"REGEX": ORDINAL_REGEX}},
+        {"LOWER": {"IN": TIME_PREPOSITIONS}, "OP": "?"},
+        TIME_COMPONENT,
+        MERIDIEM_COMPONENT
     ],
-
-    # 14. Meal times
-    [
-        {"LOWER": {"IN": ["lunch", "dinner", "breakfast", "brunch"]}},
-        {"LOWER": {"IN": ["time", "hour", "break"]}}
-    ],
-
-    # 15. Business hours
-    [
-        {"LOWER": {"IN": ["business", "office", "working", "shop", "store"]}},
-        {"LOWER": {"IN": ["hours", "time"]}}
-    ],
-
-    # 16. Relative date: Single words like "tomorrow", "today", "tonight"
-    [
-        {"LOWER": {"IN": ["tomorrow", "today", "tonight", "now", "yesterday"]}}
-    ],
-
-    # 17. Phrases like "day after tomorrow", "the day after tomorrow"
-    [
-        {"LOWER": {"IN": ["the", "day"]}, "OP": "?"},
-        {"LOWER": "after"},
-        {"LOWER": "tomorrow"}
-    ],
-
-    # 18. Relative future time like "in 2 days", "in a few weeks"
+    # Pattern 14: Relative future - "in 2 days"
     [
         {"LOWER": "in"},
         {"LIKE_NUM": True, "OP": "?"},
-        {"LOWER": {"IN": ["a", "an", "few"]}, "OP": "?"},
-        {"LOWER": {"IN": ["minute", "minutes", "hour", "hours", "day", "days", "week", "weeks", "month", "months"]}}
-    ],
-
-    # 19. "Next/This/Coming [unit]" — e.g. "next week", "this weekend"
-    [
-        {"LOWER": {"IN": ["next", "this", "coming"]}},
-        {"LOWER": {"IN": ["minute", "hour", "day", "week", "month", "weekend"]}}
+        {"LOWER": {"IN": ["a", "an", "few", "couple"]}, "OP": "?"},
+        {"LOWER": {"IN": ["minute", "minutes", "hour", "hours", "day", "days",
+                          "week", "weeks", "month", "months", "year", "years"]}}
     ]
 ]
 
+# Location patterns - simplified
 LOCATION_PATTERNS = [
     [
         {"LOWER": {"IN": ["in", "at", "inside", "near"]}},
         {"LOWER": "the", "OP": "?"},
-        {"POS": {"IN": ["NOUN", "PROPN", "NUM", "X"]}, "OP": "+"}
+        {"POS": {"IN": ["NOUN", "PROPN"]}, "OP": "+"}
     ],
 ]
 
+# Extra context patterns
 EXTRA_PATTERNS = [
     [
         {"LOWER": {"IN": ["by", "with", "for"]}},
@@ -286,59 +229,112 @@ EXTRA_PATTERNS = [
     ]
 ]
 
+# Time expressions mapping
 TIME_EXPRESSIONS = {
     'noon': '12:00 pm',
     'midnight': '12:00 am',
     'morning': '9:00 am',
     'afternoon': '2:00 pm',
     'evening': '6:00 pm',
-    'night': '9:00 pm'
+    'night': '9:00 pm',
+    'dawn': '6:00 am',
+    'dusk': '7:00 pm'
 }
 
+# Compiled regex patterns for better performance
 TIME_PATTERNS = [
-    # Natural language patterns first (higher priority)
+    # Natural language time ranges
     re.compile(
-        r"\b(?:from|starting(?:\s+at)?|begins?(?:\s+at)?)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+(?:to|until|through|ending(?:\s+at)?|till)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
-        re.IGNORECASE),
-
-    # Time ranges with meridiem
-    re.compile(r"\b(\d{1,2}(?::\d{2})?)\s*(am|pm)\s*(?:to|until|through|-|–|—)\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
-               re.IGNORECASE),
-
-    # Single meridiem shared between times
-    re.compile(r"\b(\d{1,2}(?::\d{2})?)\s*(?:to|until|through|-|–|—)\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
-               re.IGNORECASE),
-
-    # 24-hour formats
-    re.compile(r"\b([01]?\d|2[0-3]):([0-5]\d)\s*(?:to|until|through|-|–|—)\s*([01]?\d|2[0-3]):([0-5]\d)\b",
-               re.IGNORECASE),
-    re.compile(r"\b([01]?\d|2[0-3])\s*(?:to|until|through|-|–|—)\s*([01]?\d|2[0-3])\b", re.IGNORECASE),
-
-    # Contextual patterns
-    re.compile(
-        r"\b(?:between|from)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+(?:and|to|until)\s+(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
-        re.IGNORECASE),
-    # Matches "at 2:00 pm", "in 2:00 pm", "on 2:00 pm"
-    re.compile(
-        r"\b(?:at|in|on|around|about)?\s*(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        r"\b(?:from|starting(?:\s+at)?|begins?(?:\s+at)?)\s+"
+        r"(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+"
+        r"(?:to|until|through|ending(?:\s+at)?|till)\s+"
+        r"(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
         re.IGNORECASE
     ),
+
+    # Cross-meridiem ranges - "X am to Y pm"
+    re.compile(
+        r"\b(\d{1,2}(?::\d{2})?)\s*(am|pm)\s*"
+        r"(?:to|until|through|-|–|—)\s*"
+        r"(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        re.IGNORECASE
+    ),
+
+    # Shared meridiem - "X to Y am/pm"
+    re.compile(
+        r"\b(\d{1,2}(?::\d{2})?)\s*"
+        r"(?:to|until|through|-|–|—)\s*"
+        r"(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        re.IGNORECASE
+    ),
+
+    # 24-hour format ranges
+    re.compile(
+        r"\b([01]?\d|2[0-3]):([0-5]\d)\s*"
+        r"(?:to|until|through|-|–|—)\s*"
+        r"([01]?\d|2[0-3]):([0-5]\d)\b",
+        re.IGNORECASE
+    ),
+
+    # Hour-only 24-hour ranges
+    re.compile(
+        r"\b([01]?\d|2[0-3])\s*"
+        r"(?:to|until|through|-|–|—)\s*"
+        r"([01]?\d|2[0-3])\b",
+        re.IGNORECASE
+    ),
+
+    # Between/from patterns
+    re.compile(
+        r"\b(?:between|from)\s+"
+        r"(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\s+"
+        r"(?:and|to|until)\s+"
+        r"(\d{1,2}(?::\d{2})?(?:\s*(?:am|pm))?)\b",
+        re.IGNORECASE
+    ),
+
+    # Single time with preposition
+    re.compile(
+        r"\b(?:at|by|around|about|approximately)?\s*"
+        r"(\d{1,2}(?::\d{2})?)\s*(am|pm)\b",
+        re.IGNORECASE
+    ),
+
+    # Special time expressions
+    re.compile(
+        r"\b(noon|midnight|morning|afternoon|evening|night|dawn|dusk)\b",
+        re.IGNORECASE
+    )
 ]
 
+# Day patterns - optimized for better matching
 DAY_PATTERNS = [
+    # Standard weekday patterns with optional modifiers
     re.compile(
-        r"\b(?:every|on|this|next)?\s*"
-        r"(?P<day>mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|thu(?:rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)s?\b",
+        r"\b(?:every|on|this|next|coming)?\s*"
+        r"(?P<day>mon(?:day)?|tue(?:s|sday)?|wed(?:nesday)?|"
+        r"thu(?:rs|rsday)?|fri(?:day)?|sat(?:urday)?|sun(?:day)?)s?\b",
         re.IGNORECASE
     ),
+
+    # Relative day expressions
     re.compile(
-        r"\b(?P<day>today|tomorrow|tonight|yesterday|day after tomorrow|day before yesterday|this weekend|next week|this week|next weekend)\b",
+        r"\b(?P<day>today|tomorrow|tonight|yesterday|"
+        r"day\s+after\s+tomorrow|day\s+before\s+yesterday|"
+        r"this\s+weekend|next\s+week(?:end)?|this\s+week)\b",
         re.IGNORECASE
     ),
+
+    # Weekday/weekend groups
+    re.compile(
+        r"\b(?:every\s+)?(?P<day>weekday|weekend|weeknight)s?\b",
+        re.IGNORECASE
+    )
 ]
 
+# Enhanced day mappings with more variations
 DAY_MAPPINGS = {
-    # Weekdays (lowercased for matching)
+    # Standard weekdays
     'mon': 'Monday', 'monday': 'Monday',
     'tue': 'Tuesday', 'tues': 'Tuesday', 'tuesday': 'Tuesday',
     'wed': 'Wednesday', 'weds': 'Wednesday', 'wednesday': 'Wednesday',
@@ -346,4 +342,21 @@ DAY_MAPPINGS = {
     'fri': 'Friday', 'friday': 'Friday',
     'sat': 'Saturday', 'saturday': 'Saturday',
     'sun': 'Sunday', 'sunday': 'Sunday',
+
+    # Relative days
+    'today': 'Today',
+    'tomorrow': 'Tomorrow',
+    'tonight': 'Tonight',
+    'yesterday': 'Yesterday',
+    'day after tomorrow': 'Day After Tomorrow',
+    'day before yesterday': 'Day Before Yesterday',
+
+    # Time periods
+    'this weekend': 'This Weekend',
+    'next weekend': 'Next Weekend',
+    'this week': 'This Week',
+    'next week': 'Next Week',
+    'weekday': 'Weekdays',
+    'weekend': 'Weekend',
+    'weeknight': 'Weeknights'
 }
