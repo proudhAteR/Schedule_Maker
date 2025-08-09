@@ -12,7 +12,6 @@ class EventService:
     def __init__(self):
         self.__parser = EventParser()
 
-    # @PerformanceTracker.timeit()
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
         event = None

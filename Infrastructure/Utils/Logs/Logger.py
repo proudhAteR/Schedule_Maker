@@ -2,7 +2,9 @@ import threading
 from logging import *
 
 from Infrastructure.Utils.Logs.ColorFormatter import ColorFormatter
+import Infrastructure.Utils.Logs.LoggerConfig as Config
 
+_ = Config
 
 class Logger:
     _instance = None
@@ -12,7 +14,7 @@ class Logger:
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
-                    cls._instance = super(Logger, cls).__new__(cls)
+                    cls._instance = super().__new__(cls)
                     cls._instance._logger = cls._instance.__get_logger()
         return cls._instance
 
@@ -22,7 +24,7 @@ class Logger:
         if not __logger.handlers:
             __logger.setLevel(INFO)
             handler = StreamHandler()
-            formatter = ColorFormatter('[%(levelname)s] - %(message)s')
+            formatter = ColorFormatter('%(message)s')
             handler.setFormatter(formatter)
             __logger.addHandler(handler)
             __logger.propagate = False
@@ -33,16 +35,16 @@ class Logger:
         cls.__get_logger().info(message)
 
     @classmethod
+    def success(cls, message: str):
+        cls.__get_logger().success(message)
+
+    @classmethod
     def warning(cls, message: str):
         cls.__get_logger().warning(message)
 
     @classmethod
     def error(cls, message: str):
         cls.__get_logger().error(message)
-
-    @classmethod
-    def debug(cls, message: str):
-        cls.__get_logger().debug(message)
 
     @classmethod
     def set_level(cls, level: int):
