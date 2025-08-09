@@ -1,6 +1,6 @@
 import re
 
-from Infrastructure.Utils.Helpers.patterns import TIME_EXPRESSIONS
+from Infrastructure.Utils.Helpers.Patterns.patterns import TIME_EXPRESSIONS
 
 
 class Normalizer:

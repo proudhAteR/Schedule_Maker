@@ -1,10 +1,8 @@
 import re
 from datetime import datetime, timedelta, time
 
-import dateparser
-
 from Core.Models.Enum.Field import Field
-from Infrastructure.Utils.Helpers.patterns import TIME_EXPRESSIONS
+from Infrastructure.Utils.Helpers.Patterns.patterns import TIME_EXPRESSIONS
 from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.DayExtractor import DayExtractor
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
@@ -27,7 +25,7 @@ class FallbackHandler:
         }
 
     @staticmethod
-    def __get_fallback(fallback_date, fallback_time):
+    def __get_fallback(fallback_date, fallback_time) -> datetime:
         if not fallback_date:
             fallback_date = datetime.now()
         if isinstance(fallback_time, time):
@@ -38,10 +36,13 @@ class FallbackHandler:
         return fallback_time
 
     @staticmethod
-    def next_hour(given: time) -> time:
+    def next_hour(given: time | datetime) -> datetime:
+        if isinstance(given, datetime):
+            given = given.time()
         dummy_dt = datetime.combine(datetime.today(), given)
         incremented = dummy_dt + timedelta(hours=1)
-        return incremented.time()
+
+        return incremented
 
     def _extract_any_time(self, sentence: str) -> datetime | None:
         times = self.time_only_pattern.findall(sentence)

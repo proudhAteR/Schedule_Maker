@@ -1,7 +1,7 @@
 import dateparser
 
 from Core.Interface.Extractor import Extractor
-from Infrastructure.Utils.Helpers.patterns import DAY_PATTERNS, DAY_MAPPINGS
+from Infrastructure.Utils.Helpers.Patterns.Regex.patterns import DAY_PATTERNS, DAY_MAPPINGS
 
 
 class DayExtractor(Extractor):

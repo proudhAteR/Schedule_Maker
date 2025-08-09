@@ -1,10 +1,12 @@
+import re
+
 from spacy.matcher import Matcher
 from spacy.pipeline import EntityRuler
 from spacy.tokens.doc import Doc
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from Core.Interface.Tokenizer import Tokenizer
-from Infrastructure.Utils.Helpers.patterns import *
+from Infrastructure.Utils.Helpers.Patterns.Spacy.patterns import REPS, TIME_PATTERNS, LOCATION_PATTERNS, EXTRA_PATTERNS
 from Infrastructure.Utils.Parser.Matchers.Temporal.Normalizer import Normalizer
 
 
@@ -22,7 +24,7 @@ class Spacy(Tokenizer):
         self._add_matcher_patterns()
 
     def _add_matcher_patterns(self):
-        for i, p in enumerate(S_TIME_PATTERNS):
+        for i, p in enumerate(TIME_PATTERNS):
             self.matcher.add(f"time_{i}", [p])
 
         for i, p in enumerate(LOCATION_PATTERNS):
@@ -38,6 +40,7 @@ class Spacy(Tokenizer):
     def __match(self, doc: Doc, matched_token_ids: set) -> dict:
         res = {}
         matches = self.matcher(doc)
+        matches = self.__filter_overlapping_matches(matches)
 
         for match_id, start, end in matches:
             match_range = range(start, end)
@@ -121,3 +124,15 @@ class Spacy(Tokenizer):
     def __get_title(doc, matched_token_ids: set):
         leftover_tokens = [token.text for i, token in enumerate(doc) if i not in matched_token_ids]
         return " ".join(leftover_tokens).strip()
+
+    @staticmethod
+    def __filter_overlapping_matches(matches):
+        matches = sorted(matches, key=lambda m: (m[1], -m[2]))
+        filtered = []
+        last_end = -1
+        for match in matches:
+            _, start, end = match
+            if start >= last_end:
+                filtered.append(match)
+                last_end = end
+        return filtered

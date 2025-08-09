@@ -1,7 +1,8 @@
 from re import *
 
 from Core.Interface.Extractor import Extractor
-from Infrastructure.Utils.Helpers.patterns import TIME_EXPRESSIONS, TIME_PATTERNS
+from Infrastructure.Utils.Helpers.Patterns.Regex.patterns import TIME_PATTERNS
+from Infrastructure.Utils.Helpers.Patterns.patterns import TIME_EXPRESSIONS
 from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.Helpers.MeridiemHelper import MeridiemHelper
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 

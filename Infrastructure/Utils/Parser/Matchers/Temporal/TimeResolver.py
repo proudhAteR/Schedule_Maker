@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta, time
 
-import dateparser
-
 from Infrastructure.Utils.Parser.Matchers.Temporal.FallbackHandler import FallbackHandler
 from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
