@@ -1,10 +1,12 @@
 import inspect
+from datetime import datetime
 
 from Core.Interface.Parser import Parser
 from Core.Models.Events.Event import Event
 from Core.Models.Time.Period import Period
 from Core.Models.Time.Recurrence import Recurrence
 from Infrastructure.Services.Language.LanguageService import LanguageService
+from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
 class EventParser(Parser):
@@ -41,5 +43,9 @@ class EventParser(Parser):
 
         return filtered_kwargs
 
-    async def get_date(self, date_str: str):
+    async def get_date(self, date_str: str) -> datetime:
         return await self.__language.parse_datetime(date_str)
+
+    async def midnight(self, date: str):
+        date = await self.get_date(date)
+        return TimeParser.midnight(date)

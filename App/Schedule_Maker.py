@@ -21,5 +21,5 @@ class Schedule_Maker(Generic[TCalendar]):
         await self.calendar.insert_all(s)
 
     async def overview(self, date_str: str | None):
-        date = await self.service.get_date(date_str)
+        date = await self.service.overview_date(date_str)
         await self.calendar.get_schedule(date)

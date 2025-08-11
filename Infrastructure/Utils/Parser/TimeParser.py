@@ -77,3 +77,7 @@ class TimeParser(Parser):
         settings = {'RETURN_AS_TIMEZONE_AWARE': True}
         dt = dateparser.parse(date_str, settings=settings) if date_str else datetime.now().astimezone()
         return dt or datetime.now().astimezone()
+
+    @staticmethod
+    def midnight(date : datetime) -> datetime:
+        return date.replace(hour=0, minute=0, second=0, microsecond=0)

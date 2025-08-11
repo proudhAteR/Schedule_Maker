@@ -43,3 +43,6 @@ class EventService:
 
     async def get_date(self, date_str: str):
         return await self.__parser.get_date(date_str)
+
+    async def overview_date(self, date_str: str):
+        return await self.__parser.midnight(date_str)

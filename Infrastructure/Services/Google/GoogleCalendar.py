@@ -38,9 +38,29 @@ class GoogleCalendar(CalendarAPI, GoogleAPI):
             )
 
             response = request.execute()
-            events = response.get('items', [])
+            events: list[dict] = response.get('items', [])
 
-            Logger.info(f"{len(events)} event(s) found on {date.date()}")
+            await self.display(date, events)
+
         except Exception as e:
             Logger.error(f"Failed to retrieve events at {date.date()}: {e}")
             raise
+
+    @staticmethod
+    async def display(date, events):
+        Logger.success(f"{len(events)} event(s) found on {date.date()}")
+        if not events:
+            return
+
+        for e in events:
+            start_raw = e.get("start", {}).get("dateTime") or e.get("start", {}).get("date")
+            summary = e.get("summary", "No title")
+
+            # Handle possible 'Z' in ISO string
+            if start_raw.endswith("Z"):
+                start_raw = start_raw.replace("Z", "+00:00")
+
+            start_dt = datetime.fromisoformat(start_raw)
+            start_str = start_dt.strftime("%I:%M %p")
+
+            Logger.info(f"{start_str}: {summary}")
