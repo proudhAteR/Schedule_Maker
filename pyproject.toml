@@ -33,5 +33,6 @@ build-backend = "setuptools.build_meta"
 include = ["App*", "Core*", "Conf*", "Infrastructure*"]
 
 [tool.setuptools.package-data]
-Conf = ["*.json"]
+Conf = ["*.json", ".*.json"]
+
 
