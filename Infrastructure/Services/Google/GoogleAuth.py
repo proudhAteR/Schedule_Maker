@@ -41,6 +41,6 @@ class GoogleAuth(Auth):
         return None
 
     def __run_auth_flow(self) -> Credentials:
-        config = FileService.load_secret_config(self.config_name)
+        config = FileService.load_secret_config(self.config_name, "json")
         flow = InstalledAppFlow.from_client_config(config, self.client.scopes)
         return flow.run_local_server(port=0)

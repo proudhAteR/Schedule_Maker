@@ -21,5 +21,6 @@ class FileService:
         return FileIO.read_json(path)
 
     @staticmethod
-    def load_secret_config(name: str) -> dict:
-        return Secrets.load_config(name)
+    def load_secret_config(name: str, ext: str) -> dict:
+        config = Secrets.load_config(name, ext)
+        return FileIO.extension_handling(config,ext)

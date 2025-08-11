@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import yaml
+
 
 class FileIO:
     @staticmethod
@@ -19,3 +21,13 @@ class FileIO:
         if not path_obj.exists():
             return None
         return json.loads(path_obj.read_text(encoding="utf-8"))
+
+    @staticmethod
+    def extension_handling(raw: str, ext: str) -> dict:
+        match ext:
+            case 'json':
+                return json.loads(raw) if raw else {}
+            case 'yaml', 'yml':
+                return yaml.safe_load(raw) if raw else {}
+            case _:
+                raise ValueError(f"Unsupported config extension: {ext}")

@@ -1,16 +1,16 @@
 import importlib.resources as pkg_resources
-import json
 import os
 
 import Conf
-from Infrastructure.Services.Files._internal.ProjectPaths import ProjectPaths
+from .._internal.FileIO import FileIO
+from .._internal.ProjectPaths import ProjectPaths
 
 
 class Secrets:
     @staticmethod
-    def load_config(name: str) -> dict:
+    def load_config(name: str, ext: str) -> str:
         if not os.getenv(name):
-            cred_filename = f".{name.lower()}.json"
+            cred_filename = f".{name.lower()}.{ext}"
             cred_path = ProjectPaths.root() / "Conf" / cred_filename
 
             if cred_path.exists():
@@ -20,5 +20,4 @@ class Secrets:
                 with pkg_resources.files(Conf).joinpath(cred_filename).open("r", encoding="utf-8") as f:
                     os.environ[name] = f.read()
 
-        raw = os.getenv(name)
-        return json.loads(raw) if raw else {}
+        return os.getenv(name)
