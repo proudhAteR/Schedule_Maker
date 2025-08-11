@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.8.4.2"
+version = "0.1.8.4.3"
 description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -30,4 +30,8 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["App*", "Core*", "Infrastructure*"]
+include = ["App*", "Core*", "Conf*", "Infrastructure*"]
+
+[tool.setuptools.package-data]
+Conf = ["*.json"]
+
