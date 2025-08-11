@@ -7,11 +7,11 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## 🆕 Changelog
 
-### v0.1.7 (2025‑07‑22)
+### v0.1.8.5 (2025‑08‑11)
 
 #### ✨ Added
 
-- **Overview Command**: You can now get a quick summary of your schedule for a specific date.
+- **Overview Command**: Now displays both event names and their start times for the chosen date.
     - Running the command **without** the `-o` / `--on` option shows the schedule for **today** by default:
       ```bash
       sm overview
@@ -20,8 +20,6 @@ for speed and flexibility, it turns natural language inputs into structured cale
       ```bash
       sm overview -o tomorrow
       ```
-- Improved Natural Language Processing: Thanks to [`spaCy`](https://spacy.io/), the app's NLP capabilities are now more
-  accurate and flexible.
 
 ---
 
