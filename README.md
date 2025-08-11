@@ -18,7 +18,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
       ```
     - Using the `-o` / `--on` option lets you choose a specific date:
       ```bash
-      sm overview -o tomorrow
+      sm overview -o "tomorrow"
       ```
 
 ---

@@ -74,7 +74,7 @@ def schedule(
 
 @app.command(help="Get schedule overview for a given date.")
 def overview(
-        date: Optional[str] = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next Monday'.")
+        date: Optional[str] = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
         maker = Schedule_Maker()
