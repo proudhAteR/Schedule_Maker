@@ -1,8 +1,6 @@
 import json
 from pathlib import Path
 
-import yaml
-
 
 class FileIO:
     @staticmethod
@@ -27,7 +25,5 @@ class FileIO:
         match ext:
             case 'json':
                 return json.loads(raw) if raw else {}
-            case 'yaml', 'yml':
-                return yaml.safe_load(raw) if raw else {}
             case _:
                 raise ValueError(f"Unsupported config extension: {ext}")
