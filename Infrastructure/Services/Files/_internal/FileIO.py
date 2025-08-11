@@ -4,17 +4,17 @@ from pathlib import Path
 
 class FileIO:
     @staticmethod
-    def exists(path: str | Path) -> bool:
+    def exists(path: str) -> bool:
         return Path(path).exists()
 
     @staticmethod
-    def write(path: str | Path, text: str) -> None:
+    def write(path: str, text: str) -> None:
         path_obj = Path(path)
         path_obj.parent.mkdir(parents=True, exist_ok=True)
         path_obj.write_text(text, encoding="utf-8")
 
     @staticmethod
-    def read_json(file: str | Path):
+    def read_json(file: str):
         path_obj = Path(file)
         if not path_obj.exists():
             return None

@@ -8,9 +8,10 @@ from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class GoogleAuth(Auth):
-    def __init__(self, client: GoogleClient, token: str = 'token.json'):
+    def __init__(self, client: GoogleClient, token: str = 'google_token.json'):
         self.token_path = FileService.secret_path(token)
         self.client = client
+        self.config_name = "GOOGLE_CREDENTIALS"
 
     def auth(self) -> Credentials:
         creds = self.__load_token()
@@ -40,6 +41,6 @@ class GoogleAuth(Auth):
         return None
 
     def __run_auth_flow(self) -> Credentials:
-        config = FileService.load_secret_config()
+        config = FileService.load_secret_config(self.config_name)
         flow = InstalledAppFlow.from_client_config(config, self.client.scopes)
         return flow.run_local_server(port=0)
