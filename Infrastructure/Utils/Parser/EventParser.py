@@ -49,3 +49,13 @@ class EventParser(Parser):
     async def midnight(self, date: str):
         date = await self.get_date(date)
         return TimeParser.midnight(date)
+
+    @staticmethod
+    async def convert_time(event: dict):
+        start_raw = event.get("start", {}).get("dateTime") or event.get("start", {}).get("date")
+        if start_raw.endswith("Z"):
+            start_raw = start_raw.replace("Z", "+00:00")
+
+        start_dt = datetime.fromisoformat(start_raw)
+        start_str = start_dt.strftime("%I:%M %p")
+        return start_str

@@ -46,3 +46,12 @@ class EventService:
 
     async def overview_date(self, date_str: str):
         return await self.__parser.midnight(date_str)
+
+
+
+
+    @staticmethod
+    async def get_infos(event):
+        summary = event.get("summary", "No title")
+        start_str = await EventParser.convert_time(event)
+        return start_str, summary

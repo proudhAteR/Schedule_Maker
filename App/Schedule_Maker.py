@@ -1,16 +1,24 @@
+from datetime import datetime
 from typing import Generic, TypeVar
 
 from Core.Interface.APIs.CalendarAPI import CalendarAPI
 from Infrastructure.Services.EventService import EventService
-from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
+from Infrastructure.Utils.Logs.Logger import Logger
 
 TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
 
 class Schedule_Maker(Generic[TCalendar]):
     def __init__(self, calendar: TCalendar | None = None):
-        self.calendar = calendar or GoogleCalendar()
+        self._calendar = calendar
         self.service = EventService()
+
+    @property
+    def calendar(self) -> TCalendar:
+        if self._calendar is None:
+            from Infrastructure.Services.Google.GoogleCalendar import GoogleCalendar
+            self._calendar = GoogleCalendar()
+        return self._calendar
 
     async def event(self, sentence: str, priority: str):
         e = await self.service.create_event(sentence, priority)
@@ -21,5 +29,15 @@ class Schedule_Maker(Generic[TCalendar]):
         await self.calendar.insert_all(s)
 
     async def overview(self, date_str: str | None):
-        date = await self.service.overview_date(date_str)
-        await self.calendar.get_schedule(date)
+        d = await self.service.overview_date(date_str)
+        e = await self.calendar.get_schedule(d)
+        await self.display(d, e)
+
+    async def display(self, date: datetime, events: list[dict]):
+        Logger.success(f"{len(events)} event(s) found on {date.date()}")
+        if not events:
+            return
+
+        for event in events:
+            start_str, summary = await self.service.get_infos(event)
+            Logger.info(f"{start_str}: {summary}")
