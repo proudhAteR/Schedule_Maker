@@ -1,6 +1,6 @@
 [project]
 name = "sm"
-version = "0.1.8.5.2"
+version = "0.1.8.5.3"
 description = "Terminal-based Python app that quickly creates Google Calendar events from natural language."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -19,7 +19,7 @@ dependencies = [
     "google-auth-httplib2",
     "google-auth-oauthlib",
     "googleapis-common-protos",
-    "spacy==3.8.7"
+    "spacy"
 ]
 
 [project.scripts]
