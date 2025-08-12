@@ -1,5 +1,5 @@
 import re
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
 
 import dateparser
 
@@ -75,9 +75,18 @@ class TimeParser(Parser):
     @staticmethod
     def get_date(date_str: str | None):
         settings = {'RETURN_AS_TIMEZONE_AWARE': True}
+        # noinspection PyTypeChecker
         dt = dateparser.parse(date_str, settings=settings) if date_str else datetime.now().astimezone()
         return dt or datetime.now().astimezone()
 
     @staticmethod
-    def midnight(date : datetime) -> datetime:
+    def midnight(date: datetime) -> datetime:
         return date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    @staticmethod
+    def get_possible_range(date):
+        time_min = date.isoformat()
+        time_max = (
+                date + timedelta(days=1)
+        ).isoformat()
+        return time_max, time_min

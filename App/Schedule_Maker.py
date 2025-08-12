@@ -30,7 +30,7 @@ class Schedule_Maker(Generic[TCalendar]):
 
     async def overview(self, date_str: str | None):
         d = await self.service.overview_date(date_str)
-        e = await self.calendar.get_schedule(d)
+        e = await self.calendar.fetch_schedule(d)
         await self.display(d, e)
 
     async def display(self, date: datetime, events: list[dict]):

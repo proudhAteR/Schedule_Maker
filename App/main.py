@@ -34,7 +34,9 @@ def event(
         from App.Schedule_Maker import Schedule_Maker
 
         maker = Schedule_Maker()
-        async_call(maker.event(description, p))
+        async_call(
+            maker.event(description, p)
+        )
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
         raise typer.Exit(code=1)
@@ -63,9 +65,10 @@ def schedule(
             raise typer.BadParameter("No valid events provided.")
 
         from App.Schedule_Maker import Schedule_Maker
-
         maker = Schedule_Maker()
-        async_call(maker.schedule(events_list, start))
+        async_call(
+            maker.schedule(events_list, start)
+        )
     except Exception as e:
         Logger.error(f"Failed to create schedule: {e}")
         raise typer.Exit(code=2)
@@ -77,9 +80,10 @@ def overview(
 ):
     try:
         from App.Schedule_Maker import Schedule_Maker
-
         maker = Schedule_Maker()
-        async_call(maker.overview(date))
+        async_call(
+            maker.overview(date)
+        )
     except Exception as e:
         Logger.error(f"Failed to give overview: {e}")
         raise typer.Exit(code=3)

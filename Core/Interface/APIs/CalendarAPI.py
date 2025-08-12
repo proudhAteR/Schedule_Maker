@@ -18,5 +18,5 @@ class CalendarAPI(API):
     async def insert_all(self, schedule: Schedule):
         pass
 
-    async def get_schedule(self, date: datetime):
+    async def fetch_schedule(self, date: datetime):
         pass
