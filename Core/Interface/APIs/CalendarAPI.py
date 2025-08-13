@@ -23,5 +23,5 @@ class CalendarAPI(API):
         pass
 
     @abstractmethod
-    def reconnect(self):
+    def authenticate(self):
         pass

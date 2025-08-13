@@ -47,5 +47,5 @@ class GoogleCalendar(CalendarAPI, GoogleAPI):
         request: HttpRequest = getattr(self.__events, method)(**kwargs)
         return self._make_request(request)
 
-    def reconnect(self):
+    def authenticate(self):
         self._authenticator.reconnect()

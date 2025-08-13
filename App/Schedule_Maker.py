@@ -49,4 +49,4 @@ class Schedule_Maker(Generic[TCalendar]):
             Logger.info(f"{start_str}: {summary}")
 
     def connect(self):
-        self.calendar.reconnect()
+        self.calendar.authenticate()
