@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import gather
 
 from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
@@ -26,17 +26,12 @@ class EventService:
             raise
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
-        async def parse_line(line: str):
-            return await self.create_event(line, recurrence=recurrence)
-
         recurrence = None
         if date_str:
-            recurrence = Recurrence(
-                first_occurrence=await self.get_date(date_str)
-            )
+            recurrence = Recurrence(first_occurrence=await self.get_date(date_str))
 
-        tasks = [parse_line(line) for line in block]
-        results = await asyncio.gather(*tasks)
+        tasks = [await self.create_event(line, recurrence=recurrence) for line in block]
+        results = await gather(*tasks)
         events = [e for e in results if e is not None]
 
         return Schedule(events, recurrence)
@@ -46,9 +41,6 @@ class EventService:
 
     async def overview_date(self, date_str: str):
         return await self.__parser.midnight(date_str)
-
-
-
 
     @staticmethod
     async def get_infos(event):

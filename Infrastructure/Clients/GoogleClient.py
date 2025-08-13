@@ -1,4 +1,6 @@
 from google.auth.transport.requests import Request
+from googleapiclient.http import HttpRequest
+
 from Infrastructure.Clients.Client import Client
 
 
@@ -13,3 +15,7 @@ class GoogleClient(Client):
     @property
     def scopes(self) -> list[str]:
         return [self.base_url + self.service]
+
+    @staticmethod
+    def make_request(request: HttpRequest):
+        return request.execute()

@@ -8,12 +8,12 @@ from Infrastructure.Utils.Logs.Logger import Logger
 
 
 class GoogleAuth(Auth):
-    def __init__(self, client: GoogleClient, token: str = 'google_token.json'):
-        self.token_path = FileService.secret_path(token)
+    def __init__(self, client: GoogleClient, token_file: str = 'google_token.json'):
+        self.token_path = FileService.secret_path(token_file)
         self.client = client
         self.config_name = "GOOGLE_CREDENTIALS"
 
-    def auth(self) -> Credentials:
+    def run(self) -> Credentials:
         creds = self.__load_token()
         if not creds or not creds.valid:
             creds = self.__process_token(creds)

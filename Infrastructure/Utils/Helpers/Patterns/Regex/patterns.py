@@ -119,3 +119,7 @@ DAY_MAPPINGS = {
     'weekend': 'Weekend',
     'weeknight': 'Weeknights'
 }
+
+RE_HOUR_ONLY = re.compile(r"\d{1,2}$")
+RE_24H = re.compile(r"\d{1,2}:\d{2}$")
+RE_12H = re.compile(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)$", re.IGNORECASE)
