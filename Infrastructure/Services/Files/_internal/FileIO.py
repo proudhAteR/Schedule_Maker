@@ -21,6 +21,12 @@ class FileIO:
         return json.loads(path_obj.read_text(encoding="utf-8"))
 
     @staticmethod
+    def delete(file: str):
+        path = Path(file)
+        if path.exists():
+            path.unlink()
+
+    @staticmethod
     def extension_handling(raw: str, ext: str) -> dict:
         match ext:
             case 'json':

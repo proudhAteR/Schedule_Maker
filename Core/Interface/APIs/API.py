@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from Infrastructure.Clients.Client import Client
 from typing import TypeVar, Generic
+
+from Infrastructure.Clients.Client import Client
 
 TClient = TypeVar("TClient", bound=Client)
 

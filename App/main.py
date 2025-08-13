@@ -89,6 +89,18 @@ def overview(
         raise typer.Exit(code=3)
 
 
+@app.command(help="Connect to your google account.")
+def auth():
+    try:
+        from App.Schedule_Maker import Schedule_Maker
+        maker = Schedule_Maker()
+
+        maker.connect()
+    except Exception as e:
+        Logger.error(f"Failed to connect: {e}")
+        raise typer.Exit(code=4)
+
+
 def run():
     Imp.run()
     app()

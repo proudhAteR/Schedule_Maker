@@ -19,6 +19,11 @@ class GoogleAuth(Auth):
             creds = self.__process_token(creds)
         return creds
 
+    def reconnect(self):
+        if self.authenticated:
+            FileService.delete(self.token_path)
+        self.run()
+
     def __process_token(self, creds: Credentials):
         if self.__refresh_needed(creds):
             try:
@@ -36,7 +41,7 @@ class GoogleAuth(Auth):
         return creds and creds.expired and creds.refresh_token
 
     def __load_token(self) -> Credentials | None:
-        if FileService.exists(self.token_path):
+        if self.authenticated:
             return Credentials.from_authorized_user_file(self.token_path, self.client.scopes)
         return None
 
@@ -44,3 +49,7 @@ class GoogleAuth(Auth):
         config = FileService.load_secret_config(self.config_name, "json")
         flow = InstalledAppFlow.from_client_config(config, self.client.scopes)
         return flow.run_local_server(port=0)
+
+    @property
+    def authenticated(self):
+        return FileService.exists(self.token_path)

@@ -1,4 +1,6 @@
 import os
+import platform
+import subprocess
 from pathlib import Path
 
 
@@ -32,3 +34,19 @@ class ProjectPaths:
     @classmethod
     def secret_path(cls, filename: str) -> str:
         return str(cls.root() / "App" / "secrets" / filename)
+
+    @staticmethod
+    def make_hidden(path: str) -> Path:
+        path = ProjectPaths.root() / "Conf" / path
+
+        if platform.system() == "Windows":
+            subprocess.run(["attrib", "+H", str(path)], shell=True)
+        else:
+            pass
+
+        return path
+
+
+    @staticmethod
+    def config_name(name: str, ext: str):
+        return f".{name.lower()}.{ext}"

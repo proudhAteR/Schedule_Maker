@@ -47,3 +47,6 @@ class Schedule_Maker(Generic[TCalendar]):
         for event in events:
             start_str, summary = await self.service.get_infos(event)
             Logger.info(f"{start_str}: {summary}")
+
+    def connect(self):
+        self.calendar.reconnect()

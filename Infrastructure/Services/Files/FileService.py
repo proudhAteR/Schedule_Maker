@@ -21,6 +21,14 @@ class FileService:
         return FileIO.read_json(path)
 
     @staticmethod
+    def delete(file: str):
+        return FileIO.delete(file)
+
+    @staticmethod
     def load_secret_config(name: str, ext: str) -> dict:
         config = Secrets.load_config(name, ext)
-        return FileIO.extension_handling(config,ext)
+        return FileIO.extension_handling(config, ext)
+
+    @staticmethod
+    def config_name(name: str, ext: str = 'json'):
+        return ProjectPaths.config_name(name, ext)

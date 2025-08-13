@@ -7,18 +7,14 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## 🆕 Changelog
 
-### v0.1.8.5 (2025‑08‑11)
+### v0.1.9 (2025‑08‑12)
 
 #### ✨ Added
 
-- **Overview Command**: Now displays both event names and their start times for the chosen date.
-    - Running the command **without** the `-o` / `--on` option shows the schedule for **today** by default:
+- **Auth Command**: Easily switch between Google accounts.
+    - Running the command opens your browser and lets you select the account to authenticate:
       ```bash
-      sm overview
-      ```
-    - Using the `-o` / `--on` option lets you choose a specific date:
-      ```bash
-      sm overview -o "tomorrow"
+      sm auth
       ```
 
 ---
