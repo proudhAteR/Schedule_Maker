@@ -9,9 +9,7 @@ from Infrastructure.Services.Google.GoogleAuth import GoogleAuth
 
 class GoogleAPI(API[GoogleClient]):
     def __init__(self, service: str):
-        super().__init__(
-            GoogleClient(service)
-        )
+        super().__init__(GoogleClient(service))
 
         try:
             self._authenticator = GoogleAuth(self.client)
