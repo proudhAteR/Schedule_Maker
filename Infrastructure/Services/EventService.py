@@ -4,7 +4,6 @@ from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 from Core.Models.Time.Recurrence import Recurrence
-from Infrastructure.Utils.Logs.Logger import Logger
 from Infrastructure.Utils.Parser.EventParser import EventParser
 
 
@@ -14,16 +13,11 @@ class EventService:
 
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:
-        event = None
-        try:
-            event = await self.__parser.parse(sentence, recurrence)
-            if priority:
-                event.priority = Priority.from_str(priority)
+        event = await self.__parser.parse(sentence, recurrence)
+        if priority:
+            event.priority = Priority.from_str(priority)
 
-            return event
-        except ValueError as e:
-            Logger.error(f"Unable to create {event.name}. Cause: {e}")
-            raise
+        return event
 
     async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
         recurrence = None

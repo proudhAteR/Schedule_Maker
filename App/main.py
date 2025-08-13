@@ -81,9 +81,14 @@ def overview(
     try:
         from App.Schedule_Maker import Schedule_Maker
         maker = Schedule_Maker()
-        async_call(
+        events, date_time = async_call(
             maker.overview(date)
         )
+
+        Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
+        for start_str, summary in events:
+            Logger.info(f"{start_str}: {summary}")
+
     except Exception as e:
         Logger.error(f"Failed to give overview: {e}")
         raise typer.Exit(code=3)
