@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, time
 
 from Core.Models.Enum.Field import Field
 from Infrastructure.Utils.Helpers.Patterns.patterns import TIME_EXPRESSIONS
-from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.DayExtractor import DayExtractor
-from Infrastructure.Utils.Parser.TimeParser import TimeParser
+from Infrastructure.Utils.Matchers.Time._internal.Extractors.DayExtractor import DayExtractor
+from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
 class FallbackHandler:

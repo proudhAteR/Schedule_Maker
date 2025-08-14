@@ -6,17 +6,23 @@ from spacy.tokens.doc import Doc
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from Core.Interface.Tokenizer import Tokenizer
+from Infrastructure.Utils.Helpers.Normalizer import Normalizer
 from Infrastructure.Utils.Helpers.Patterns.Spacy.patterns import REPS, TIME_PATTERNS, LOCATION_PATTERNS, EXTRA_PATTERNS
-from Infrastructure.Utils.Parser.Matchers.Temporal.Normalizer import Normalizer
 
 
 class Spacy(Tokenizer):
-
-    def __init__(self, model: str = "en_core_web_sm"):
-        self.core = Imp.load_spacy_model(model)
-        self.matcher = Matcher(self.core.vocab)
-        self.normalizer = Normalizer()
+    def __init__(self, core_model, matcher, normalizer):
+        self.core = core_model
+        self.matcher = matcher
+        self.normalizer = normalizer
         self.__add_patterns()
+
+    @classmethod
+    async def create(cls, model: str = "en_core_web_sm"):
+        core_model = await Imp.load_spacy_model_async(model)
+        matcher = Matcher(core_model.vocab)
+        normalizer = Normalizer()
+        return cls(core_model, matcher, normalizer)
 
     def __add_patterns(self):
         ruler = EntityRuler(self.core)

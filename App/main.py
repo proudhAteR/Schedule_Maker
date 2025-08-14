@@ -31,11 +31,10 @@ def event(
         else:
             p = None
 
-        from App.Schedule_Maker import Schedule_Maker
+        from App.SM import SM
 
-        maker = Schedule_Maker()
         async_call(
-            maker.event(description, p)
+            SM().event(description, p)
         )
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
@@ -64,10 +63,9 @@ def schedule(
         if not events_list:
             raise typer.BadParameter("No valid events provided.")
 
-        from App.Schedule_Maker import Schedule_Maker
-        maker = Schedule_Maker()
+        from App.SM import SM
         async_call(
-            maker.schedule(events_list, start)
+            SM().schedule(events_list, start)
         )
     except Exception as e:
         Logger.error(f"Failed to create schedule: {e}")
@@ -79,10 +77,9 @@ def overview(
         date: Optional[str] = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
-        from App.Schedule_Maker import Schedule_Maker
-        maker = Schedule_Maker()
+        from App.SM import SM
         events, date_time = async_call(
-            maker.overview(date)
+            SM().overview(date)
         )
 
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
@@ -97,10 +94,9 @@ def overview(
 @app.command(help="Connect to your google account.")
 def auth():
     try:
-        from App.Schedule_Maker import Schedule_Maker
-        maker = Schedule_Maker()
+        from App.SM import SM
 
-        maker.connect()
+        SM().connect()
     except Exception as e:
         Logger.error(f"Failed to connect: {e}")
         raise typer.Exit(code=4)

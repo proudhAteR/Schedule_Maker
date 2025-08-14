@@ -3,13 +3,13 @@ from asyncio import gather
 
 from Core.Interface.Matcher import Matcher
 from Core.Models.Enum.Field import Field
-from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.DayExtractor import DayExtractor
-from Infrastructure.Utils.Parser.Matchers.Temporal.Extractors.TimeExtractor import TimeExtractor
-from Infrastructure.Utils.Parser.Matchers.Temporal.FallbackHandler import FallbackHandler
-from Infrastructure.Utils.Parser.Matchers.Temporal.TimeResolver import TimeResolver
+from ._internal.Extractors.DayExtractor import DayExtractor
+from ._internal.Extractors.TimeExtractor import TimeExtractor
+from ._internal.FallbackHandler import FallbackHandler
+from ._internal.TimeResolver import TimeResolver
 
 
-class TemporalMatcher(Matcher):
+class TimeMatcher(Matcher):
     def __init__(self):
         self.time_pattern = re.compile(r"\b(\d{1,2}(?::\d{2})?)\s*(am|pm)\b", re.IGNORECASE)
         self.day_extractor = DayExtractor()

@@ -3,12 +3,12 @@ from typing import Generic, TypeVar
 
 from Core.Interface.APIs.CalendarAPI import CalendarAPI
 from Infrastructure.Services.EventService import EventService
-from Infrastructure.Utils.Parser.TimeParser import TimeParser
+from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
 
-class Schedule_Maker(Generic[TCalendar]):
+class SM(Generic[TCalendar]):
     def __init__(self, calendar: TCalendar | None = None):
         self._calendar = calendar
         self.service = EventService()

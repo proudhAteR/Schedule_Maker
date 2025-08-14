@@ -4,7 +4,7 @@ from Core.Models.Enum.Priority import Priority
 from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 from Core.Models.Time.Recurrence import Recurrence
-from Infrastructure.Utils.Parser.EventParser import EventParser
+from Infrastructure.Utils.Parsers.EventParser import EventParser
 
 
 class EventService:

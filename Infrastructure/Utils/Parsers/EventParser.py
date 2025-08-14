@@ -6,7 +6,7 @@ from Core.Models.Events.Event import Event
 from Core.Models.Time.Period import Period
 from Core.Models.Time.Recurrence import Recurrence
 from Infrastructure.Services.Language.LanguageService import LanguageService
-from Infrastructure.Utils.Parser.TimeParser import TimeParser
+from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
 class EventParser(Parser):

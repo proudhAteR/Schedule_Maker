@@ -7,14 +7,14 @@ from Core.Interface.Tokenizer import Tokenizer
 from Core.Models.Match import Match
 from Infrastructure.Services.Google.GoogleTranslator import GoogleTranslator
 from Infrastructure.Services.Language.Spacy import Spacy
-from Infrastructure.Utils.Parser.Matchers.Temporal.Normalizer import Normalizer
-from Infrastructure.Utils.Parser.TimeParser import TimeParser
+from Infrastructure.Utils.Helpers.Normalizer import Normalizer
+from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
 class LanguageService:
-    def __init__(self, translator: TranslationAPI = GoogleTranslator(), tokenizer: Tokenizer = Spacy()):
+    def __init__(self, translator: TranslationAPI = GoogleTranslator(), tokenizer: Tokenizer = None):
         self._translator = translator
-        self._tokenizer = tokenizer
+        self._tokenizer = tokenizer or Spacy.create()
         self._normalizer = Normalizer()
         self._matchers = [matcher() for matcher in Matcher.all_subclasses()]
 

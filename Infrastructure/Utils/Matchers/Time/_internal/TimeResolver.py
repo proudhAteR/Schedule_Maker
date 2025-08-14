@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, time
 
-from Infrastructure.Utils.Parser.Matchers.Temporal.FallbackHandler import FallbackHandler
-from Infrastructure.Utils.Parser.TimeParser import TimeParser
+from Infrastructure.Utils.Matchers.Time._internal.FallbackHandler import FallbackHandler
+from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
 class TimeResolver:
