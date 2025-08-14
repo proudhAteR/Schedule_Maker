@@ -16,23 +16,22 @@ class EventService:
     def __init__(self, parser: EventParser):
         self.__parser = parser
 
-    async def create_event(self, sentence: str, priority: str | None = None,
-                           recurrence: Recurrence | None = None) -> Event:
+    async def create_event(self, sentence: str, priority: str = None, recurrence: Recurrence = None) -> Event:
         event = await self.__parser.parse(sentence, recurrence)
         if priority:
             event.priority = Priority.from_str(priority)
 
         return event
 
-    async def create_schedule(self, block: list[str], date_str: str | None = None) -> Schedule:
+    async def create_schedule(self, block: list[str], date_str: str = None) -> Schedule:
         recurrence = None
         if date_str:
             recurrence = Recurrence(first_occurrence=await self.get_date(date_str))
 
-        tasks = [await self.create_event(line, recurrence=recurrence) for line in block]
+        tasks = [self.create_event(line, recurrence=recurrence) for line in block]
         results = await gather(*tasks)
-        events = [e for e in results if e is not None]
 
+        events = [e for e in results if e is not None]
         return Schedule(events, recurrence)
 
     async def get_date(self, date_str: str):

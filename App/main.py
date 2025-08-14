@@ -12,12 +12,6 @@ from Infrastructure.Utils.Logs.Logger import Logger
 app = typer.Typer()
 
 
-def sm() -> "SM":
-    return async_call(
-        SM.create()
-    )
-
-
 @app.command(help="Create an event from natural language input.")
 def event(
         description: str = typer.Argument(..., help=EVENT_HELP["description"]),
@@ -31,15 +25,9 @@ def event(
         )
 ):
     try:
-        if priority:
-            p = priority.lower()
-            if p not in EVENT_HELP["priority"]:
-                raise typer.BadParameter(f"Priority must be one of: {', '.join(EVENT_HELP['priority'].keys())}")
-        else:
-            p = None
-
+        priority = check_priority(priority)
         async_call(
-            sm().event(description, p)
+            sm().event(description, priority)
         )
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
@@ -53,21 +41,7 @@ def schedule(
         start: Optional[str] = typer.Option(None, "-s", "--start", help="Starting date (yy-mm-dd).")
 ):
     try:
-        if not events and not file:
-            raise typer.BadParameter("Provide either a block of events or a file path.")
-
-        if file:
-            path = Path(file)
-            if not path.exists():
-                raise typer.BadParameter(f"File not found: {file}")
-            with open(path, "r", encoding="utf-8") as f:
-                events_list = [line.strip() for line in f if line.strip()]
-        else:
-            events_list = [e.strip() for e in events.split(";") if e.strip()]
-
-        if not events_list:
-            raise typer.BadParameter("No valid events provided.")
-
+        events_list = get_events(events, file)
         async_call(
             sm().schedule(events_list, start)
         )
@@ -88,6 +62,7 @@ def overview(
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
         for start_str, summary in events:
             Logger.info(f"{start_str}: {summary}")
+
     except Exception as e:
         Logger.error(f"Failed to give overview: {e}")
         raise typer.Exit(code=3)
@@ -100,6 +75,40 @@ def auth():
     except Exception as e:
         Logger.error(f"Failed to connect: {e}")
         raise typer.Exit(code=4)
+
+
+### HELPERS
+
+def sm() -> "SM":
+    return async_call(
+        SM.create()
+    )
+
+
+def get_events(events, file):
+    if not events and not file:
+        raise typer.BadParameter("Provide either a block of events or a file path.")
+    if file:
+        path = Path(file)
+        if not path.exists():
+            raise typer.BadParameter(f"File not found: {file}")
+        with open(path, "r", encoding="utf-8") as f:
+            events_list = [line.strip() for line in f if line.strip()]
+    else:
+        events_list = [e.strip() for e in events.split(";") if e.strip()]
+    if not events_list:
+        raise typer.BadParameter("No valid events provided.")
+    return events_list
+
+
+def check_priority(priority):
+    if priority:
+        p = priority.lower()
+        if p not in EVENT_HELP["priority"]:
+            raise typer.BadParameter(f"Priority must be one of: {', '.join(EVENT_HELP['priority'].keys())}")
+    else:
+        p = None
+    return p
 
 
 def run():

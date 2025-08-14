@@ -11,9 +11,8 @@ from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 class EventParser(Parser):
     @classmethod
-    async def create(cls, language_service: LanguageService = None):
-        language_service = language_service or await language_factory()
-        return cls(language_service)
+    async def create(cls, language_service: LanguageService = None) -> "EventParser":
+        return cls(language_service or await language_factory())
 
     def __init__(self, language_service: LanguageService):
         self._language = language_service
@@ -23,12 +22,11 @@ class EventParser(Parser):
         period = Period.from_match(match, recurrence)
         event_cls = Event.detect_type(match.title)
 
-        kwargs = self._prepare_event_kwargs(match.title, period, match.location, event_cls, match.extra)
+        kwargs = self._build_kwargs(match.title, period, match.location, event_cls, match.extra)
 
         return event_cls(**kwargs)
 
-    def _prepare_event_kwargs(self, title: str, period: Period, location: str, event_cls: type[Event],
-                              extra: str) -> dict:
+    def _build_kwargs(self, title: str, period: Period, location: str, event_cls: type[Event], extra: str) -> dict:
         base_kwargs = {
             'name': title,
             'period': period,
@@ -37,24 +35,19 @@ class EventParser(Parser):
         return self._filter_kwargs(base_kwargs, event_cls, extra)
 
     @staticmethod
-    def _filter_kwargs(kwargs: dict, event_cls: type[Event], extra: str | None) -> dict:
-        sig = inspect.signature(event_cls.__init__)
-        param_names = [p for p in sig.parameters if p != "self"]
+    def _filter_kwargs(kwargs: dict, event_cls: type[Event], extra: str) -> dict:
+        param_names = list(inspect.signature(event_cls.__init__).parameters.keys())
+        param_names.remove("self")
+
         filtered = {k: v for k, v in kwargs.items() if k in param_names}
 
-        EventParser._fill_kwargs(param_names, filtered, extra)
+        if extra := (extra or "").strip():
+            for param in param_names:
+                if param not in filtered:
+                    filtered[param] = extra
+                    break
+
         return filtered
-
-    @staticmethod
-    def _fill_kwargs(param_names: list[str], filtered: dict, extra: str | None) -> None:
-        extra_value = (extra or "").strip()
-        if not extra_value:
-            return
-
-        for param in param_names:
-            if param not in filtered:
-                filtered[param] = extra_value
-                break
 
     async def get_date(self, date_str: str) -> datetime:
         return await self._language.parse_datetime(date_str)
