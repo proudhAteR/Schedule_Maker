@@ -12,7 +12,6 @@ from Infrastructure.Utils.Logs.Logger import Logger
 app = typer.Typer()
 
 
-@property
 def sm() -> "SM":
     return async_call(
         SM.create()
@@ -83,13 +82,12 @@ def overview(
 ):
     try:
         events, date_time = async_call(
-           sm().overview(date)
+            sm().overview(date)
         )
 
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
         for start_str, summary in events:
             Logger.info(f"{start_str}: {summary}")
-
     except Exception as e:
         Logger.error(f"Failed to give overview: {e}")
         raise typer.Exit(code=3)
