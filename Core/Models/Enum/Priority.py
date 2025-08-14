@@ -4,7 +4,7 @@ from enum import Enum
 class Priority(str, Enum):
     URGENT = "11"  # Red — Critical or emergency-level tasks
     HIGH = "4"  # Pink — Important or time-sensitive
-    MEDIUM = "9"  # Blue — Normal or default importance
+    NORMAL = "9"  # Blue — Normal or default importance
     CASUAL = "1"  # Lavender — Non-work or casual meetings
     OPTIONAL = "5"  # Yellow — Optional activities
 
@@ -15,4 +15,4 @@ class Priority(str, Enum):
             if priority.name == s:
                 return priority
 
-        return Priority.MEDIUM
+        return Priority.NORMAL

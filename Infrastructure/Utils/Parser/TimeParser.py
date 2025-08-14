@@ -89,3 +89,13 @@ class TimeParser(Parser):
         time_min = date.isoformat()
         time_max = (date + cls._ONE_DAY).isoformat()
         return time_min, time_max
+
+    @staticmethod
+    async def convert_time(event_data: dict) -> str:
+        start_raw = event_data.get("start", {}).get("dateTime") or event_data.get("start", {}).get("date")
+
+        if start_raw.endswith("Z"):
+            start_raw = start_raw.replace("Z", "+00:00")
+
+        start_dt = datetime.fromisoformat(start_raw)
+        return start_dt.strftime("%I:%M %p")

@@ -13,7 +13,7 @@ class Event:
     location: str
     description: str = ''
     timezone: str = ZoneService.get_timezone()
-    priority: Priority = Priority.MEDIUM
+    priority: Priority = Priority.NORMAL
 
     # noinspection PyTypeChecker
     def to_google_event(self) -> dict:

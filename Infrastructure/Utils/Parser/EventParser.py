@@ -10,52 +10,54 @@ from Infrastructure.Utils.Parser.TimeParser import TimeParser
 
 
 class EventParser(Parser):
-    def __init__(self):
-        self.__language = LanguageService()
+    def __init__(self, language_service: LanguageService = None):
+        self._language = language_service or LanguageService()
 
-    async def parse(self, sentence: str, recurrence: Recurrence | None = None) -> Event:
-        match = await self.__language.match(sentence)
+    async def parse(self, sentence: str, recurrence: Recurrence = None) -> Event:
+        match = await self._language.match(sentence)
         period = Period.from_match(match, recurrence)
-        event = Event.detect_type(match.title)
+        event_cls = Event.detect_type(match.title)
 
-        kwargs = {
-            'name': match.title,
+        kwargs = self._prepare_event_kwargs(match.title, period, match.location, event_cls, match.extra)
+
+        return event_cls(**kwargs)
+
+    def _prepare_event_kwargs(self, title: str, period: Period, location: str, event_cls: type[Event],
+                              extra: str) -> dict:
+        base_kwargs = {
+            'name': title,
             'period': period,
-            'location': match.location,
+            'location': location,
         }
-
-        kwargs = self.__define_args(kwargs, event, match.extra)
-
-        # noinspection PyArgumentList
-        return event(**kwargs)
+        return self._filter_kwargs(base_kwargs, event_cls, extra)
 
     @staticmethod
-    def __define_args(kwargs: dict, event: type['Event'], extra: str):
-        sig = inspect.signature(event.__init__)
+    def _filter_kwargs(kwargs: dict, event_cls: type[Event], extra: str | None) -> dict:
+        sig = inspect.signature(event_cls.__init__)
         param_names = [p for p in sig.parameters if p != "self"]
-        filtered_kwargs = {k: v for k, v in kwargs.items() if k in param_names}
+        filtered = {k: v for k, v in kwargs.items() if k in param_names}
+
+        EventParser._fill_kwargs(param_names, filtered, extra)
+        return filtered
+
+    @staticmethod
+    def _fill_kwargs(param_names: list[str], filtered: dict, extra: str | None) -> None:
+        extra_value = (extra or "").strip()
+        if not extra_value:
+            return
 
         for param in param_names:
-            if param not in filtered_kwargs:
-                if extra.strip():
-                    filtered_kwargs[param] = extra.strip()
+            if param not in filtered:
+                filtered[param] = extra_value
                 break
 
-        return filtered_kwargs
-
     async def get_date(self, date_str: str) -> datetime:
-        return await self.__language.parse_datetime(date_str)
+        return await self._language.parse_datetime(date_str)
 
-    async def midnight(self, date: str):
-        date = await self.get_date(date)
+    async def midnight(self, date_str: str) -> datetime:
+        date = await self.get_date(date_str)
         return TimeParser.midnight(date)
 
     @staticmethod
-    async def convert_time(event: dict):
-        start_raw = event.get("start", {}).get("dateTime") or event.get("start", {}).get("date")
-        if start_raw.endswith("Z"):
-            start_raw = start_raw.replace("Z", "+00:00")
-
-        start_dt = datetime.fromisoformat(start_raw)
-        start_str = start_dt.strftime("%I:%M %p")
-        return start_str
+    async def convert_time(event_data: dict) -> str:
+        return await TimeParser.convert_time(event_data)

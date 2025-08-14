@@ -33,7 +33,7 @@ for speed and flexibility, it turns natural language inputs into structured cale
 Schedule_Maker understands input in a simple, natural format:
 
 ```
-[Course Name] in [Location] from [Start Time] to [End Time] every [Day] by [Teacher]
+[Event Name] in [Location] from [Start Time] to [End Time] every [Day] with [Extra]
 ```
 
 Example:
