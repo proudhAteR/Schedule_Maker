@@ -5,13 +5,18 @@ from Core.Interface.Parser import Parser
 from Core.Models.Events.Event import Event
 from Core.Models.Time.Period import Period
 from Core.Models.Time.Recurrence import Recurrence
-from Infrastructure.Services.Language.LanguageService import LanguageService
+from Infrastructure.Services.Language.LanguageService import LanguageService, language_factory
 from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
 class EventParser(Parser):
-    def __init__(self, language_service: LanguageService = None):
-        self._language = language_service or LanguageService()
+    @classmethod
+    async def create(cls, language_service: LanguageService = None):
+        language_service = language_service or await language_factory()
+        return cls(language_service)
+
+    def __init__(self, language_service: LanguageService):
+        self._language = language_service
 
     async def parse(self, sentence: str, recurrence: Recurrence = None) -> Event:
         match = await self._language.match(sentence)

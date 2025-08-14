@@ -8,8 +8,13 @@ from Infrastructure.Utils.Parsers.EventParser import EventParser
 
 
 class EventService:
-    def __init__(self):
-        self.__parser = EventParser()
+    @classmethod
+    async def create(cls):
+        parser = await EventParser.create()
+        return cls(parser)
+
+    def __init__(self, parser: EventParser):
+        self.__parser = parser
 
     async def create_event(self, sentence: str, priority: str | None = None,
                            recurrence: Recurrence | None = None) -> Event:

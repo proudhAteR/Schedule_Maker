@@ -5,10 +5,18 @@ from typing import Optional
 import typer
 
 import Infrastructure.Utils.Helpers.Imports as Imp
+from App.SM import SM
 from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
 from Infrastructure.Utils.Logs.Logger import Logger
 
 app = typer.Typer()
+
+
+@property
+def sm() -> "SM":
+    return async_call(
+        SM.create()
+    )
 
 
 @app.command(help="Create an event from natural language input.")
@@ -31,10 +39,8 @@ def event(
         else:
             p = None
 
-        from App.SM import SM
-
         async_call(
-            SM().event(description, p)
+            sm().event(description, p)
         )
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
@@ -63,9 +69,8 @@ def schedule(
         if not events_list:
             raise typer.BadParameter("No valid events provided.")
 
-        from App.SM import SM
         async_call(
-            SM().schedule(events_list, start)
+            sm().schedule(events_list, start)
         )
     except Exception as e:
         Logger.error(f"Failed to create schedule: {e}")
@@ -77,9 +82,8 @@ def overview(
         date: Optional[str] = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
-        from App.SM import SM
         events, date_time = async_call(
-            SM().overview(date)
+           sm().overview(date)
         )
 
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
@@ -94,9 +98,7 @@ def overview(
 @app.command(help="Connect to your google account.")
 def auth():
     try:
-        from App.SM import SM
-
-        SM().connect()
+        sm().connect()
     except Exception as e:
         Logger.error(f"Failed to connect: {e}")
         raise typer.Exit(code=4)

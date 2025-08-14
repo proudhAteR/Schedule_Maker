@@ -11,10 +11,15 @@ from Infrastructure.Utils.Helpers.Normalizer import Normalizer
 from Infrastructure.Utils.Parsers.TimeParser import TimeParser
 
 
+async def language_factory(tokenizer: Tokenizer = None):
+    tokenizer = tokenizer or await Spacy.create()
+    return LanguageService(tokenizer)
+
+
 class LanguageService:
-    def __init__(self, translator: TranslationAPI = GoogleTranslator(), tokenizer: Tokenizer = None):
+    def __init__(self, tokenizer: Tokenizer, translator: TranslationAPI = GoogleTranslator()):
         self._translator = translator
-        self._tokenizer = tokenizer or Spacy.create()
+        self._tokenizer = tokenizer
         self._normalizer = Normalizer()
         self._matchers = [matcher() for matcher in Matcher.all_subclasses()]
 

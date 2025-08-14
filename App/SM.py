@@ -9,9 +9,14 @@ TCalendar = TypeVar("TCalendar", bound=CalendarAPI)
 
 
 class SM(Generic[TCalendar]):
-    def __init__(self, calendar: TCalendar | None = None):
+    @classmethod
+    async def create(cls, calendar: TCalendar | None = None):
+        service = await EventService.create()
+        return cls(calendar, service)
+
+    def __init__(self, calendar: TCalendar | None, service: EventService):
         self._calendar = calendar
-        self.service = EventService()
+        self.service = service
 
     @property
     def calendar(self) -> TCalendar:

@@ -1,6 +1,6 @@
 import pytest
 
-from Infrastructure.Services.Language.LanguageService import LanguageService
+from Infrastructure.Services.Language.LanguageService import LanguageService, language_factory
 
 
 @pytest.mark.parametrize("sentence, expected_time, expected_location_contains, expected_title_contains", [
@@ -25,7 +25,7 @@ from Infrastructure.Services.Language.LanguageService import LanguageService
 @pytest.mark.asyncio
 async def test_processor(sentence: str, expected_time: str, expected_location_contains: str,
                          expected_title_contains: str):
-    service = LanguageService()
+    service = await language_factory()
     result = await service.process(sentence)
 
     time_val = result.get("time", "").lower()
