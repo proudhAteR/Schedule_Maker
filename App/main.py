@@ -5,9 +5,9 @@ import typer
 
 import Infrastructure.Utils.Helpers.Imports as Imp
 from App.SM import SM
-from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
 from Infrastructure.Utils.CLI.Loader import Loader
 from Infrastructure.Utils.CLI.Logger import Logger
+from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
 
 app = typer.Typer()
 
@@ -26,9 +26,8 @@ def event(
 ):
     try:
         priority = check_priority(priority)
-        async_call(
-            sm().event(description, priority)
-        )
+        with Loader.run(message="Creating event..."):
+            async_call(sm().event(description, priority))
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
         raise typer.Exit(code=1)
@@ -42,9 +41,8 @@ def schedule(
 ):
     try:
         events_list = get_events(events, file)
-        async_call(
-            sm().schedule(events_list, start)
-        )
+        with Loader.run(message="Creating schedule..."):
+            async_call(sm().schedule(events_list, start))
     except Exception as e:
         Logger.error(f"Failed to create schedule: {e}")
         raise typer.Exit(code=2)
@@ -55,14 +53,12 @@ def overview(
         date: str | None = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
-        events, date_time = async_call(
-            sm().overview(date)
-        )
+        with Loader.run(message="Fetching overview..."):
+            events, date_time = async_call(sm().overview(date))
 
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
         for start_str, summary in events:
             Logger.info(f"{start_str}: {summary}")
-
     except Exception as e:
         Logger.error(f"Failed to give overview: {e}")
         raise typer.Exit(code=3)
@@ -71,14 +67,14 @@ def overview(
 @app.command(help="Connect to your google account.")
 def auth():
     try:
-        sm().connect()
+        with Loader.run(message="Connecting to Google..."):
+            sm().connect()
     except Exception as e:
         Logger.error(f"Failed to connect: {e}")
         raise typer.Exit(code=4)
 
 
-### HELPERS
-
+# -------------------- HELPERS -------------------- #
 def sm() -> SM:
     return async_call(
         SM.create()
@@ -111,11 +107,11 @@ def check_priority(priority):
     return p
 
 
+# -------------------- MAIN -------------------- #
 def run():
     Imp.run()
     app()
 
 
 if __name__ == "__main__":
-    with Loader.run():
-        run()
+    run()
