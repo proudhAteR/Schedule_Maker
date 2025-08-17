@@ -26,7 +26,7 @@ def event(
 ):
     try:
         priority = check_priority(priority)
-        with Loader.run(message="Creating event..."):
+        with Loader.run():
             async_call(sm().event(description, priority))
     except Exception as e:
         Logger.error(f"Failed to create event: {e}")
@@ -41,7 +41,7 @@ def schedule(
 ):
     try:
         events_list = get_events(events, file)
-        with Loader.run(message="Creating schedule..."):
+        with Loader.run():
             async_call(sm().schedule(events_list, start))
     except Exception as e:
         Logger.error(f"Failed to create schedule: {e}")
@@ -53,7 +53,7 @@ def overview(
         date: str | None = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
-        with Loader.run(message="Fetching overview..."):
+        with Loader.run():
             events, date_time = async_call(sm().overview(date))
 
         Logger.success(f"{len(events)} event(s) found on {date_time.date()}")
@@ -67,7 +67,7 @@ def overview(
 @app.command(help="Connect to your google account.")
 def auth():
     try:
-        with Loader.run(message="Connecting to Google..."):
+        with Loader.run():
             sm().connect()
     except Exception as e:
         Logger.error(f"Failed to connect: {e}")
