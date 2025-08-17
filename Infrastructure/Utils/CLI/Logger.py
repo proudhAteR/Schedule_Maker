@@ -1,8 +1,8 @@
 import threading
 from logging import *
 
-from Infrastructure.Utils.Logs.ColorFormatter import ColorFormatter
-import Infrastructure.Utils.Logs.LoggerConfig as Config
+from Infrastructure.Utils.CLI.ColorFormatter import ColorFormatter
+import Infrastructure.Utils.CLI.LoggerConfig as Config
 
 _ = Config
 

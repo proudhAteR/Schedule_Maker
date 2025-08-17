@@ -6,7 +6,7 @@ from Core.Interface.APIs.CalendarAPI import CalendarAPI
 from Core.Models.Events.Event import Event
 from Core.Models.Schedule import Schedule
 from Infrastructure.Services.Google.GoogleAPI import GoogleAPI
-from Infrastructure.Utils.Logs.Logger import Logger
+from Infrastructure.Utils.CLI.Logger import Logger
 
 
 class GoogleCalendar(CalendarAPI, GoogleAPI):

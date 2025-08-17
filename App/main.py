@@ -6,7 +6,8 @@ import typer
 import Infrastructure.Utils.Helpers.Imports as Imp
 from App.SM import SM
 from Infrastructure.Utils.Helpers.Help_texts import EVENT_HELP
-from Infrastructure.Utils.Logs.Logger import Logger
+from Infrastructure.Utils.CLI.Loader import Loader
+from Infrastructure.Utils.CLI.Logger import Logger
 
 app = typer.Typer()
 
@@ -116,4 +117,5 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    with Loader.run():
+        run()

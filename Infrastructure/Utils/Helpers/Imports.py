@@ -8,7 +8,7 @@ import spacy.cli
 
 import Core.Models.Events
 import Infrastructure.Utils.Matchers
-from Infrastructure.Utils.Logs.Logger import Logger
+from Infrastructure.Utils.CLI.Logger import Logger
 
 
 def run():

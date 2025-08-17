@@ -5,7 +5,7 @@ from Core.Interface.APIs.Auth import Auth
 from Infrastructure.Clients.GoogleClient import GoogleClient
 from Infrastructure.Services.Files.FileService import FileService
 from ._internal.TokenHandler import TokenHandler
-from ...Utils.Logs.Logger import Logger
+from ...Utils.CLI.Logger import Logger
 
 
 class GoogleAuth(Auth):

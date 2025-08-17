@@ -26,7 +26,7 @@ from Infrastructure.Services.Language.LanguageService import LanguageService, la
 async def test_processor(sentence: str, expected_time: str, expected_location_contains: str,
                          expected_title_contains: str):
     service = await language_factory()
-    result = await service.process(sentence)
+    result = await service._process(sentence)
 
     time_val = result.get("time", "").lower()
     location_val = result.get("location", "").lower()
