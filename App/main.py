@@ -1,6 +1,5 @@
 from asyncio import run as async_call
 from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -15,7 +14,7 @@ app = typer.Typer()
 @app.command(help="Create an event from natural language input.")
 def event(
         description: str = typer.Argument(..., help=EVENT_HELP["description"]),
-        priority: Optional[str] = typer.Option(
+        priority: str | None = typer.Option(
             None,
             "--priority",
             "-pr",
@@ -36,9 +35,9 @@ def event(
 
 @app.command(help="Create a schedule using a block of events.")
 def schedule(
-        events: Optional[str] = typer.Argument(None, help="Block of events, ';' separated."),
-        file: Optional[str] = typer.Option(None, "--file", "-f", help="Path to file with one event per line."),
-        start: Optional[str] = typer.Option(None, "-s", "--start", help="Starting date (yy-mm-dd).")
+        events: str | None = typer.Argument(None, help="Block of events, ';' separated."),
+        file: str | None = typer.Option(None, "--file", "-f", help="Path to file with one event per line."),
+        start: str | None = typer.Option(None, "-s", "--start", help="Starting date (yy-mm-dd).")
 ):
     try:
         events_list = get_events(events, file)
@@ -52,7 +51,7 @@ def schedule(
 
 @app.command(help="Get schedule overview for a given date.")
 def overview(
-        date: Optional[str] = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
+        date: str | None = typer.Option(None, "-o", "--on", help="Date or expression like 'today', 'next monday'.")
 ):
     try:
         events, date_time = async_call(
@@ -79,7 +78,7 @@ def auth():
 
 ### HELPERS
 
-def sm() -> "SM":
+def sm() -> SM:
     return async_call(
         SM.create()
     )
