@@ -7,15 +7,12 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## 🆕 Changelog
 
-### v0.1.9 (2025‑08‑12)
+This project is no longer maintained for two main reasons:
 
-#### ✨ Added
+- It started as a summer learning project — a way for me to practice Python and build something useful for myself.
+- My access to Google APIs was limited to a free trial.
 
-- **Auth Command**: Easily switch between Google accounts.
-    - Running the command opens your browser and lets you select the account to authenticate:
-      ```bash
-      sm auth
-      ```
+Thank you for checking it out! Feel free to explore the code, fork it, or use it as inspiration.
 
 ---
 
@@ -30,8 +27,9 @@ for speed and flexibility, it turns natural language inputs into structured cale
 
 ## ⚙️ How It Works
 
-Schedule_Maker understands input in a simple, natural format:
+### ⚠️ Note: You may need to double-check your calendar entries, since the NLP algorithm could still be improved.
 
+Schedule_Maker understands input in a simple, natural format:
 ```
 [Event Name] in [Location] from [Start Time] to [End Time] every [Day] with [Extra]
 ```
